@@ -26,7 +26,7 @@ import nodomain.freeyourgadget.gadgetbridge.R;
 
 /**
  * For every supported device, a device type constant must exist.
- *
+ * <p>
  * Note: they key of every constant is stored in the DB, so it is fixed forever,
  * and may not be changed.
  */
@@ -64,6 +64,7 @@ public enum DeviceType {
     MAKIBESHR3(150, R.drawable.ic_device_default, R.drawable.ic_device_hplus_disabled, R.string.devicetype_makibes_hr3),
     BANGLEJS(160, R.drawable.ic_device_zetime, R.drawable.ic_device_zetime_disabled, R.string.devicetype_banglejs),
     MIJIA_LYWSD02(200, R.drawable.ic_device_pebble, R.drawable.ic_device_pebble_disabled, R.string.devicetype_mijia_lywsd02),
+    VIVOMOVE_HR(210, R.drawable.ic_device_default, R.drawable.ic_device_default_disabled, R.string.garmin_vivomove_hr),
     VIBRATISSIMO(300, R.drawable.ic_device_lovetoy, R.drawable.ic_device_lovetoy_disabled, R.string.devicetype_vibratissimo),
     TEST(1000, R.drawable.ic_device_default, R.drawable.ic_device_default_disabled, R.string.devicetype_test);
 

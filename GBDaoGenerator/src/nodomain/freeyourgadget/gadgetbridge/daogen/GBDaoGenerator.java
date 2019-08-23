@@ -15,6 +15,8 @@
  */
 package nodomain.freeyourgadget.gadgetbridge.daogen;
 
+import java.util.Date;
+
 import de.greenrobot.daogenerator.DaoGenerator;
 import de.greenrobot.daogenerator.Entity;
 import de.greenrobot.daogenerator.Index;
@@ -71,6 +73,8 @@ public class GBDaoGenerator {
         addZeTimeActivitySample(schema, user, device);
         addID115ActivitySample(schema, user, device);
         addJYouActivitySample(schema, user, device);
+        addVivomoveHrActivitySample(schema, user, device);
+
         addCalendarSyncState(schema, device);
         addAlarms(schema, user, device);
 
@@ -325,6 +329,18 @@ public class GBDaoGenerator {
         activitySample.addIntProperty("caloriesBurnt");
         activitySample.addIntProperty("distanceMeters");
         activitySample.addIntProperty("activeTimeMinutes");
+        return activitySample;
+    }
+
+    private static Entity addVivomoveHrActivitySample(Schema schema, Entity user, Entity device) {
+        Entity activitySample = addEntity(schema, "VivomoveHrActivitySample");
+        activitySample.implementsSerializable();
+        addCommonActivitySampleProperties("AbstractActivitySample", activitySample, user, device);
+        activitySample.addIntProperty(SAMPLE_RAW_KIND).notNull().codeBeforeGetterAndSetter(OVERRIDE);
+        activitySample.addIntProperty(SAMPLE_STEPS).notNull().codeBeforeGetterAndSetter(OVERRIDE);
+        activitySample.addIntProperty(SAMPLE_HEART_RATE).notNull().codeBeforeGetterAndSetter(OVERRIDE);
+        activitySample.addIntProperty("caloriesBurnt");
+        activitySample.addIntProperty("floorsClimbed");
         return activitySample;
     }
 
