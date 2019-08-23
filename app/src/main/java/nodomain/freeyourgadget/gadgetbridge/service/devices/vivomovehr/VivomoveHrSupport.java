@@ -25,9 +25,7 @@ import nodomain.freeyourgadget.gadgetbridge.impl.GBDevice;
 import nodomain.freeyourgadget.gadgetbridge.model.*;
 import nodomain.freeyourgadget.gadgetbridge.service.btle.AbstractBTLEDeviceSupport;
 import nodomain.freeyourgadget.gadgetbridge.service.btle.TransactionBuilder;
-import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.DeviceInformationMessage;
-import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.DeviceInformationResponseMessage;
-import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.ResponseMessage;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.*;
 import nodomain.freeyourgadget.gadgetbridge.util.GB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +34,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Set;
 import java.util.UUID;
 
 import static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.BinaryUtils.*;
@@ -57,6 +56,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
     private final VivomoveHrActivitySample lastSample = new VivomoveHrActivitySample();
 
     private final GfdiPacketParser gfdiPacketParser = new GfdiPacketParser();
+    private Set<GarminCapability> capabilities;
 
     public VivomoveHrSupport() {
         super(LOG);
@@ -279,11 +279,15 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
         final int messageType = readShort(packet, 2);
         switch (messageType) {
             case VivomoveConstants.MESSAGE_RESPONSE:
-                processResponseMessage(packet);
+                processResponseMessage(ResponseMessage.parsePacket(packet));
                 break;
 
             case VivomoveConstants.MESSAGE_DEVICE_INFORMATION:
-                processDeviceInformationMessage(packet);
+                processDeviceInformationMessage(DeviceInformationMessage.parsePacket(packet));
+                break;
+
+            case VivomoveConstants.MESSAGE_CONFIGURATION:
+                processConfigurationMessage(ConfigurationMessage.parsePacket(packet));
                 break;
 
             default:
@@ -292,14 +296,11 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
         }
     }
 
-    private void processResponseMessage(byte[] packet) {
-        final ResponseMessage responseMessage = ResponseMessage.parsePacket(packet);
+    private void processResponseMessage(ResponseMessage responseMessage) {
         LOG.info("Received response to message {}: {}", responseMessage.requestID, responseMessage.getStatusStr());
     }
 
-    private void processDeviceInformationMessage(byte[] packet) {
-        final DeviceInformationMessage deviceInformationMessage = DeviceInformationMessage.parsePacket(packet);
-
+    private void processDeviceInformationMessage(DeviceInformationMessage deviceInformationMessage) {
         LOG.info("Received device information: protocol {}, product {}, unit {}, SW {}, max packet {}, BT name {}, device name {}, device model {}", deviceInformationMessage.protocolVersion, deviceInformationMessage.productNumber, deviceInformationMessage.unitNumber, deviceInformationMessage.getSoftwareVersionStr(), deviceInformationMessage.maxPacketSize, deviceInformationMessage.bluetoothFriendlyName, deviceInformationMessage.deviceName, deviceInformationMessage.deviceModel);
 
         final GBDeviceEventVersionInfo deviceEventVersionInfo = new GBDeviceEventVersionInfo();
@@ -315,13 +316,20 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
         final DeviceInformationResponseMessage deviceInformationResponseMessage = new DeviceInformationResponseMessage(VivomoveConstants.STATUS_ACK, 112, -1, VivomoveConstants.GADGETBRIDGE_UNIT_NUMBER, BuildConfig.VERSION_CODE, 16384, getBluetoothAdapter().getName(), Build.MANUFACTURER, Build.DEVICE, protocolFlags);
 
         sendMessage(deviceInformationResponseMessage.packet);
-        try {
-            performInitialized("Send DeviceInformationResponseMessage")
-                    .write(char1_1, GfdiPacketParser.wrapMessageToPacket(deviceInformationResponseMessage.packet))
-                    .queue(getQueue());
-        } catch (IOException e) {
-            LOG.error("Unable to send DeviceInformationResponseMessage", e);
-        }
+    }
+
+    private void processConfigurationMessage(ConfigurationMessage configurationMessage) {
+        this.capabilities = GarminCapability.setFromBinary(configurationMessage.configurationPayload);
+
+        LOG.info("Received configuration message; capabilities: {}", GarminCapability.setToString(capabilities));
+
+        // prepare and send response
+        sendMessage(new GenericResponseMessage(VivomoveConstants.MESSAGE_CONFIGURATION, VivomoveConstants.STATUS_ACK).packet);
+
+        // and report our own configuration/capabilities
+        // TODO: Better capability management/configuration
+        final byte[] ourCapabilityFlags = GarminCapability.setToBinary(GarminCapability.ALL_CAPABILITIES);
+        sendMessage(new ConfigurationMessage(ourCapabilityFlags).packet);
     }
 
     private void sendMessage(byte[] messageBytes) {

@@ -50,4 +50,11 @@ public class MessageWriter {
     public byte[] getBytes() {
         return position == buffer.length ? buffer : Arrays.copyOf(buffer, position);
     }
+
+    public void writeBytes(byte[] bytes) {
+        final int size = bytes.length;
+        if (position + size > buffer.length) throw new IllegalStateException();
+        System.arraycopy(bytes, 0, buffer, position, size);
+        position += size;
+    }
 }

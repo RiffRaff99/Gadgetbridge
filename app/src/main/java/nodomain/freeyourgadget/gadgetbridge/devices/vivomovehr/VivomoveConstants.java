@@ -37,8 +37,9 @@ public class VivomoveConstants {
 
     public static final int MESSAGE_RESPONSE = 5000;
     public static final int MESSAGE_DEVICE_INFORMATION = 5024;
+    public static final int MESSAGE_CONFIGURATION = 5050;
 
-    public static final int GADGETBRIDGE_UNIT_NUMBER = 12345;
+    public static final int GADGETBRIDGE_UNIT_NUMBER = 22222;
 
     public static final int MAX_WRITE_SIZE = 20;
 }
