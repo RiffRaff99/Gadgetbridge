@@ -1,7 +1,5 @@
 package nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr;
 
-import java.nio.charset.StandardCharsets;
-
 public final class BinaryUtils {
     private BinaryUtils() {
     }
@@ -18,7 +16,19 @@ public final class BinaryUtils {
         return (array[offset] & 0xFF) | ((array[offset + 1] & 0xFF) << 8) | ((array[offset + 2] & 0xFF) << 16) | ((array[offset + 3] & 0xFF) << 24);
     }
 
-    public static String readString(byte[] array, int offset, int size) {
-        return new String(array, offset, size, StandardCharsets.UTF_8);
+    public static void writeByte(byte[] array, int offset, int value) {
+        array[offset] = (byte) value;
+    }
+
+    public static void writeShort(byte[] array, int offset, int value) {
+        array[offset] = (byte) value;
+        array[offset + 1] = (byte) (value >> 8);
+    }
+
+    public static void writeInt(byte[] array, int offset, int value) {
+        array[offset] = (byte) value;
+        array[offset + 1] = (byte) (value >> 8);
+        array[offset + 2] = (byte) (value >> 16);
+        array[offset + 3] = (byte) (value >> 24);
     }
 }

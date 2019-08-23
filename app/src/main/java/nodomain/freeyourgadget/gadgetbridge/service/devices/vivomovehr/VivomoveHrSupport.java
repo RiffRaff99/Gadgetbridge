@@ -4,10 +4,12 @@ import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.widget.Toast;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import nodomain.freeyourgadget.gadgetbridge.BuildConfig;
 import nodomain.freeyourgadget.gadgetbridge.GBApplication;
 import nodomain.freeyourgadget.gadgetbridge.database.DBHandler;
 import nodomain.freeyourgadget.gadgetbridge.database.DBHelper;
@@ -24,6 +26,8 @@ import nodomain.freeyourgadget.gadgetbridge.model.*;
 import nodomain.freeyourgadget.gadgetbridge.service.btle.AbstractBTLEDeviceSupport;
 import nodomain.freeyourgadget.gadgetbridge.service.btle.TransactionBuilder;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.DeviceInformationMessage;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.DeviceInformationResponseMessage;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.ResponseMessage;
 import nodomain.freeyourgadget.gadgetbridge.util.GB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -251,8 +255,10 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
 
     private void handleReceivedGfdiBytes(byte[] data) {
         gfdiPacketParser.receivedBytes(data);
+        LOG.debug("Received {} GFDI bytes", data.length);
         byte[] packet;
         while ((packet = gfdiPacketParser.retrievePacket()) != null) {
+            LOG.debug("Processing a {}B GFDI packet", packet.length);
             processGfdiPacket(packet);
         }
     }
@@ -263,9 +269,19 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
             LOG.error("Received GFDI packet with invalid length: {} vs {}", size, packet.length);
             return;
         }
+        final int crc = readShort(packet, packet.length - 2);
+        final int correctCrc = ChecksumCalculator.computeCrc(packet, 0, packet.length - 2);
+        if (crc != correctCrc) {
+            LOG.error("Received GFDI packet with invalid CRC: {} vs {}", crc, correctCrc);
+            return;
+        }
 
         final int messageType = readShort(packet, 2);
         switch (messageType) {
+            case VivomoveConstants.MESSAGE_RESPONSE:
+                processResponseMessage(packet);
+                break;
+
             case VivomoveConstants.MESSAGE_DEVICE_INFORMATION:
                 processDeviceInformationMessage(packet);
                 break;
@@ -276,6 +292,11 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
         }
     }
 
+    private void processResponseMessage(byte[] packet) {
+        final ResponseMessage responseMessage = ResponseMessage.parsePacket(packet);
+        LOG.info("Received response to message {}: {}", responseMessage.requestID, responseMessage.getStatusStr());
+    }
+
     private void processDeviceInformationMessage(byte[] packet) {
         final DeviceInformationMessage deviceInformationMessage = DeviceInformationMessage.parsePacket(packet);
 
@@ -284,6 +305,45 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
         final GBDeviceEventVersionInfo deviceEventVersionInfo = new GBDeviceEventVersionInfo();
         deviceEventVersionInfo.fwVersion = deviceInformationMessage.getSoftwareVersionStr();
         handleGBDeviceEvent(deviceEventVersionInfo);
+
+        // prepare and send response
+        final boolean protocolVersionSupported = deviceInformationMessage.protocolVersion / 100 == 1;
+        if (!protocolVersionSupported) {
+            LOG.error("Unsupported protocol version {}", deviceInformationMessage.protocolVersion);
+        }
+        final int protocolFlags = protocolVersionSupported ? 1 : 0;
+        final DeviceInformationResponseMessage deviceInformationResponseMessage = new DeviceInformationResponseMessage(VivomoveConstants.STATUS_ACK, 112, -1, VivomoveConstants.GADGETBRIDGE_UNIT_NUMBER, BuildConfig.VERSION_CODE, 16384, getBluetoothAdapter().getName(), Build.MANUFACTURER, Build.DEVICE, protocolFlags);
+
+        sendMessage(deviceInformationResponseMessage.packet);
+        try {
+            performInitialized("Send DeviceInformationResponseMessage")
+                    .write(char1_1, GfdiPacketParser.wrapMessageToPacket(deviceInformationResponseMessage.packet))
+                    .queue(getQueue());
+        } catch (IOException e) {
+            LOG.error("Unable to send DeviceInformationResponseMessage", e);
+        }
+    }
+
+    private void sendMessage(byte[] messageBytes) {
+        final byte[] packet = GfdiPacketParser.wrapMessageToPacket(messageBytes);
+        try {
+            final TransactionBuilder builder = performInitialized("sendMessage()");
+            int remainingBytes = packet.length;
+            if (remainingBytes > VivomoveConstants.MAX_WRITE_SIZE) {
+                int position = 0;
+                while (remainingBytes > 0) {
+                    final byte[] fragment = Arrays.copyOfRange(packet, position, position + Math.min(remainingBytes, VivomoveConstants.MAX_WRITE_SIZE));
+                    builder.write(char1_1, fragment);
+                    position += fragment.length;
+                    remainingBytes -= fragment.length;
+                }
+            } else {
+                builder.write(char1_1, packet);
+            }
+            builder.queue(getQueue());
+        } catch (IOException e) {
+            LOG.error("Unable to send a message", e);
+        }
     }
 
     @Override

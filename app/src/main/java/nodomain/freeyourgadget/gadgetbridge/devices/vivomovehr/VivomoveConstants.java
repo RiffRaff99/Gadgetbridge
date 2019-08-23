@@ -28,5 +28,17 @@ public class VivomoveConstants {
 
     // public static final UUID UUID_CLIENT_CHARACTERISTIC_CONFIGURATION = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
 
-    public static final int MESSAGE_DEVICE_INFORMATION = 0x13A0;
+    public static final int STATUS_ACK = 0;
+    public static final int STATUS_NAK = 1;
+    public static final int STATUS_UNSUPPORTED = 2;
+    public static final int STATUS_DECODE_ERROR = 3;
+    public static final int STATUS_CRC_ERROR = 4;
+    public static final int STATUS_LENGTH_ERROR = 5;
+
+    public static final int MESSAGE_RESPONSE = 5000;
+    public static final int MESSAGE_DEVICE_INFORMATION = 5024;
+
+    public static final int GADGETBRIDGE_UNIT_NUMBER = 12345;
+
+    public static final int MAX_WRITE_SIZE = 20;
 }

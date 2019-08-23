@@ -2,8 +2,6 @@ package nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages
 
 import java.util.Locale;
 
-import static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.BinaryUtils.*;
-
 public class DeviceInformationMessage {
     public final int protocolVersion;
     public final int productNumber;
@@ -27,19 +25,15 @@ public class DeviceInformationMessage {
     }
 
     public static DeviceInformationMessage parsePacket(byte[] packet) {
-        final int protocolVersion = readShort(packet, 4);
-        final int productNumber = readShort(packet, 6);
-        final String unitNumber = Long.toString(readInt(packet, 8) & 0xFFFFFFFFL);
-        final int softwareVersion = readShort(packet, 12);
-        final int maxPacketSize = readShort(packet, 14);
-        final int bluetoothFriendlyNameSize = readByte(packet, 16);
-        final String bluetoothFriendlyName = readString(packet, 17, bluetoothFriendlyNameSize);
-        final int deviceNameOffset = 17 + bluetoothFriendlyNameSize;
-        final int deviceNameSize = readByte(packet, deviceNameOffset);
-        final String deviceName = readString(packet, deviceNameOffset + 1, deviceNameSize);
-        final int deviceModelOffset = deviceNameOffset + 1 + deviceNameSize;
-        final int deviceModelSize = readByte(packet, deviceModelOffset);
-        final String deviceModel = readString(packet, deviceModelOffset + 1, deviceModelSize);
+        final MessageReader reader = new MessageReader(packet, 4);
+        final int protocolVersion = reader.readShort();
+        final int productNumber = reader.readShort();
+        final String unitNumber = Long.toString(reader.readInt() & 0xFFFFFFFFL);
+        final int softwareVersion = reader.readShort();
+        final int maxPacketSize = reader.readShort();
+        final String bluetoothFriendlyName = reader.readString();
+        final String deviceName = reader.readString();
+        final String deviceModel = reader.readString();
 
         return new DeviceInformationMessage(protocolVersion, productNumber, unitNumber, softwareVersion, maxPacketSize, bluetoothFriendlyName, deviceName, deviceModel);
     }

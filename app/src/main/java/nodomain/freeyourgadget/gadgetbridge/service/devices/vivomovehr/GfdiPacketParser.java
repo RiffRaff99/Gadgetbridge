@@ -3,8 +3,15 @@ package nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Arrays;
 
+/**
+ * Parser of GFDI messages embedded in COBS packets.
+ * <p>
+ * COBS ensures there are no embedded NUL bytes inside the packet data, and wraps the message into NUL framing bytes.
+ */
 // Notes: not really optimized; does a lot of (re)allocation, might use more static buffers, I guess… And code cleanup as well.
 public class GfdiPacketParser {
     private static final Logger LOG = LoggerFactory.getLogger(GfdiPacketParser.class);
@@ -43,6 +50,7 @@ public class GfdiPacketParser {
     public byte[] retrievePacket() {
         final byte[] resultPacket = packet;
         packet = null;
+        parseBuffer();
         return resultPacket;
     }
 
@@ -55,7 +63,7 @@ public class GfdiPacketParser {
             // nothing to parse
             return;
         }
-        final boolean startOfPacket = !insidePacket;
+        boolean startOfPacket = !insidePacket;
         if (startOfPacket) {
             byte b;
             while (bufferPos < buffer.length && (b = buffer[bufferPos++]) != 0) {
@@ -69,11 +77,12 @@ public class GfdiPacketParser {
             }
             insidePacket = true;
         }
-        while(true) {
+        boolean singleZeroLast = false;
+        while (true) {
             int chunkSize = -1;
             int chunkStart = bufferPos;
             int pos = bufferPos;
-            while (pos < buffer.length && ((chunkSize = buffer[pos++]) == 0) && startOfPacket) {
+            while (pos < buffer.length && ((chunkSize = (buffer[pos++] & 0xFF)) == 0) && startOfPacket) {
                 // skip repeating framing bytes (?)
                 bufferPos = pos;
                 chunkStart = pos;
@@ -89,7 +98,12 @@ public class GfdiPacketParser {
             if (chunkSize == 0) {
                 // end of packet
                 // drop the last zero
-                packet = Arrays.copyOf(packetBuffer, packetBuffer.length - 1);
+                if (singleZeroLast) {
+                    // except when it was explicitly added (TODO: ugly, is it correct?)
+                    packet = packetBuffer;
+                } else {
+                    packet = Arrays.copyOf(packetBuffer, packetBuffer.length - 1);
+                }
                 packetBuffer = EMPTY_BUFFER;
                 insidePacket = false;
 
@@ -111,9 +125,57 @@ public class GfdiPacketParser {
             final int packetPos = packetBuffer.length;
             packetBuffer = Arrays.copyOf(packetBuffer, packetPos + chunkSize);
             System.arraycopy(buffer, chunkStart + 1, packetBuffer, packetPos, chunkSize - 1);
-            packetBuffer[packetBuffer.length - 1] = 0;
+            if (chunkSize < 255) {
+                packetBuffer[packetBuffer.length - 1] = 0;
+                bufferPos = chunkStart + chunkSize;
+            } else {
+                bufferPos = chunkStart + chunkSize - 1;
+            }
 
-            bufferPos = chunkStart + chunkSize;
+            singleZeroLast = chunkSize == 1;
+            startOfPacket = false;
+        }
+    }
+
+    public static byte[] wrapMessageToPacket(byte[] message) {
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream(message.length + 2 + (message.length + 253) / 254)) {
+            outputStream.write(0);
+            int chunkStart = 0;
+            for (int i = 0; i < message.length; ++i) {
+                if (message[i] == 0) {
+                    int chunkLength = i - chunkStart;
+                    while (true) {
+                        if (chunkLength >= 255) {
+                            // write 255-byte chunk
+                            outputStream.write(255);
+                            outputStream.write(message, chunkStart, 254);
+                            chunkLength -= 254;
+                            chunkStart += 254;
+                            if (chunkLength == 255) {
+                                // write an empty chunk to mark the zero
+                                outputStream.write(1);
+                            }
+                        } else {
+                            // write chunk from chunkStart to here
+                            outputStream.write(chunkLength + 1);
+                            outputStream.write(message, chunkStart, chunkLength);
+                            chunkStart = i + 1;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (chunkStart < message.length) {
+                int chunkLength = message.length - chunkStart;
+                // TODO: chunkLength >= 255!
+                outputStream.write(chunkLength + 1);
+                outputStream.write(message, chunkStart, chunkLength);
+            }
+            outputStream.write(0);
+            return outputStream.toByteArray();
+        } catch (IOException e) {
+            LOG.error("Error writing to memory buffer", e);
+            throw new RuntimeException(e);
         }
     }
 }
