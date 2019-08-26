@@ -43,7 +43,7 @@ public class VivomoveConstants {
     public static final int GADGETBRIDGE_UNIT_NUMBER = 22222;
 
     // TODO: Better capability management/configuration
-    public static final Set<GarminCapability> OUR_CAPABILITIES = new HashSet<>(Arrays.asList(GarminCapability.SYNC, GarminCapability.ADVANCED_MUSIC_CONTROLS, GarminCapability.FIND_MY_PHONE, GarminCapability.WEATHER_CONDITIONS, GarminCapability.WEATHER_ALERTS, GarminCapability.DEVICE_MESSAGES, GarminCapability.SMS_NOTIFICATIONS, GarminCapability.SYNC));
+    public static final Set<GarminCapability> OUR_CAPABILITIES = new HashSet<>(Arrays.asList(GarminCapability.SYNC, GarminCapability.ADVANCED_MUSIC_CONTROLS, GarminCapability.FIND_MY_PHONE, GarminCapability.WEATHER_CONDITIONS, GarminCapability.WEATHER_ALERTS, GarminCapability.DEVICE_MESSAGES, GarminCapability.SMS_NOTIFICATIONS, GarminCapability.SYNC, GarminCapability.DEVICE_INITIATES_SYNC, GarminCapability.HOST_INITIATED_SYNC_REQUESTS, GarminCapability.CALENDAR, GarminCapability.CURRENT_TIME_REQUEST_SUPPORT));
     //public static final Set<GarminCapability> OUR_CAPABILITIES = GarminCapability.ALL_CAPABILITIES;
 
     public static final int MAX_WRITE_SIZE = 20;
@@ -54,9 +54,12 @@ public class VivomoveConstants {
     public static final int GARMIN_TIME_EPOCH = 631065600;
 
     public static final int MESSAGE_RESPONSE = 5000;
+    public static final int MESSAGE_WEATHER_REQUEST = 5014;
     public static final int MESSAGE_BATTERY_STATUS = 5023;
     public static final int MESSAGE_DEVICE_INFORMATION = 5024;
     public static final int MESSAGE_DEVICE_SETTINGS = 5026;
+    public static final int MESSAGE_SYSTEM_EVENT = 5030;
     public static final int MESSAGE_PROTOBUF_REQUEST = 5043;
     public static final int MESSAGE_CONFIGURATION = 5050;
+    public static final int MESSAGE_CURRENT_TIME_REQUEST = 5052;
 }

@@ -290,6 +290,14 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
                 processDeviceInformationMessage(DeviceInformationMessage.parsePacket(packet));
                 break;
 
+            case VivomoveConstants.MESSAGE_WEATHER_REQUEST:
+                processWeatherRequest(WeatherRequestMessage.parsePacket(packet));
+                break;
+
+            case VivomoveConstants.MESSAGE_CURRENT_TIME_REQUEST:
+                processCurrentTimeRequest(CurrentTimeRequestMessage.parsePacket(packet));
+                break;
+
             case VivomoveConstants.MESSAGE_CONFIGURATION:
                 processConfigurationMessage(ConfigurationMessage.parsePacket(packet));
                 break;
@@ -298,6 +306,24 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
                 LOG.info("Unknown message type {}", messageType);
                 break;
         }
+    }
+
+    private void processWeatherRequest(WeatherRequestMessage requestMessage) {
+        LOG.info("Processing weather request fmt={}, {} hrs, {}/{}", requestMessage.format, requestMessage.hoursOfForecast, requestMessage.latitude, requestMessage.longitude);
+        sendMessage(new WeatherRequestResponseMessage(0, 0, 2, 300).packet);
+    }
+
+    private void processCurrentTimeRequest(CurrentTimeRequestMessage requestMessage) {
+        long now = System.currentTimeMillis();
+        final TimeZone timeZone = TimeZone.getDefault();
+        final Calendar calendar = Calendar.getInstance(timeZone);
+        calendar.setTimeInMillis(now);
+        int dstOffset = calendar.get(Calendar.DST_OFFSET) / 1000;
+        int timeZoneOffset = timeZone.getOffset(now) / 1000;
+        int garminTimestamp = (int) (now / 1000) - VivomoveConstants.GARMIN_TIME_EPOCH;
+
+        LOG.info("Processing current time request #{}: time={}, DST={}, ofs={}", requestMessage.referenceID, garminTimestamp, dstOffset, timeZoneOffset);
+        sendMessage(new CurrentTimeRequestResponseMessage(0, requestMessage.referenceID, garminTimestamp, timeZoneOffset, dstOffset).packet);
     }
 
     private void processResponseMessage(ResponseMessage responseMessage, byte[] packet) {
@@ -395,9 +421,9 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
         final TimeZone timeZone = TimeZone.getDefault();
         final Calendar calendar = Calendar.getInstance(timeZone);
         calendar.setTimeInMillis(now);
-        int garminTimestamp = (int) (now / 1000) - VivomoveConstants.GARMIN_TIME_EPOCH;
         int dstOffset = calendar.get(Calendar.DST_OFFSET) / 1000;
-        int timeZoneOffset = timeZone.getOffset(now) / 1000;
+        int timeZoneOffset = 0; // timeZone.getOffset(now) / 1000;
+        int garminTimestamp = (int) (now / 1000) - VivomoveConstants.GARMIN_TIME_EPOCH;
 
         settings.put(GarminDeviceSetting.CURRENT_TIME, garminTimestamp);
         settings.put(GarminDeviceSetting.DAYLIGHT_SAVINGS_TIME_OFFSET, dstOffset);
@@ -601,11 +627,11 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
     @Override
     public void onTestNewFunction() {
         dbg("onTestNewFunction()");
-        sendBatteryStatus();
+        sendMessage(new SystemEventMessage(GarminSystemEventType.SYNC_READY, 0).packet);
     }
 
     @Override
     public void onSendWeather(WeatherSpec weatherSpec) {
-
+        dbg("onSendWeather");
     }
 }
