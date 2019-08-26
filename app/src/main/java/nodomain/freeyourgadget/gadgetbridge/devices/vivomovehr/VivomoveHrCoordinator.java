@@ -116,11 +116,11 @@ public class VivomoveHrCoordinator extends AbstractDeviceCoordinator {
 
     @Override
     public boolean supportsWeather() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean supportsFindDevice() {
-        return false;
+        return true;
     }
 }

@@ -1,0 +1,1 @@
+"c:\Program Files\protoc\bin\protoc.exe" -I=. --java_out=lite:..\..\..\..\..\..\..\ gdi_smart_proto.proto

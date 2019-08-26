@@ -26,23 +26,21 @@ import nodomain.freeyourgadget.gadgetbridge.model.*;
 import nodomain.freeyourgadget.gadgetbridge.service.btle.AbstractBTLEDeviceSupport;
 import nodomain.freeyourgadget.gadgetbridge.service.btle.TransactionBuilder;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.*;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto;
 import nodomain.freeyourgadget.gadgetbridge.util.GB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.BinaryUtils.*;
 
 public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
     private static final Logger LOG = LoggerFactory.getLogger(VivomoveHrSupport.class);
 
-    private BluetoothGattCharacteristic char1_1;
+    private BluetoothGattCharacteristic characteristicMessageSender;
     private BluetoothGattCharacteristic characteristicMessageReceiver;
     private BluetoothGattCharacteristic characteristicHeartRate;
     private BluetoothGattCharacteristic characteristicSteps;
@@ -58,6 +56,8 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
     private final GfdiPacketParser gfdiPacketParser = new GfdiPacketParser();
     private Set<GarminCapability> capabilities;
 
+    private int lastProtobufRequestId;
+
     public VivomoveHrSupport() {
         super(LOG);
 
@@ -70,6 +70,11 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
         LOG.debug(msg);
     }
 
+    private int getNextProtobufRequestId() {
+        lastProtobufRequestId = (lastProtobufRequestId + 1) % 65536;
+        return lastProtobufRequestId;
+    }
+
     @Override
     protected TransactionBuilder initializeDevice(TransactionBuilder builder) {
         LOG.info("Initializing");
@@ -77,8 +82,8 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
         gbDevice.setState(GBDevice.State.INITIALIZING);
         gbDevice.sendDeviceUpdateIntent(getContext());
 
-        char1_1 = getCharacteristic(VivomoveConstants.UUID_CHARACTERISTIC_GARMIN_1_1);
-        characteristicMessageReceiver = getCharacteristic(VivomoveConstants.UUID_CHARACTERISTIC_GARMIN_MESSAGE_RECEIVE);
+        characteristicMessageSender = getCharacteristic(VivomoveConstants.UUID_CHARACTERISTIC_GARMIN_GFDI_SEND);
+        characteristicMessageReceiver = getCharacteristic(VivomoveConstants.UUID_CHARACTERISTIC_GARMIN_GFDI_RECEIVE);
         characteristicHeartRate = getCharacteristic(VivomoveConstants.UUID_CHARACTERISTIC_GARMIN_HEART_RATE);
         characteristicSteps = getCharacteristic(VivomoveConstants.UUID_CHARACTERISTIC_GARMIN_STEPS);
         characteristicCalories = getCharacteristic(VivomoveConstants.UUID_CHARACTERISTIC_GARMIN_CALORIES);
@@ -94,6 +99,11 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
 //        builder.notify(characteristicStairs, true);
         //builder.notify(char2_7, true);
         // builder.notify(char2_9, true);
+
+        /*
+        sendCurrentTime(builder);
+        sendSettings(builder);
+        */
 
         gbDevice.setState(GBDevice.State.INITIALIZED);
         gbDevice.sendDeviceUpdateIntent(getContext());
@@ -136,14 +146,8 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
             processRealtimeIntensityMinutes(data);
         } else if (VivomoveConstants.UUID_CHARACTERISTIC_GARMIN_HEART_RATE_VARIATION.equals(characteristicUUID)) {
             handleRealtimeHeartbeat(data);
-        } else if (VivomoveConstants.UUID_CHARACTERISTIC_GARMIN_MESSAGE_RECEIVE.equals(characteristicUUID)) {
+        } else if (VivomoveConstants.UUID_CHARACTERISTIC_GARMIN_GFDI_RECEIVE.equals(characteristicUUID)) {
             handleReceivedGfdiBytes(data);
-        } else if (VivomoveConstants.UUID_CHARACTERISTIC_GARMIN_2_9.equals(characteristicUUID)) {
-            try {
-                stream2_9.write(data);
-            } catch (IOException e) {
-                LOG.error("Failed to write data to stream", e);
-            }
         } else {
             LOG.debug("Unknown characteristic {} changed: {}", characteristicUUID, Arrays.toString(data));
         }
@@ -279,7 +283,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
         final int messageType = readShort(packet, 2);
         switch (messageType) {
             case VivomoveConstants.MESSAGE_RESPONSE:
-                processResponseMessage(ResponseMessage.parsePacket(packet));
+                processResponseMessage(ResponseMessage.parsePacket(packet), packet);
                 break;
 
             case VivomoveConstants.MESSAGE_DEVICE_INFORMATION:
@@ -296,8 +300,19 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
         }
     }
 
-    private void processResponseMessage(ResponseMessage responseMessage) {
-        LOG.info("Received response to message {}: {}", responseMessage.requestID, responseMessage.getStatusStr());
+    private void processResponseMessage(ResponseMessage responseMessage, byte[] packet) {
+        switch (responseMessage.requestID) {
+            case VivomoveConstants.MESSAGE_PROTOBUF_REQUEST:
+                processProtobufRequestResponse(ProtobufRequestResponseMessage.parsePacket(packet));
+                break;
+            default:
+                LOG.info("Received response to message {}: {}", responseMessage.requestID, responseMessage.getStatusStr());
+                break;
+        }
+    }
+
+    private void processProtobufRequestResponse(ProtobufRequestResponseMessage responseMessage) {
+        LOG.info("Received response to protobuf message #{}@{}:  status={}, error={}", responseMessage.requestId, responseMessage.dataOffset, responseMessage.protobufStatus, responseMessage.error);
     }
 
     private void processDeviceInformationMessage(DeviceInformationMessage deviceInformationMessage) {
@@ -327,31 +342,83 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
         sendMessage(new GenericResponseMessage(VivomoveConstants.MESSAGE_CONFIGURATION, VivomoveConstants.STATUS_ACK).packet);
 
         // and report our own configuration/capabilities
-        // TODO: Better capability management/configuration
-        final byte[] ourCapabilityFlags = GarminCapability.setToBinary(GarminCapability.ALL_CAPABILITIES);
+        final byte[] ourCapabilityFlags = GarminCapability.setToBinary(VivomoveConstants.OUR_CAPABILITIES);
         sendMessage(new ConfigurationMessage(ourCapabilityFlags).packet);
+
+        // initialize current time and settings
+        sendCurrentTime(null);
+        sendSettings(null);
     }
 
     private void sendMessage(byte[] messageBytes) {
-        final byte[] packet = GfdiPacketParser.wrapMessageToPacket(messageBytes);
         try {
             final TransactionBuilder builder = performInitialized("sendMessage()");
-            int remainingBytes = packet.length;
-            if (remainingBytes > VivomoveConstants.MAX_WRITE_SIZE) {
-                int position = 0;
-                while (remainingBytes > 0) {
-                    final byte[] fragment = Arrays.copyOfRange(packet, position, position + Math.min(remainingBytes, VivomoveConstants.MAX_WRITE_SIZE));
-                    builder.write(char1_1, fragment);
-                    position += fragment.length;
-                    remainingBytes -= fragment.length;
-                }
-            } else {
-                builder.write(char1_1, packet);
-            }
+            sendMessage(builder, messageBytes);
             builder.queue(getQueue());
         } catch (IOException e) {
             LOG.error("Unable to send a message", e);
         }
+    }
+
+    private void sendMessage(TransactionBuilder builder, byte[] messageBytes) {
+        // ugly, refactor??
+        if (builder == null) {
+            sendMessage(messageBytes);
+            return;
+        }
+
+        final byte[] packet = GfdiPacketParser.wrapMessageToPacket(messageBytes);
+        int remainingBytes = packet.length;
+        if (remainingBytes > VivomoveConstants.MAX_WRITE_SIZE) {
+            int position = 0;
+            while (remainingBytes > 0) {
+                final byte[] fragment = Arrays.copyOfRange(packet, position, position + Math.min(remainingBytes, VivomoveConstants.MAX_WRITE_SIZE));
+                builder.write(characteristicMessageSender, fragment);
+                position += fragment.length;
+                remainingBytes -= fragment.length;
+            }
+        } else {
+            builder.write(characteristicMessageSender, packet);
+        }
+    }
+
+    private void sendProtobufRequest(byte[] protobufMessage) {
+        final int requestId = getNextProtobufRequestId();
+        LOG.info("Sending {}B protobuf request #{}: {}", protobufMessage.length, requestId, GB.hexdump(protobufMessage, 0, protobufMessage.length));
+        sendMessage(new ProtobufRequestMessage(requestId, 0, protobufMessage.length, protobufMessage.length, protobufMessage).packet);
+    }
+
+    private void sendCurrentTime(TransactionBuilder builder) {
+        final Map<GarminDeviceSetting, Object> settings = new LinkedHashMap<>(3);
+
+        long now = System.currentTimeMillis();
+        final TimeZone timeZone = TimeZone.getDefault();
+        final Calendar calendar = Calendar.getInstance(timeZone);
+        calendar.setTimeInMillis(now);
+        int garminTimestamp = (int) (now / 1000) - VivomoveConstants.GARMIN_TIME_EPOCH;
+        int dstOffset = calendar.get(Calendar.DST_OFFSET) / 1000;
+        int timeZoneOffset = timeZone.getOffset(now) / 1000;
+
+        settings.put(GarminDeviceSetting.CURRENT_TIME, garminTimestamp);
+        settings.put(GarminDeviceSetting.DAYLIGHT_SAVINGS_TIME_OFFSET, dstOffset);
+        settings.put(GarminDeviceSetting.TIME_ZONE_OFFSET, timeZoneOffset);
+        // TODO: NEXT_DAYLIGHT_SAVINGS_START, NEXT_DAYLIGHT_SAVINGS_END
+        LOG.info("Setting time to {}, dstOffset={}, tzOffset={} (DST={})", garminTimestamp, dstOffset, timeZoneOffset, timeZone.inDaylightTime(new Date(now)) ? 1 : 0);
+        sendMessage(builder, new SetDeviceSettingsMessage(settings).packet);
+    }
+
+    private void sendSettings(TransactionBuilder builder) {
+        final Map<GarminDeviceSetting, Object> settings = new LinkedHashMap<>(3);
+
+        settings.put(GarminDeviceSetting.WEATHER_CONDITIONS_ENABLED, true);
+        settings.put(GarminDeviceSetting.WEATHER_ALERTS_ENABLED, true);
+        LOG.info("Sending settings");
+        sendMessage(builder, new SetDeviceSettingsMessage(settings).packet);
+    }
+
+    private void sendBatteryStatus() {
+        LOG.info("Sending battery status");
+        sendMessage(new BatteryStatusMessage(12).packet);
     }
 
     @Override
@@ -371,6 +438,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
     @Override
     public void onSetTime() {
         dbg("onSetTime()");
+        sendCurrentTime(null);
     }
 
     @Override
@@ -463,7 +531,31 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
 
     @Override
     public void onFindDevice(boolean start) {
-
+        dbg("onFindDevice " + start);
+        if (start) {
+            sendProtobufRequest(
+                    GdiSmartProto.Smart.newBuilder()
+                            .setFindMyWatchService(
+                                    GdiFindMyWatch.FindMyWatchService.newBuilder()
+                                            .setFindRequest(
+                                                    GdiFindMyWatch.FindMyWatchRequest.newBuilder()
+                                                            .setTimeout(60)
+                                            )
+                            )
+                            .build()
+                            .toByteArray());
+        } else {
+            sendProtobufRequest(
+                    GdiSmartProto.Smart.newBuilder()
+                            .setFindMyWatchService(
+                                    GdiFindMyWatch.FindMyWatchService.newBuilder()
+                                            .setCancelRequest(
+                                                    GdiFindMyWatch.FindMyWatchCancelRequest.newBuilder()
+                                            )
+                            )
+                            .build()
+                            .toByteArray());
+        }
     }
 
     @Override
@@ -506,34 +598,10 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
 
     }
 
-    private OutputStream stream2_9;
-
-    private Runnable stopStreaming = new Runnable() {
-        @Override
-        public void run() {
-            try {
-                performInitialized("Write stop request").write(char2_9, new byte[]{0}).notify(char2_9, false).queue(getQueue());
-                stream2_9.close();
-                dbg("Streaming stopped");
-            } catch (IOException ex) {
-                dbg("I/O error stopping: " + ex.getLocalizedMessage());
-            }
-        }
-    };
-
     @Override
     public void onTestNewFunction() {
         dbg("onTestNewFunction()");
-        getContext().deleteFile("data2_9.bin");
-        /*
-        try {
-            stream2_9 = getContext().openFileOutput("data2_9.bin", 0);
-            performInitialized("Write start request").write(char2_9, new byte[]{1}).notify(char2_9, true).queue(getQueue());
-            handler.postDelayed(stopStreaming, 20000);
-        } catch (IOException ex) {
-            dbg("I/O error starting: " + ex.getLocalizedMessage());
-        }
-         */
+        sendBatteryStatus();
     }
 
     @Override

@@ -1,5 +1,10 @@
 package nodomain.freeyourgadget.gadgetbridge.devices.vivomovehr;
 
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.GarminCapability;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 public class VivomoveConstants {
@@ -12,8 +17,8 @@ public class VivomoveConstants {
     public static final UUID UUID_SERVICE_GARMIN_1 = UUID.fromString("6A4E2401-667B-11E3-949A-0800200C9A66");
     public static final UUID UUID_SERVICE_GARMIN_2 = UUID.fromString("6A4E2500-667B-11E3-949A-0800200C9A66");
 
-    public static final UUID UUID_CHARACTERISTIC_GARMIN_1_1 = UUID.fromString("6a4e4c80-667b-11e3-949a-0800200c9a66");
-    public static final UUID UUID_CHARACTERISTIC_GARMIN_MESSAGE_RECEIVE = UUID.fromString("6a4ecd28-667b-11e3-949a-0800200c9a66");
+    public static final UUID UUID_CHARACTERISTIC_GARMIN_GFDI_SEND = UUID.fromString("6a4e4c80-667b-11e3-949a-0800200c9a66");
+    public static final UUID UUID_CHARACTERISTIC_GARMIN_GFDI_RECEIVE = UUID.fromString("6a4ecd28-667b-11e3-949a-0800200c9a66");
 
     public static final UUID UUID_CHARACTERISTIC_GARMIN_HEART_RATE = UUID.fromString("6a4e2501-667b-11e3-949a-0800200c9a66");
     public static final UUID UUID_CHARACTERISTIC_GARMIN_STEPS = UUID.fromString("6a4e2502-667b-11e3-949a-0800200c9a66");
@@ -35,11 +40,23 @@ public class VivomoveConstants {
     public static final int STATUS_CRC_ERROR = 4;
     public static final int STATUS_LENGTH_ERROR = 5;
 
-    public static final int MESSAGE_RESPONSE = 5000;
-    public static final int MESSAGE_DEVICE_INFORMATION = 5024;
-    public static final int MESSAGE_CONFIGURATION = 5050;
-
     public static final int GADGETBRIDGE_UNIT_NUMBER = 22222;
 
+    // TODO: Better capability management/configuration
+    public static final Set<GarminCapability> OUR_CAPABILITIES = new HashSet<>(Arrays.asList(GarminCapability.SYNC, GarminCapability.ADVANCED_MUSIC_CONTROLS, GarminCapability.FIND_MY_PHONE, GarminCapability.WEATHER_CONDITIONS, GarminCapability.WEATHER_ALERTS, GarminCapability.DEVICE_MESSAGES, GarminCapability.SMS_NOTIFICATIONS, GarminCapability.SYNC));
+    //public static final Set<GarminCapability> OUR_CAPABILITIES = GarminCapability.ALL_CAPABILITIES;
+
     public static final int MAX_WRITE_SIZE = 20;
+
+    /**
+     * Garmin zero time in seconds since Epoch: 1989-12-31T00:00:00Z
+     */
+    public static final int GARMIN_TIME_EPOCH = 631065600;
+
+    public static final int MESSAGE_RESPONSE = 5000;
+    public static final int MESSAGE_BATTERY_STATUS = 5023;
+    public static final int MESSAGE_DEVICE_INFORMATION = 5024;
+    public static final int MESSAGE_DEVICE_SETTINGS = 5026;
+    public static final int MESSAGE_PROTOBUF_REQUEST = 5043;
+    public static final int MESSAGE_CONFIGURATION = 5050;
 }

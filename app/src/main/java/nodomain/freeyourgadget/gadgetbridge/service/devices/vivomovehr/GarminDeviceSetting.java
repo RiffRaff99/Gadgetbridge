@@ -1,4 +1,4 @@
-package nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages;
+package nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr;
 
 public enum GarminDeviceSetting {
 	DEVICE_NAME,
