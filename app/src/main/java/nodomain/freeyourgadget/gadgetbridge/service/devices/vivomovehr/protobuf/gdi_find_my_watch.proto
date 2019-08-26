@@ -16,14 +16,14 @@ message FindMyWatchRequest {
 }
 
 message FindMyWatchResponse {
-    required ResponseStatus status = 1;
+    optional ResponseStatus status = 1;
 }
 
 message FindMyWatchCancelRequest {
 }
 
 message FindMyWatchCancelResponse {
-    required ResponseStatus status = 1;
+    optional ResponseStatus status = 1;
 }
 
 enum ResponseStatus {
