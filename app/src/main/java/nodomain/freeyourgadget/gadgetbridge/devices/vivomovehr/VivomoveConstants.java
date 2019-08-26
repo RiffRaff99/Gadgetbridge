@@ -59,7 +59,10 @@ public class VivomoveConstants {
     public static final int MESSAGE_DEVICE_INFORMATION = 5024;
     public static final int MESSAGE_DEVICE_SETTINGS = 5026;
     public static final int MESSAGE_SYSTEM_EVENT = 5030;
+    public static final int MESSAGE_SYNC_REQUEST = 5037;
+    public static final int MESSAGE_MUSIC_CONTROL_CAPABILITIES = 5042;
     public static final int MESSAGE_PROTOBUF_REQUEST = 5043;
+    public static final int MESSAGE_PROTOBUF_RESPONSE = 5044;
     public static final int MESSAGE_CONFIGURATION = 5050;
     public static final int MESSAGE_CURRENT_TIME_REQUEST = 5052;
 }

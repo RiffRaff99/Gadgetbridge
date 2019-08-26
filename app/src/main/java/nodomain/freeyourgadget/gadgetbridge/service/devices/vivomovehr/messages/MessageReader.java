@@ -45,4 +45,11 @@ public class MessageReader {
         position += size;
         return result;
     }
+
+    public byte[] readBytes(int size) {
+        final byte[] result = new byte[size];
+        System.arraycopy(data, position, result, 0, size);
+        position += size;
+        return result;
+    }
 }

@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.widget.Toast;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import com.google.protobuf.InvalidProtocolBufferException;
 import nodomain.freeyourgadget.gadgetbridge.BuildConfig;
 import nodomain.freeyourgadget.gadgetbridge.GBApplication;
 import nodomain.freeyourgadget.gadgetbridge.database.DBHandler;
@@ -294,18 +295,51 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
                 processWeatherRequest(WeatherRequestMessage.parsePacket(packet));
                 break;
 
+            case VivomoveConstants.MESSAGE_MUSIC_CONTROL_CAPABILITIES:
+                processMusicControlCapabilities(MusicControlCapabilitiesMessage.parsePacket(packet));
+                break;
+
             case VivomoveConstants.MESSAGE_CURRENT_TIME_REQUEST:
                 processCurrentTimeRequest(CurrentTimeRequestMessage.parsePacket(packet));
+                break;
+
+            case VivomoveConstants.MESSAGE_SYNC_REQUEST:
+                processSyncRequest(SyncRequestMessage.parsePacket(packet));
                 break;
 
             case VivomoveConstants.MESSAGE_CONFIGURATION:
                 processConfigurationMessage(ConfigurationMessage.parsePacket(packet));
                 break;
 
+            case VivomoveConstants.MESSAGE_PROTOBUF_RESPONSE:
+                processProtobufResponse(ProtobufRequestMessage.parsePacket(packet));
+                break;
+
             default:
-                LOG.info("Unknown message type {}", messageType);
+                LOG.info("Unknown message type {}: {}", messageType, GB.hexdump(packet, 0, packet.length));
                 break;
         }
+    }
+
+    private void processSyncRequest(SyncRequestMessage requestMessage) {
+        LOG.info("Processing sync request message: option={}, types: {}", requestMessage.option, GB.hexdump(requestMessage.fileTypes, 0, requestMessage.fileTypes.length));
+        sendMessage(new GenericResponseMessage(VivomoveConstants.MESSAGE_SYNC_REQUEST, 0).packet);
+    }
+
+    private void processProtobufResponse(ProtobufRequestMessage requestMessage) {
+        LOG.info("Received protobuf response #{}, {}B@{}/{}: {}", requestMessage.requestId, requestMessage.protobufDataLength, requestMessage.dataOffset, requestMessage.totalProtobufLength, GB.hexdump(requestMessage.messageBytes, 0, requestMessage.messageBytes.length));
+        sendMessage(new GenericResponseMessage(VivomoveConstants.MESSAGE_PROTOBUF_RESPONSE, 0).packet);
+        try {
+            final GdiSmartProto.Smart smart = GdiSmartProto.Smart.parseFrom(requestMessage.messageBytes);
+            LOG.info("Parsed message: {}", smart.toString());
+        } catch (InvalidProtocolBufferException e) {
+            LOG.error("Failed to parse protobuf message", e);
+        }
+    }
+
+    private void processMusicControlCapabilities(MusicControlCapabilitiesMessage capabilitiesMessage) {
+        LOG.info("Processing music control capabilities request caps={}", capabilitiesMessage.supportedCapabilities);
+        sendMessage(new MusicControlCapabilitiesResponseMessage(0, GarminMusicControlCommand.values()).packet);
     }
 
     private void processWeatherRequest(WeatherRequestMessage requestMessage) {
