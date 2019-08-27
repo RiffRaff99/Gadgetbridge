@@ -431,10 +431,24 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
             case VivomoveConstants.MESSAGE_PROTOBUF_REQUEST:
                 processProtobufRequestResponse(ProtobufRequestResponseMessage.parsePacket(packet));
                 break;
+            case VivomoveConstants.MESSAGE_DEVICE_SETTINGS:
+                processDeviceSettingsResponse(SetDeviceSettingsResponseMessage.parsePacket(packet));
+                break;
+            case VivomoveConstants.MESSAGE_SYSTEM_EVENT:
+                processSystemEventResponse(SystemEventResponseMessage.parsePacket(packet));
+                break;
             default:
                 LOG.info("Received response to message {}: {}", responseMessage.requestID, responseMessage.getStatusStr());
                 break;
         }
+    }
+
+    private void processDeviceSettingsResponse(SetDeviceSettingsResponseMessage responseMessage) {
+        LOG.info("Received response to device settings message: status={}, response={}", responseMessage.status, responseMessage.response);
+    }
+
+    private void processSystemEventResponse(SystemEventResponseMessage responseMessage) {
+        LOG.info("Received response to system event message: status={}, response={}", responseMessage.status, responseMessage.response);
     }
 
     private void processFitDefinitionResponse(FitDefinitionResponseMessage responseMessage) {
@@ -487,6 +501,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
         sendSyncReady();
         requestBatteryStatusUpdate();
         sendFitDefinitions();
+        sendFitConnectivityMessage();
     }
 
     private void sendMessage(byte[] messageBytes) {
