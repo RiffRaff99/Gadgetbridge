@@ -98,7 +98,7 @@ public class GfdiPacketParser {
             if (chunkSize == 0) {
                 // end of packet
                 // drop the last zero
-                if (singleZeroLast) {
+                if (singleZeroLast && false) {
                     // except when it was explicitly added (TODO: ugly, is it correct?)
                     packet = packetBuffer;
                 } else {

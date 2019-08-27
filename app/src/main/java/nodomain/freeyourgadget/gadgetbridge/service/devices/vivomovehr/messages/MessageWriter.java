@@ -37,6 +37,12 @@ public class MessageWriter {
         position += 4;
     }
 
+    public void writeLong(long value) {
+        if (position + 8 > buffer.length) throw new IllegalStateException();
+        BinaryUtils.writeLong(buffer, position, value);
+        position += 8;
+    }
+
     public void writeString(String value) {
         final byte[] bytes = value.getBytes(StandardCharsets.UTF_8);
         final int size = bytes.length;
@@ -52,9 +58,12 @@ public class MessageWriter {
     }
 
     public void writeBytes(byte[] bytes) {
-        final int size = bytes.length;
+        writeBytes(bytes, 0, bytes.length);
+    }
+
+    public void writeBytes(byte[] bytes, int offset, int size) {
         if (position + size > buffer.length) throw new IllegalStateException();
-        System.arraycopy(bytes, 0, buffer, position, size);
+        System.arraycopy(bytes, offset, buffer, position, size);
         position += size;
     }
 }

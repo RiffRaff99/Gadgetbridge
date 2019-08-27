@@ -31,4 +31,15 @@ public final class BinaryUtils {
         array[offset + 2] = (byte) (value >> 16);
         array[offset + 3] = (byte) (value >> 24);
     }
+
+    public static void writeLong(byte[] array, int offset, long value) {
+        array[offset] = (byte) value;
+        array[offset + 1] = (byte) (value >> 8);
+        array[offset + 2] = (byte) (value >> 16);
+        array[offset + 3] = (byte) (value >> 24);
+        array[offset + 4] = (byte) (value >> 32);
+        array[offset + 5] = (byte) (value >> 40);
+        array[offset + 6] = (byte) (value >> 48);
+        array[offset + 7] = (byte) (value >> 56);
+    }
 }

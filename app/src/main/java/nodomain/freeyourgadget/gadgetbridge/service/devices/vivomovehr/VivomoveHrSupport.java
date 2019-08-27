@@ -77,6 +77,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
         weatherSpec.windSpeed = 18;
         weatherSpec.windDirection = 244;
         weatherSpec.forecasts.add(new WeatherSpec.Forecast(17, 28, 905, 65));
+        return weatherSpec;
     }
 
     public VivomoveHrSupport() {
@@ -402,7 +403,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
 
     private void processWeatherRequest(WeatherRequestMessage requestMessage) {
         LOG.info("Processing weather request fmt={}, {} hrs, {}/{}", requestMessage.format, requestMessage.hoursOfForecast, requestMessage.latitude, requestMessage.longitude);
-        sendMessage(new WeatherRequestResponseMessage(0, 0, 2, 300).packet);
+        sendMessage(new WeatherRequestResponseMessage(0, 0, 1, 300).packet);
     }
 
     private void processCurrentTimeRequest(CurrentTimeRequestMessage requestMessage) {
@@ -614,7 +615,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
         weatherConditionsMessage.setField(1, weather.currentTemp);
         weatherConditionsMessage.setField(2, openWeatherCodeToFitWeatherStatus(weather.currentConditionCode));
         weatherConditionsMessage.setField(3, weather.windDirection);
-        weatherConditionsMessage.setField(4, weather.windSpeed);
+        weatherConditionsMessage.setField(4, Math.round(weather.windSpeed));
         weatherConditionsMessage.setField(7, weather.currentHumidity);
         weatherConditionsMessage.setField(8, weather.location);
         final Calendar timestamp = Calendar.getInstance();
@@ -684,26 +685,41 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
             case 302:
             case 312:
             case 314:
-            case 321:
                 // heavy_rain
                 return 17;
+            case 321:
+                // scattered_showers
+                return 13;
             case 511:
                 // unknown_precipitation
                 return 15;
+            case 200:
+            case 201:
+            case 202:
+            case 210:
+            case 211:
+            case 212:
+            case 230:
+            case 231:
+            case 232:
+                // thunderstorm
+                return 6;
+            case 221:
+                // scattered_thunderstorms
+                return 14;
+            case 600:
+                // light_snow
+                return 18;
+            case 601:
+                // snow
+                return 4;
+            case 602:
+                // heavy_snow
+                return 19;
+            default:
+                throw new IllegalArgumentException("Unknown weather code " + openWeatherCode);
 
         }
-/*
-        rain	3
-        snow	4
-        thunderstorms	6
-        scattered_showers	13
-        scattered_thunderstorms	14
-        unknown_precipitation	15
-        light_rain	16
-        heavy_rain	17
-        light_snow	18
-        heavy_snow	19
-*/
     }
 
     private void sendBatteryStatus() {
