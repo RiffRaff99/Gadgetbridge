@@ -32,6 +32,7 @@ import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiDeviceStatus;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto;
+import nodomain.freeyourgadget.gadgetbridge.service.serial.GBDeviceProtocol;
 import nodomain.freeyourgadget.gadgetbridge.util.DateTimeUtils;
 import nodomain.freeyourgadget.gadgetbridge.util.GB;
 import org.slf4j.Logger;
@@ -771,6 +772,12 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
     @Override
     public void onSetMusicInfo(MusicSpec musicSpec) {
         dbg("onSetMusicInfo " + musicSpec);
+        sendMessage(new MusicControlEntityUpdateMessage(
+                new AmsEntityAttribute(AmsEntity.TRACK, AmsEntityAttribute.TRACK_ATTRIBUTE_ARTIST, 0, musicSpec.artist),
+                new AmsEntityAttribute(AmsEntity.TRACK, AmsEntityAttribute.TRACK_ATTRIBUTE_ALBUM, 0, musicSpec.album),
+                new AmsEntityAttribute(AmsEntity.TRACK, AmsEntityAttribute.TRACK_ATTRIBUTE_TITLE, 0, musicSpec.track),
+                new AmsEntityAttribute(AmsEntity.TRACK, AmsEntityAttribute.TRACK_ATTRIBUTE_DURATION, 0, String.valueOf(musicSpec.duration))
+        ).packet);
     }
 
     @Override
@@ -812,6 +819,16 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
 
     @Override
     public void onReset(int flags) {
+        switch(flags) {
+            case GBDeviceProtocol.RESET_FLAGS_FACTORY_RESET:
+                LOG.info("Requesting factory reset");
+                sendMessage(new SystemEventMessage(GarminSystemEventType.FACTORY_RESET, 1).packet);
+                break;
+
+            default:
+                GB.toast(getContext(), "This kind of reset not supported for this device", Toast.LENGTH_LONG, GB.ERROR);
+                break;
+        }
     }
 
     @Override
@@ -893,7 +910,6 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
     @Override
     public void onTestNewFunction() {
         dbg("onTestNewFunction()");
-        sendWeatherConditions();
     }
 
     @Override
