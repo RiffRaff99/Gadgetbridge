@@ -14,6 +14,7 @@ import nodomain.freeyourgadget.gadgetbridge.BuildConfig;
 import nodomain.freeyourgadget.gadgetbridge.GBApplication;
 import nodomain.freeyourgadget.gadgetbridge.database.DBHandler;
 import nodomain.freeyourgadget.gadgetbridge.database.DBHelper;
+import nodomain.freeyourgadget.gadgetbridge.deviceevents.GBDeviceEventBatteryInfo;
 import nodomain.freeyourgadget.gadgetbridge.deviceevents.GBDeviceEventVersionInfo;
 import nodomain.freeyourgadget.gadgetbridge.devices.SampleProvider;
 import nodomain.freeyourgadget.gadgetbridge.devices.vivomovehr.VivomoveConstants;
@@ -27,6 +28,7 @@ import nodomain.freeyourgadget.gadgetbridge.model.*;
 import nodomain.freeyourgadget.gadgetbridge.service.btle.AbstractBTLEDeviceSupport;
 import nodomain.freeyourgadget.gadgetbridge.service.btle.TransactionBuilder;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.*;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiDeviceStatus;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto;
 import nodomain.freeyourgadget.gadgetbridge.util.GB;
@@ -100,11 +102,6 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
 //        builder.notify(characteristicStairs, true);
         //builder.notify(char2_7, true);
         // builder.notify(char2_9, true);
-
-        /*
-        sendCurrentTime(builder);
-        sendSettings(builder);
-        */
 
         gbDevice.setState(GBDevice.State.INITIALIZED);
         gbDevice.sendDeviceUpdateIntent(getContext());
@@ -329,12 +326,55 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
     private void processProtobufResponse(ProtobufRequestMessage requestMessage) {
         LOG.info("Received protobuf response #{}, {}B@{}/{}: {}", requestMessage.requestId, requestMessage.protobufDataLength, requestMessage.dataOffset, requestMessage.totalProtobufLength, GB.hexdump(requestMessage.messageBytes, 0, requestMessage.messageBytes.length));
         sendMessage(new GenericResponseMessage(VivomoveConstants.MESSAGE_PROTOBUF_RESPONSE, 0).packet);
+        final GdiSmartProto.Smart smart;
         try {
-            final GdiSmartProto.Smart smart = GdiSmartProto.Smart.parseFrom(requestMessage.messageBytes);
-            LOG.info("Parsed message: {}", smart.toString());
+            smart = GdiSmartProto.Smart.parseFrom(requestMessage.messageBytes);
         } catch (InvalidProtocolBufferException e) {
-            LOG.error("Failed to parse protobuf message", e);
+            LOG.error("Failed to parse protobuf message ({}): {}", e.getLocalizedMessage(), GB.hexdump(requestMessage.messageBytes, 0, requestMessage.messageBytes.length));
+            return;
         }
+        boolean processed = false;
+        if (smart.hasFindMyWatchService()) {
+            processProtobufFindMyWatchResponse(smart.getFindMyWatchService());
+            processed = true;
+        }
+        if (smart.hasDeviceStatusService()) {
+            processProtobufDeviceStatusResponse(smart.getDeviceStatusService());
+            processed = true;
+        }
+        if (!processed) {
+            LOG.warn("Unknown protobuf response: {}", smart.toString());
+        }
+    }
+
+    private void processProtobufDeviceStatusResponse(GdiDeviceStatus.DeviceStatusService deviceStatusService) {
+        if (deviceStatusService.hasRemoteDeviceBatteryStatusResponse()) {
+            final GdiDeviceStatus.DeviceStatusService.RemoteDeviceBatteryStatusResponse batteryStatusResponse = deviceStatusService.getRemoteDeviceBatteryStatusResponse();
+            final int batteryLevel = batteryStatusResponse.getCurrentBatteryLevel();
+            LOG.info("Received remote battery status {}: level={}", batteryStatusResponse.getStatus(), batteryLevel);
+            final GBDeviceEventBatteryInfo batteryEvent = new GBDeviceEventBatteryInfo();
+            batteryEvent.level = (short) batteryLevel;
+            handleGBDeviceEvent(batteryEvent);
+            return;
+        }
+        if (deviceStatusService.hasActivityStatusResponse()) {
+            final GdiDeviceStatus.DeviceStatusService.ActivityStatusResponse activityStatusResponse = deviceStatusService.getActivityStatusResponse();
+            LOG.info("Received activity status: {}", activityStatusResponse.getStatus());
+        }
+        LOG.warn("Unknown DeviceStatusService response: {}", deviceStatusService);
+    }
+
+    private void processProtobufFindMyWatchResponse(GdiFindMyWatch.FindMyWatchService findMyWatchService) {
+        if (findMyWatchService.hasCancelRequest()) {
+            LOG.info("Watch search cancelled, watch found");
+            GBApplication.deviceService().onFindDevice(false);
+            return;
+        }
+        if (findMyWatchService.hasCancelResponse() || findMyWatchService.hasFindResponse()) {
+            LOG.debug("Received findMyWatch response");
+            return;
+        }
+        LOG.warn("Unknown FindMyWatchService response: {}", findMyWatchService);
     }
 
     private void processMusicControlCapabilities(MusicControlCapabilitiesMessage capabilitiesMessage) {
@@ -408,6 +448,10 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
         // initialize current time and settings
         sendCurrentTime(null);
         sendSettings(null);
+
+        // and everything is ready now
+        sendSyncReady();
+        requestBatteryStatusUpdate();
     }
 
     private void sendMessage(byte[] messageBytes) {
@@ -444,8 +488,25 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
 
     private void sendProtobufRequest(byte[] protobufMessage) {
         final int requestId = getNextProtobufRequestId();
-        LOG.info("Sending {}B protobuf request #{}: {}", protobufMessage.length, requestId, GB.hexdump(protobufMessage, 0, protobufMessage.length));
+        LOG.debug("Sending {}B protobuf request #{}: {}", protobufMessage.length, requestId, GB.hexdump(protobufMessage, 0, protobufMessage.length));
         sendMessage(new ProtobufRequestMessage(requestId, 0, protobufMessage.length, protobufMessage.length, protobufMessage).packet);
+    }
+
+    private void requestBatteryStatusUpdate() {
+        sendProtobufRequest(
+                GdiSmartProto.Smart.newBuilder()
+                        .setDeviceStatusService(
+                                GdiDeviceStatus.DeviceStatusService.newBuilder()
+                                        .setRemoteDeviceBatteryStatusRequest(
+                                                GdiDeviceStatus.DeviceStatusService.RemoteDeviceBatteryStatusRequest.newBuilder()
+                                        )
+                        )
+                        .build()
+                        .toByteArray());
+    }
+
+    private void sendSyncReady() {
+        sendMessage(new SystemEventMessage(GarminSystemEventType.SYNC_READY, 0).packet);
     }
 
     private void sendCurrentTime(TransactionBuilder builder) {
@@ -472,6 +533,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
 
         settings.put(GarminDeviceSetting.WEATHER_CONDITIONS_ENABLED, true);
         settings.put(GarminDeviceSetting.WEATHER_ALERTS_ENABLED, true);
+        settings.put(GarminDeviceSetting.AUTO_UPLOAD_ENABLED, true);
         LOG.info("Sending settings");
         sendMessage(builder, new SetDeviceSettingsMessage(settings).packet);
     }
@@ -488,11 +550,12 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
 
     @Override
     public void onNotification(NotificationSpec notificationSpec) {
+        dbg("onNotification " + notificationSpec);
     }
 
     @Override
     public void onDeleteNotification(int id) {
-
+        dbg("onDeleteNotification " + id);
     }
 
     @Override
@@ -508,22 +571,22 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
 
     @Override
     public void onSetCallState(CallSpec callSpec) {
-
+        dbg("onSetCallState " + callSpec);
     }
 
     @Override
     public void onSetCannedMessages(CannedMessagesSpec cannedMessagesSpec) {
-
+        dbg("onSetCannedMessages");
     }
 
     @Override
     public void onSetMusicState(MusicStateSpec stateSpec) {
-
+        dbg("onSetMusicState " + stateSpec);
     }
 
     @Override
     public void onSetMusicInfo(MusicSpec musicSpec) {
-
+        dbg("onSetMusicInfo " + musicSpec);
     }
 
     @Override
@@ -537,42 +600,34 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
 
     @Override
     public void onInstallApp(Uri uri) {
-
     }
 
     @Override
     public void onAppInfoReq() {
-
     }
 
     @Override
     public void onAppStart(UUID uuid, boolean start) {
-
     }
 
     @Override
     public void onAppDelete(UUID uuid) {
-
     }
 
     @Override
     public void onAppConfiguration(UUID appUuid, String config, Integer id) {
-
     }
 
     @Override
     public void onAppReorder(UUID[] uuids) {
-
     }
 
     @Override
     public void onFetchRecordedData(int dataTypes) {
-
     }
 
     @Override
     public void onReset(int flags) {
-
     }
 
     @Override
@@ -598,7 +653,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
                             .setFindMyWatchService(
                                     GdiFindMyWatch.FindMyWatchService.newBuilder()
                                             .setFindRequest(
-                                                    GdiFindMyWatch.FindMyWatchRequest.newBuilder()
+                                                    GdiFindMyWatch.FindMyWatchService.FindMyWatchRequest.newBuilder()
                                                             .setTimeout(60)
                                             )
                             )
@@ -610,7 +665,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
                             .setFindMyWatchService(
                                     GdiFindMyWatch.FindMyWatchService.newBuilder()
                                             .setCancelRequest(
-                                                    GdiFindMyWatch.FindMyWatchCancelRequest.newBuilder()
+                                                    GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelRequest.newBuilder()
                                             )
                             )
                             .build()
@@ -661,7 +716,16 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
     @Override
     public void onTestNewFunction() {
         dbg("onTestNewFunction()");
-        sendMessage(new SystemEventMessage(GarminSystemEventType.SYNC_READY, 0).packet);
+        sendProtobufRequest(
+                GdiSmartProto.Smart.newBuilder()
+                        .setDeviceStatusService(
+                                GdiDeviceStatus.DeviceStatusService.newBuilder()
+                                        .setActivityStatusRequest(
+                                                GdiDeviceStatus.DeviceStatusService.ActivityStatusRequest.newBuilder()
+                                        )
+                        )
+                        .build()
+                        .toByteArray());
     }
 
     @Override

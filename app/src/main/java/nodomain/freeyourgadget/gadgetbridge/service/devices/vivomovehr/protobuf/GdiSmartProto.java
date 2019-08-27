@@ -22,6 +22,15 @@ public final class GdiSmartProto {
     nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto.CalendarService getCalendarEventsService();
 
     /**
+     * <code>optional .garmin_vivomovehr.DeviceStatusService device_status_service = 8;</code>
+     */
+    boolean hasDeviceStatusService();
+    /**
+     * <code>optional .garmin_vivomovehr.DeviceStatusService device_status_service = 8;</code>
+     */
+    nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiDeviceStatus.DeviceStatusService getDeviceStatusService();
+
+    /**
      * <code>optional .garmin_vivomovehr.FindMyWatchService find_my_watch_service = 12;</code>
      */
     boolean hasFindMyWatchService();
@@ -99,6 +108,64 @@ public final class GdiSmartProto {
       bitField0_ = (bitField0_ & ~0x00000001);
     }
 
+    public static final int DEVICE_STATUS_SERVICE_FIELD_NUMBER = 8;
+    private nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiDeviceStatus.DeviceStatusService deviceStatusService_;
+    /**
+     * <code>optional .garmin_vivomovehr.DeviceStatusService device_status_service = 8;</code>
+     */
+    @java.lang.Override
+    public boolean hasDeviceStatusService() {
+      return ((bitField0_ & 0x00000002) != 0);
+    }
+    /**
+     * <code>optional .garmin_vivomovehr.DeviceStatusService device_status_service = 8;</code>
+     */
+    @java.lang.Override
+    public nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiDeviceStatus.DeviceStatusService getDeviceStatusService() {
+      return deviceStatusService_ == null ? nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiDeviceStatus.DeviceStatusService.getDefaultInstance() : deviceStatusService_;
+    }
+    /**
+     * <code>optional .garmin_vivomovehr.DeviceStatusService device_status_service = 8;</code>
+     */
+    private void setDeviceStatusService(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiDeviceStatus.DeviceStatusService value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      deviceStatusService_ = value;
+      bitField0_ |= 0x00000002;
+      }
+    /**
+     * <code>optional .garmin_vivomovehr.DeviceStatusService device_status_service = 8;</code>
+     */
+    private void setDeviceStatusService(
+        nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiDeviceStatus.DeviceStatusService.Builder builderForValue) {
+      deviceStatusService_ = builderForValue.build();
+      bitField0_ |= 0x00000002;
+    }
+    /**
+     * <code>optional .garmin_vivomovehr.DeviceStatusService device_status_service = 8;</code>
+     */
+    @java.lang.SuppressWarnings({"ReferenceEquality"})
+    private void mergeDeviceStatusService(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiDeviceStatus.DeviceStatusService value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      if (deviceStatusService_ != null &&
+          deviceStatusService_ != nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiDeviceStatus.DeviceStatusService.getDefaultInstance()) {
+        deviceStatusService_ =
+          nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiDeviceStatus.DeviceStatusService.newBuilder(deviceStatusService_).mergeFrom(value).buildPartial();
+      } else {
+        deviceStatusService_ = value;
+      }
+      bitField0_ |= 0x00000002;
+    }
+    /**
+     * <code>optional .garmin_vivomovehr.DeviceStatusService device_status_service = 8;</code>
+     */
+    private void clearDeviceStatusService() {  deviceStatusService_ = null;
+      bitField0_ = (bitField0_ & ~0x00000002);
+    }
+
     public static final int FIND_MY_WATCH_SERVICE_FIELD_NUMBER = 12;
     private nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService findMyWatchService_;
     /**
@@ -106,7 +173,7 @@ public final class GdiSmartProto {
      */
     @java.lang.Override
     public boolean hasFindMyWatchService() {
-      return ((bitField0_ & 0x00000002) != 0);
+      return ((bitField0_ & 0x00000004) != 0);
     }
     /**
      * <code>optional .garmin_vivomovehr.FindMyWatchService find_my_watch_service = 12;</code>
@@ -123,7 +190,7 @@ public final class GdiSmartProto {
         throw new NullPointerException();
       }
       findMyWatchService_ = value;
-      bitField0_ |= 0x00000002;
+      bitField0_ |= 0x00000004;
       }
     /**
      * <code>optional .garmin_vivomovehr.FindMyWatchService find_my_watch_service = 12;</code>
@@ -131,7 +198,7 @@ public final class GdiSmartProto {
     private void setFindMyWatchService(
         nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.Builder builderForValue) {
       findMyWatchService_ = builderForValue.build();
-      bitField0_ |= 0x00000002;
+      bitField0_ |= 0x00000004;
     }
     /**
      * <code>optional .garmin_vivomovehr.FindMyWatchService find_my_watch_service = 12;</code>
@@ -148,13 +215,13 @@ public final class GdiSmartProto {
       } else {
         findMyWatchService_ = value;
       }
-      bitField0_ |= 0x00000002;
+      bitField0_ |= 0x00000004;
     }
     /**
      * <code>optional .garmin_vivomovehr.FindMyWatchService find_my_watch_service = 12;</code>
      */
     private void clearFindMyWatchService() {  findMyWatchService_ = null;
-      bitField0_ = (bitField0_ & ~0x00000002);
+      bitField0_ = (bitField0_ & ~0x00000004);
     }
 
     public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto.Smart parseFrom(
@@ -300,6 +367,53 @@ public final class GdiSmartProto {
       }
 
       /**
+       * <code>optional .garmin_vivomovehr.DeviceStatusService device_status_service = 8;</code>
+       */
+      @java.lang.Override
+      public boolean hasDeviceStatusService() {
+        return instance.hasDeviceStatusService();
+      }
+      /**
+       * <code>optional .garmin_vivomovehr.DeviceStatusService device_status_service = 8;</code>
+       */
+      @java.lang.Override
+      public nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiDeviceStatus.DeviceStatusService getDeviceStatusService() {
+        return instance.getDeviceStatusService();
+      }
+      /**
+       * <code>optional .garmin_vivomovehr.DeviceStatusService device_status_service = 8;</code>
+       */
+      public Builder setDeviceStatusService(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiDeviceStatus.DeviceStatusService value) {
+        copyOnWrite();
+        instance.setDeviceStatusService(value);
+        return this;
+        }
+      /**
+       * <code>optional .garmin_vivomovehr.DeviceStatusService device_status_service = 8;</code>
+       */
+      public Builder setDeviceStatusService(
+          nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiDeviceStatus.DeviceStatusService.Builder builderForValue) {
+        copyOnWrite();
+        instance.setDeviceStatusService(builderForValue);
+        return this;
+      }
+      /**
+       * <code>optional .garmin_vivomovehr.DeviceStatusService device_status_service = 8;</code>
+       */
+      public Builder mergeDeviceStatusService(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiDeviceStatus.DeviceStatusService value) {
+        copyOnWrite();
+        instance.mergeDeviceStatusService(value);
+        return this;
+      }
+      /**
+       * <code>optional .garmin_vivomovehr.DeviceStatusService device_status_service = 8;</code>
+       */
+      public Builder clearDeviceStatusService() {  copyOnWrite();
+        instance.clearDeviceStatusService();
+        return this;
+      }
+
+      /**
        * <code>optional .garmin_vivomovehr.FindMyWatchService find_my_watch_service = 12;</code>
        */
       @java.lang.Override
@@ -365,11 +479,12 @@ public final class GdiSmartProto {
             java.lang.Object[] objects = new java.lang.Object[] {
               "bitField0_",
               "calendarEventsService_",
+              "deviceStatusService_",
               "findMyWatchService_",
             };
             java.lang.String info =
-                "\u0001\u0002\u0000\u0001\u0001\f\u0002\u0000\u0000\u0001\u0001\t\u0000\f\u0409\u0001" +
-                "";
+                "\u0001\u0003\u0000\u0001\u0001\f\u0003\u0000\u0000\u0001\u0001\t\u0000\b\t\u0001" +
+                "\f\u0409\u0002";
             return newMessageInfo(DEFAULT_INSTANCE, info, objects);
         }
         // fall through

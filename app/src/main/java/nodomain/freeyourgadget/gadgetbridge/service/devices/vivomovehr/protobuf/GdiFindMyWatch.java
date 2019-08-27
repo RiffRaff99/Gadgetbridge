@@ -8,136 +8,45 @@ public final class GdiFindMyWatch {
   public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistryLite registry) {
   }
-  /**
-   * Protobuf enum {@code garmin_vivomovehr.ResponseStatus}
-   */
-  public enum ResponseStatus
-      implements com.google.protobuf.Internal.EnumLite {
-    /**
-     * <code>UNKNOWN_RESPONSE_STATUS = 0;</code>
-     */
-    UNKNOWN_RESPONSE_STATUS(0),
-    /**
-     * <code>OK = 100;</code>
-     */
-    OK(100),
-    /**
-     * <code>ERROR = 200;</code>
-     */
-    ERROR(200),
-    ;
-
-    /**
-     * <code>UNKNOWN_RESPONSE_STATUS = 0;</code>
-     */
-    public static final int UNKNOWN_RESPONSE_STATUS_VALUE = 0;
-    /**
-     * <code>OK = 100;</code>
-     */
-    public static final int OK_VALUE = 100;
-    /**
-     * <code>ERROR = 200;</code>
-     */
-    public static final int ERROR_VALUE = 200;
-
-
-    @java.lang.Override
-    public final int getNumber() {
-      return value;
-    }
-
-    /**
-     * @deprecated Use {@link #forNumber(int)} instead.
-     */
-    @java.lang.Deprecated
-    public static ResponseStatus valueOf(int value) {
-      return forNumber(value);
-    }
-
-    public static ResponseStatus forNumber(int value) {
-      switch (value) {
-        case 0: return UNKNOWN_RESPONSE_STATUS;
-        case 100: return OK;
-        case 200: return ERROR;
-        default: return null;
-      }
-    }
-
-    public static com.google.protobuf.Internal.EnumLiteMap<ResponseStatus>
-        internalGetValueMap() {
-      return internalValueMap;
-    }
-    private static final com.google.protobuf.Internal.EnumLiteMap<
-        ResponseStatus> internalValueMap =
-          new com.google.protobuf.Internal.EnumLiteMap<ResponseStatus>() {
-            @java.lang.Override
-            public ResponseStatus findValueByNumber(int number) {
-              return ResponseStatus.forNumber(number);
-            }
-          };
-
-    public static com.google.protobuf.Internal.EnumVerifier 
-        internalGetVerifier() {
-      return ResponseStatusVerifier.INSTANCE;
-    }
-
-    private static final class ResponseStatusVerifier implements 
-         com.google.protobuf.Internal.EnumVerifier { 
-            static final com.google.protobuf.Internal.EnumVerifier           INSTANCE = new ResponseStatusVerifier();
-            @java.lang.Override
-            public boolean isInRange(int number) {
-              return ResponseStatus.forNumber(number) != null;
-            }
-          };
-
-    private final int value;
-
-    private ResponseStatus(int value) {
-      this.value = value;
-    }
-
-    // @@protoc_insertion_point(enum_scope:garmin_vivomovehr.ResponseStatus)
-  }
-
   public interface FindMyWatchServiceOrBuilder extends
       // @@protoc_insertion_point(interface_extends:garmin_vivomovehr.FindMyWatchService)
       com.google.protobuf.MessageLiteOrBuilder {
 
     /**
-     * <code>optional .garmin_vivomovehr.FindMyWatchRequest find_request = 1;</code>
+     * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchRequest find_request = 1;</code>
      */
     boolean hasFindRequest();
     /**
-     * <code>optional .garmin_vivomovehr.FindMyWatchRequest find_request = 1;</code>
+     * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchRequest find_request = 1;</code>
      */
-    nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchRequest getFindRequest();
+    nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchRequest getFindRequest();
 
     /**
-     * <code>optional .garmin_vivomovehr.FindMyWatchResponse find_response = 2;</code>
+     * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchResponse find_response = 2;</code>
      */
     boolean hasFindResponse();
     /**
-     * <code>optional .garmin_vivomovehr.FindMyWatchResponse find_response = 2;</code>
+     * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchResponse find_response = 2;</code>
      */
-    nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchResponse getFindResponse();
+    nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchResponse getFindResponse();
 
     /**
-     * <code>optional .garmin_vivomovehr.FindMyWatchCancelRequest cancel_request = 3;</code>
+     * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelRequest cancel_request = 3;</code>
      */
     boolean hasCancelRequest();
     /**
-     * <code>optional .garmin_vivomovehr.FindMyWatchCancelRequest cancel_request = 3;</code>
+     * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelRequest cancel_request = 3;</code>
      */
-    nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelRequest getCancelRequest();
+    nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelRequest getCancelRequest();
 
     /**
-     * <code>optional .garmin_vivomovehr.FindMyWatchCancelResponse cancel_response = 4;</code>
+     * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelResponse cancel_response = 4;</code>
      */
     boolean hasCancelResponse();
     /**
-     * <code>optional .garmin_vivomovehr.FindMyWatchCancelResponse cancel_response = 4;</code>
+     * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelResponse cancel_response = 4;</code>
      */
-    nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelResponse getCancelResponse();
+    nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelResponse getCancelResponse();
   }
   /**
    * Protobuf type {@code garmin_vivomovehr.FindMyWatchService}
@@ -149,27 +58,1078 @@ public final class GdiFindMyWatch {
       FindMyWatchServiceOrBuilder {
     private FindMyWatchService() {
     }
+    /**
+     * Protobuf enum {@code garmin_vivomovehr.FindMyWatchService.ResponseStatus}
+     */
+    public enum ResponseStatus
+        implements com.google.protobuf.Internal.EnumLite {
+      /**
+       * <code>UNKNOWN_RESPONSE_STATUS = 0;</code>
+       */
+      UNKNOWN_RESPONSE_STATUS(0),
+      /**
+       * <code>OK = 100;</code>
+       */
+      OK(100),
+      /**
+       * <code>ERROR = 200;</code>
+       */
+      ERROR(200),
+      ;
+
+      /**
+       * <code>UNKNOWN_RESPONSE_STATUS = 0;</code>
+       */
+      public static final int UNKNOWN_RESPONSE_STATUS_VALUE = 0;
+      /**
+       * <code>OK = 100;</code>
+       */
+      public static final int OK_VALUE = 100;
+      /**
+       * <code>ERROR = 200;</code>
+       */
+      public static final int ERROR_VALUE = 200;
+
+
+      @java.lang.Override
+      public final int getNumber() {
+        return value;
+      }
+
+      /**
+       * @deprecated Use {@link #forNumber(int)} instead.
+       */
+      @java.lang.Deprecated
+      public static ResponseStatus valueOf(int value) {
+        return forNumber(value);
+      }
+
+      public static ResponseStatus forNumber(int value) {
+        switch (value) {
+          case 0: return UNKNOWN_RESPONSE_STATUS;
+          case 100: return OK;
+          case 200: return ERROR;
+          default: return null;
+        }
+      }
+
+      public static com.google.protobuf.Internal.EnumLiteMap<ResponseStatus>
+          internalGetValueMap() {
+        return internalValueMap;
+      }
+      private static final com.google.protobuf.Internal.EnumLiteMap<
+          ResponseStatus> internalValueMap =
+            new com.google.protobuf.Internal.EnumLiteMap<ResponseStatus>() {
+              @java.lang.Override
+              public ResponseStatus findValueByNumber(int number) {
+                return ResponseStatus.forNumber(number);
+              }
+            };
+
+      public static com.google.protobuf.Internal.EnumVerifier 
+          internalGetVerifier() {
+        return ResponseStatusVerifier.INSTANCE;
+      }
+
+      private static final class ResponseStatusVerifier implements 
+           com.google.protobuf.Internal.EnumVerifier { 
+              static final com.google.protobuf.Internal.EnumVerifier           INSTANCE = new ResponseStatusVerifier();
+              @java.lang.Override
+              public boolean isInRange(int number) {
+                return ResponseStatus.forNumber(number) != null;
+              }
+            };
+
+      private final int value;
+
+      private ResponseStatus(int value) {
+        this.value = value;
+      }
+
+      // @@protoc_insertion_point(enum_scope:garmin_vivomovehr.FindMyWatchService.ResponseStatus)
+    }
+
+    public interface FindMyWatchRequestOrBuilder extends
+        // @@protoc_insertion_point(interface_extends:garmin_vivomovehr.FindMyWatchService.FindMyWatchRequest)
+        com.google.protobuf.MessageLiteOrBuilder {
+
+      /**
+       * <code>required int32 timeout = 1;</code>
+       */
+      boolean hasTimeout();
+      /**
+       * <code>required int32 timeout = 1;</code>
+       */
+      int getTimeout();
+    }
+    /**
+     * Protobuf type {@code garmin_vivomovehr.FindMyWatchService.FindMyWatchRequest}
+     */
+    public  static final class FindMyWatchRequest extends
+        com.google.protobuf.GeneratedMessageLite<
+            FindMyWatchRequest, FindMyWatchRequest.Builder> implements
+        // @@protoc_insertion_point(message_implements:garmin_vivomovehr.FindMyWatchService.FindMyWatchRequest)
+        FindMyWatchRequestOrBuilder {
+      private FindMyWatchRequest() {
+      }
+      private int bitField0_;
+      public static final int TIMEOUT_FIELD_NUMBER = 1;
+      private int timeout_;
+      /**
+       * <code>required int32 timeout = 1;</code>
+       */
+      @java.lang.Override
+      public boolean hasTimeout() {
+        return ((bitField0_ & 0x00000001) != 0);
+      }
+      /**
+       * <code>required int32 timeout = 1;</code>
+       */
+      @java.lang.Override
+      public int getTimeout() {
+        return timeout_;
+      }
+      /**
+       * <code>required int32 timeout = 1;</code>
+       */
+      private void setTimeout(int value) {
+        bitField0_ |= 0x00000001;
+        timeout_ = value;
+      }
+      /**
+       * <code>required int32 timeout = 1;</code>
+       */
+      private void clearTimeout() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        timeout_ = 0;
+      }
+
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchRequest parseFrom(
+          java.nio.ByteBuffer data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return com.google.protobuf.GeneratedMessageLite.parseFrom(
+            DEFAULT_INSTANCE, data);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchRequest parseFrom(
+          java.nio.ByteBuffer data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return com.google.protobuf.GeneratedMessageLite.parseFrom(
+            DEFAULT_INSTANCE, data, extensionRegistry);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchRequest parseFrom(
+          com.google.protobuf.ByteString data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return com.google.protobuf.GeneratedMessageLite.parseFrom(
+            DEFAULT_INSTANCE, data);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchRequest parseFrom(
+          com.google.protobuf.ByteString data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return com.google.protobuf.GeneratedMessageLite.parseFrom(
+            DEFAULT_INSTANCE, data, extensionRegistry);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchRequest parseFrom(byte[] data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return com.google.protobuf.GeneratedMessageLite.parseFrom(
+            DEFAULT_INSTANCE, data);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchRequest parseFrom(
+          byte[] data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return com.google.protobuf.GeneratedMessageLite.parseFrom(
+            DEFAULT_INSTANCE, data, extensionRegistry);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchRequest parseFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageLite.parseFrom(
+            DEFAULT_INSTANCE, input);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchRequest parseFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageLite.parseFrom(
+            DEFAULT_INSTANCE, input, extensionRegistry);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchRequest parseDelimitedFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return parseDelimitedFrom(DEFAULT_INSTANCE, input);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchRequest parseDelimitedFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchRequest parseFrom(
+          com.google.protobuf.CodedInputStream input)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageLite.parseFrom(
+            DEFAULT_INSTANCE, input);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchRequest parseFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageLite.parseFrom(
+            DEFAULT_INSTANCE, input, extensionRegistry);
+      }
+
+      public static Builder newBuilder() {
+        return (Builder) DEFAULT_INSTANCE.createBuilder();
+      }
+      public static Builder newBuilder(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchRequest prototype) {
+        return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+      }
+
+      /**
+       * Protobuf type {@code garmin_vivomovehr.FindMyWatchService.FindMyWatchRequest}
+       */
+      public static final class Builder extends
+          com.google.protobuf.GeneratedMessageLite.Builder<
+            nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchRequest, Builder> implements
+          // @@protoc_insertion_point(builder_implements:garmin_vivomovehr.FindMyWatchService.FindMyWatchRequest)
+          nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchRequestOrBuilder {
+        // Construct using nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchRequest.newBuilder()
+        private Builder() {
+          super(DEFAULT_INSTANCE);
+        }
+
+
+        /**
+         * <code>required int32 timeout = 1;</code>
+         */
+        @java.lang.Override
+        public boolean hasTimeout() {
+          return instance.hasTimeout();
+        }
+        /**
+         * <code>required int32 timeout = 1;</code>
+         */
+        @java.lang.Override
+        public int getTimeout() {
+          return instance.getTimeout();
+        }
+        /**
+         * <code>required int32 timeout = 1;</code>
+         */
+        public Builder setTimeout(int value) {
+          copyOnWrite();
+          instance.setTimeout(value);
+          return this;
+        }
+        /**
+         * <code>required int32 timeout = 1;</code>
+         */
+        public Builder clearTimeout() {
+          copyOnWrite();
+          instance.clearTimeout();
+          return this;
+        }
+
+        // @@protoc_insertion_point(builder_scope:garmin_vivomovehr.FindMyWatchService.FindMyWatchRequest)
+      }
+      private byte memoizedIsInitialized = 2;
+      @java.lang.Override
+      @java.lang.SuppressWarnings({"unchecked", "fallthrough"})
+      protected final java.lang.Object dynamicMethod(
+          com.google.protobuf.GeneratedMessageLite.MethodToInvoke method,
+          java.lang.Object arg0, java.lang.Object arg1) {
+        switch (method) {
+          case NEW_MUTABLE_INSTANCE: {
+            return new nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchRequest();
+          }
+          case NEW_BUILDER: {
+            return new Builder();
+          }
+          case BUILD_MESSAGE_INFO: {
+              java.lang.Object[] objects = new java.lang.Object[] {
+                "bitField0_",
+                "timeout_",
+              };
+              java.lang.String info =
+                  "\u0001\u0001\u0000\u0001\u0001\u0001\u0001\u0000\u0000\u0001\u0001\u0504\u0000";
+              return newMessageInfo(DEFAULT_INSTANCE, info, objects);
+          }
+          // fall through
+          case GET_DEFAULT_INSTANCE: {
+            return DEFAULT_INSTANCE;
+          }
+          case GET_PARSER: {
+            com.google.protobuf.Parser<nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchRequest> parser = PARSER;
+            if (parser == null) {
+              synchronized (nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchRequest.class) {
+                parser = PARSER;
+                if (parser == null) {
+                  parser =
+                      new DefaultInstanceBasedParser<nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchRequest>(
+                          DEFAULT_INSTANCE);
+                  PARSER = parser;
+                }
+              }
+            }
+            return parser;
+        }
+        case GET_MEMOIZED_IS_INITIALIZED: {
+          return memoizedIsInitialized;
+        }
+        case SET_MEMOIZED_IS_INITIALIZED: {
+          memoizedIsInitialized = (byte) (arg0 == null ? 0 : 1);
+          return null;
+        }
+        }
+        throw new UnsupportedOperationException();
+      }
+
+
+      // @@protoc_insertion_point(class_scope:garmin_vivomovehr.FindMyWatchService.FindMyWatchRequest)
+      private static final nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchRequest DEFAULT_INSTANCE;
+      static {
+        FindMyWatchRequest defaultInstance = new FindMyWatchRequest();
+        // New instances are implicitly immutable so no need to make
+        // immutable.
+        DEFAULT_INSTANCE = defaultInstance;
+        com.google.protobuf.GeneratedMessageLite.registerDefaultInstance(
+          FindMyWatchRequest.class, defaultInstance);
+      }
+
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchRequest getDefaultInstance() {
+        return DEFAULT_INSTANCE;
+      }
+
+      private static volatile com.google.protobuf.Parser<FindMyWatchRequest> PARSER;
+
+      public static com.google.protobuf.Parser<FindMyWatchRequest> parser() {
+        return DEFAULT_INSTANCE.getParserForType();
+      }
+    }
+
+    public interface FindMyWatchResponseOrBuilder extends
+        // @@protoc_insertion_point(interface_extends:garmin_vivomovehr.FindMyWatchService.FindMyWatchResponse)
+        com.google.protobuf.MessageLiteOrBuilder {
+
+      /**
+       * <code>optional .garmin_vivomovehr.FindMyWatchService.ResponseStatus status = 1;</code>
+       */
+      boolean hasStatus();
+      /**
+       * <code>optional .garmin_vivomovehr.FindMyWatchService.ResponseStatus status = 1;</code>
+       */
+      nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.ResponseStatus getStatus();
+    }
+    /**
+     * Protobuf type {@code garmin_vivomovehr.FindMyWatchService.FindMyWatchResponse}
+     */
+    public  static final class FindMyWatchResponse extends
+        com.google.protobuf.GeneratedMessageLite<
+            FindMyWatchResponse, FindMyWatchResponse.Builder> implements
+        // @@protoc_insertion_point(message_implements:garmin_vivomovehr.FindMyWatchService.FindMyWatchResponse)
+        FindMyWatchResponseOrBuilder {
+      private FindMyWatchResponse() {
+      }
+      private int bitField0_;
+      public static final int STATUS_FIELD_NUMBER = 1;
+      private int status_;
+      /**
+       * <code>optional .garmin_vivomovehr.FindMyWatchService.ResponseStatus status = 1;</code>
+       */
+      @java.lang.Override
+      public boolean hasStatus() {
+        return ((bitField0_ & 0x00000001) != 0);
+      }
+      /**
+       * <code>optional .garmin_vivomovehr.FindMyWatchService.ResponseStatus status = 1;</code>
+       */
+      @java.lang.Override
+      public nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.ResponseStatus getStatus() {
+        nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.ResponseStatus result = nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.ResponseStatus.forNumber(status_);
+        return result == null ? nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.ResponseStatus.UNKNOWN_RESPONSE_STATUS : result;
+      }
+      /**
+       * <code>optional .garmin_vivomovehr.FindMyWatchService.ResponseStatus status = 1;</code>
+       */
+      private void setStatus(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.ResponseStatus value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        bitField0_ |= 0x00000001;
+        status_ = value.getNumber();
+      }
+      /**
+       * <code>optional .garmin_vivomovehr.FindMyWatchService.ResponseStatus status = 1;</code>
+       */
+      private void clearStatus() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        status_ = 0;
+      }
+
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchResponse parseFrom(
+          java.nio.ByteBuffer data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return com.google.protobuf.GeneratedMessageLite.parseFrom(
+            DEFAULT_INSTANCE, data);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchResponse parseFrom(
+          java.nio.ByteBuffer data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return com.google.protobuf.GeneratedMessageLite.parseFrom(
+            DEFAULT_INSTANCE, data, extensionRegistry);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchResponse parseFrom(
+          com.google.protobuf.ByteString data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return com.google.protobuf.GeneratedMessageLite.parseFrom(
+            DEFAULT_INSTANCE, data);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchResponse parseFrom(
+          com.google.protobuf.ByteString data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return com.google.protobuf.GeneratedMessageLite.parseFrom(
+            DEFAULT_INSTANCE, data, extensionRegistry);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchResponse parseFrom(byte[] data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return com.google.protobuf.GeneratedMessageLite.parseFrom(
+            DEFAULT_INSTANCE, data);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchResponse parseFrom(
+          byte[] data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return com.google.protobuf.GeneratedMessageLite.parseFrom(
+            DEFAULT_INSTANCE, data, extensionRegistry);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchResponse parseFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageLite.parseFrom(
+            DEFAULT_INSTANCE, input);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchResponse parseFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageLite.parseFrom(
+            DEFAULT_INSTANCE, input, extensionRegistry);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchResponse parseDelimitedFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return parseDelimitedFrom(DEFAULT_INSTANCE, input);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchResponse parseDelimitedFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchResponse parseFrom(
+          com.google.protobuf.CodedInputStream input)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageLite.parseFrom(
+            DEFAULT_INSTANCE, input);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchResponse parseFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageLite.parseFrom(
+            DEFAULT_INSTANCE, input, extensionRegistry);
+      }
+
+      public static Builder newBuilder() {
+        return (Builder) DEFAULT_INSTANCE.createBuilder();
+      }
+      public static Builder newBuilder(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchResponse prototype) {
+        return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+      }
+
+      /**
+       * Protobuf type {@code garmin_vivomovehr.FindMyWatchService.FindMyWatchResponse}
+       */
+      public static final class Builder extends
+          com.google.protobuf.GeneratedMessageLite.Builder<
+            nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchResponse, Builder> implements
+          // @@protoc_insertion_point(builder_implements:garmin_vivomovehr.FindMyWatchService.FindMyWatchResponse)
+          nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchResponseOrBuilder {
+        // Construct using nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchResponse.newBuilder()
+        private Builder() {
+          super(DEFAULT_INSTANCE);
+        }
+
+
+        /**
+         * <code>optional .garmin_vivomovehr.FindMyWatchService.ResponseStatus status = 1;</code>
+         */
+        @java.lang.Override
+        public boolean hasStatus() {
+          return instance.hasStatus();
+        }
+        /**
+         * <code>optional .garmin_vivomovehr.FindMyWatchService.ResponseStatus status = 1;</code>
+         */
+        @java.lang.Override
+        public nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.ResponseStatus getStatus() {
+          return instance.getStatus();
+        }
+        /**
+         * <code>optional .garmin_vivomovehr.FindMyWatchService.ResponseStatus status = 1;</code>
+         */
+        public Builder setStatus(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.ResponseStatus value) {
+          copyOnWrite();
+          instance.setStatus(value);
+          return this;
+        }
+        /**
+         * <code>optional .garmin_vivomovehr.FindMyWatchService.ResponseStatus status = 1;</code>
+         */
+        public Builder clearStatus() {
+          copyOnWrite();
+          instance.clearStatus();
+          return this;
+        }
+
+        // @@protoc_insertion_point(builder_scope:garmin_vivomovehr.FindMyWatchService.FindMyWatchResponse)
+      }
+      @java.lang.Override
+      @java.lang.SuppressWarnings({"unchecked", "fallthrough"})
+      protected final java.lang.Object dynamicMethod(
+          com.google.protobuf.GeneratedMessageLite.MethodToInvoke method,
+          java.lang.Object arg0, java.lang.Object arg1) {
+        switch (method) {
+          case NEW_MUTABLE_INSTANCE: {
+            return new nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchResponse();
+          }
+          case NEW_BUILDER: {
+            return new Builder();
+          }
+          case BUILD_MESSAGE_INFO: {
+              java.lang.Object[] objects = new java.lang.Object[] {
+                "bitField0_",
+                "status_",
+                nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.ResponseStatus.internalGetVerifier(),
+              };
+              java.lang.String info =
+                  "\u0001\u0001\u0000\u0001\u0001\u0001\u0001\u0000\u0000\u0000\u0001\f\u0000";
+              return newMessageInfo(DEFAULT_INSTANCE, info, objects);
+          }
+          // fall through
+          case GET_DEFAULT_INSTANCE: {
+            return DEFAULT_INSTANCE;
+          }
+          case GET_PARSER: {
+            com.google.protobuf.Parser<nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchResponse> parser = PARSER;
+            if (parser == null) {
+              synchronized (nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchResponse.class) {
+                parser = PARSER;
+                if (parser == null) {
+                  parser =
+                      new DefaultInstanceBasedParser<nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchResponse>(
+                          DEFAULT_INSTANCE);
+                  PARSER = parser;
+                }
+              }
+            }
+            return parser;
+        }
+        case GET_MEMOIZED_IS_INITIALIZED: {
+          return (byte) 1;
+        }
+        case SET_MEMOIZED_IS_INITIALIZED: {
+          return null;
+        }
+        }
+        throw new UnsupportedOperationException();
+      }
+
+
+      // @@protoc_insertion_point(class_scope:garmin_vivomovehr.FindMyWatchService.FindMyWatchResponse)
+      private static final nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchResponse DEFAULT_INSTANCE;
+      static {
+        FindMyWatchResponse defaultInstance = new FindMyWatchResponse();
+        // New instances are implicitly immutable so no need to make
+        // immutable.
+        DEFAULT_INSTANCE = defaultInstance;
+        com.google.protobuf.GeneratedMessageLite.registerDefaultInstance(
+          FindMyWatchResponse.class, defaultInstance);
+      }
+
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchResponse getDefaultInstance() {
+        return DEFAULT_INSTANCE;
+      }
+
+      private static volatile com.google.protobuf.Parser<FindMyWatchResponse> PARSER;
+
+      public static com.google.protobuf.Parser<FindMyWatchResponse> parser() {
+        return DEFAULT_INSTANCE.getParserForType();
+      }
+    }
+
+    public interface FindMyWatchCancelRequestOrBuilder extends
+        // @@protoc_insertion_point(interface_extends:garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelRequest)
+        com.google.protobuf.MessageLiteOrBuilder {
+    }
+    /**
+     * Protobuf type {@code garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelRequest}
+     */
+    public  static final class FindMyWatchCancelRequest extends
+        com.google.protobuf.GeneratedMessageLite<
+            FindMyWatchCancelRequest, FindMyWatchCancelRequest.Builder> implements
+        // @@protoc_insertion_point(message_implements:garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelRequest)
+        FindMyWatchCancelRequestOrBuilder {
+      private FindMyWatchCancelRequest() {
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelRequest parseFrom(
+          java.nio.ByteBuffer data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return com.google.protobuf.GeneratedMessageLite.parseFrom(
+            DEFAULT_INSTANCE, data);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelRequest parseFrom(
+          java.nio.ByteBuffer data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return com.google.protobuf.GeneratedMessageLite.parseFrom(
+            DEFAULT_INSTANCE, data, extensionRegistry);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelRequest parseFrom(
+          com.google.protobuf.ByteString data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return com.google.protobuf.GeneratedMessageLite.parseFrom(
+            DEFAULT_INSTANCE, data);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelRequest parseFrom(
+          com.google.protobuf.ByteString data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return com.google.protobuf.GeneratedMessageLite.parseFrom(
+            DEFAULT_INSTANCE, data, extensionRegistry);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelRequest parseFrom(byte[] data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return com.google.protobuf.GeneratedMessageLite.parseFrom(
+            DEFAULT_INSTANCE, data);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelRequest parseFrom(
+          byte[] data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return com.google.protobuf.GeneratedMessageLite.parseFrom(
+            DEFAULT_INSTANCE, data, extensionRegistry);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelRequest parseFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageLite.parseFrom(
+            DEFAULT_INSTANCE, input);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelRequest parseFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageLite.parseFrom(
+            DEFAULT_INSTANCE, input, extensionRegistry);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelRequest parseDelimitedFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return parseDelimitedFrom(DEFAULT_INSTANCE, input);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelRequest parseDelimitedFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelRequest parseFrom(
+          com.google.protobuf.CodedInputStream input)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageLite.parseFrom(
+            DEFAULT_INSTANCE, input);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelRequest parseFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageLite.parseFrom(
+            DEFAULT_INSTANCE, input, extensionRegistry);
+      }
+
+      public static Builder newBuilder() {
+        return (Builder) DEFAULT_INSTANCE.createBuilder();
+      }
+      public static Builder newBuilder(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelRequest prototype) {
+        return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+      }
+
+      /**
+       * Protobuf type {@code garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelRequest}
+       */
+      public static final class Builder extends
+          com.google.protobuf.GeneratedMessageLite.Builder<
+            nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelRequest, Builder> implements
+          // @@protoc_insertion_point(builder_implements:garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelRequest)
+          nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelRequestOrBuilder {
+        // Construct using nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelRequest.newBuilder()
+        private Builder() {
+          super(DEFAULT_INSTANCE);
+        }
+
+
+        // @@protoc_insertion_point(builder_scope:garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelRequest)
+      }
+      @java.lang.Override
+      @java.lang.SuppressWarnings({"unchecked", "fallthrough"})
+      protected final java.lang.Object dynamicMethod(
+          com.google.protobuf.GeneratedMessageLite.MethodToInvoke method,
+          java.lang.Object arg0, java.lang.Object arg1) {
+        switch (method) {
+          case NEW_MUTABLE_INSTANCE: {
+            return new nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelRequest();
+          }
+          case NEW_BUILDER: {
+            return new Builder();
+          }
+          case BUILD_MESSAGE_INFO: {
+              java.lang.Object[] objects = null;java.lang.String info =
+                  "\u0001\u0000";
+              return newMessageInfo(DEFAULT_INSTANCE, info, objects);
+          }
+          // fall through
+          case GET_DEFAULT_INSTANCE: {
+            return DEFAULT_INSTANCE;
+          }
+          case GET_PARSER: {
+            com.google.protobuf.Parser<nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelRequest> parser = PARSER;
+            if (parser == null) {
+              synchronized (nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelRequest.class) {
+                parser = PARSER;
+                if (parser == null) {
+                  parser =
+                      new DefaultInstanceBasedParser<nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelRequest>(
+                          DEFAULT_INSTANCE);
+                  PARSER = parser;
+                }
+              }
+            }
+            return parser;
+        }
+        case GET_MEMOIZED_IS_INITIALIZED: {
+          return (byte) 1;
+        }
+        case SET_MEMOIZED_IS_INITIALIZED: {
+          return null;
+        }
+        }
+        throw new UnsupportedOperationException();
+      }
+
+
+      // @@protoc_insertion_point(class_scope:garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelRequest)
+      private static final nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelRequest DEFAULT_INSTANCE;
+      static {
+        FindMyWatchCancelRequest defaultInstance = new FindMyWatchCancelRequest();
+        // New instances are implicitly immutable so no need to make
+        // immutable.
+        DEFAULT_INSTANCE = defaultInstance;
+        com.google.protobuf.GeneratedMessageLite.registerDefaultInstance(
+          FindMyWatchCancelRequest.class, defaultInstance);
+      }
+
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelRequest getDefaultInstance() {
+        return DEFAULT_INSTANCE;
+      }
+
+      private static volatile com.google.protobuf.Parser<FindMyWatchCancelRequest> PARSER;
+
+      public static com.google.protobuf.Parser<FindMyWatchCancelRequest> parser() {
+        return DEFAULT_INSTANCE.getParserForType();
+      }
+    }
+
+    public interface FindMyWatchCancelResponseOrBuilder extends
+        // @@protoc_insertion_point(interface_extends:garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelResponse)
+        com.google.protobuf.MessageLiteOrBuilder {
+
+      /**
+       * <code>optional .garmin_vivomovehr.FindMyWatchService.ResponseStatus status = 1;</code>
+       */
+      boolean hasStatus();
+      /**
+       * <code>optional .garmin_vivomovehr.FindMyWatchService.ResponseStatus status = 1;</code>
+       */
+      nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.ResponseStatus getStatus();
+    }
+    /**
+     * Protobuf type {@code garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelResponse}
+     */
+    public  static final class FindMyWatchCancelResponse extends
+        com.google.protobuf.GeneratedMessageLite<
+            FindMyWatchCancelResponse, FindMyWatchCancelResponse.Builder> implements
+        // @@protoc_insertion_point(message_implements:garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelResponse)
+        FindMyWatchCancelResponseOrBuilder {
+      private FindMyWatchCancelResponse() {
+      }
+      private int bitField0_;
+      public static final int STATUS_FIELD_NUMBER = 1;
+      private int status_;
+      /**
+       * <code>optional .garmin_vivomovehr.FindMyWatchService.ResponseStatus status = 1;</code>
+       */
+      @java.lang.Override
+      public boolean hasStatus() {
+        return ((bitField0_ & 0x00000001) != 0);
+      }
+      /**
+       * <code>optional .garmin_vivomovehr.FindMyWatchService.ResponseStatus status = 1;</code>
+       */
+      @java.lang.Override
+      public nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.ResponseStatus getStatus() {
+        nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.ResponseStatus result = nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.ResponseStatus.forNumber(status_);
+        return result == null ? nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.ResponseStatus.UNKNOWN_RESPONSE_STATUS : result;
+      }
+      /**
+       * <code>optional .garmin_vivomovehr.FindMyWatchService.ResponseStatus status = 1;</code>
+       */
+      private void setStatus(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.ResponseStatus value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        bitField0_ |= 0x00000001;
+        status_ = value.getNumber();
+      }
+      /**
+       * <code>optional .garmin_vivomovehr.FindMyWatchService.ResponseStatus status = 1;</code>
+       */
+      private void clearStatus() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        status_ = 0;
+      }
+
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelResponse parseFrom(
+          java.nio.ByteBuffer data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return com.google.protobuf.GeneratedMessageLite.parseFrom(
+            DEFAULT_INSTANCE, data);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelResponse parseFrom(
+          java.nio.ByteBuffer data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return com.google.protobuf.GeneratedMessageLite.parseFrom(
+            DEFAULT_INSTANCE, data, extensionRegistry);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelResponse parseFrom(
+          com.google.protobuf.ByteString data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return com.google.protobuf.GeneratedMessageLite.parseFrom(
+            DEFAULT_INSTANCE, data);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelResponse parseFrom(
+          com.google.protobuf.ByteString data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return com.google.protobuf.GeneratedMessageLite.parseFrom(
+            DEFAULT_INSTANCE, data, extensionRegistry);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelResponse parseFrom(byte[] data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return com.google.protobuf.GeneratedMessageLite.parseFrom(
+            DEFAULT_INSTANCE, data);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelResponse parseFrom(
+          byte[] data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return com.google.protobuf.GeneratedMessageLite.parseFrom(
+            DEFAULT_INSTANCE, data, extensionRegistry);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelResponse parseFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageLite.parseFrom(
+            DEFAULT_INSTANCE, input);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelResponse parseFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageLite.parseFrom(
+            DEFAULT_INSTANCE, input, extensionRegistry);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelResponse parseDelimitedFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return parseDelimitedFrom(DEFAULT_INSTANCE, input);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelResponse parseDelimitedFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelResponse parseFrom(
+          com.google.protobuf.CodedInputStream input)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageLite.parseFrom(
+            DEFAULT_INSTANCE, input);
+      }
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelResponse parseFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageLite.parseFrom(
+            DEFAULT_INSTANCE, input, extensionRegistry);
+      }
+
+      public static Builder newBuilder() {
+        return (Builder) DEFAULT_INSTANCE.createBuilder();
+      }
+      public static Builder newBuilder(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelResponse prototype) {
+        return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+      }
+
+      /**
+       * Protobuf type {@code garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelResponse}
+       */
+      public static final class Builder extends
+          com.google.protobuf.GeneratedMessageLite.Builder<
+            nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelResponse, Builder> implements
+          // @@protoc_insertion_point(builder_implements:garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelResponse)
+          nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelResponseOrBuilder {
+        // Construct using nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelResponse.newBuilder()
+        private Builder() {
+          super(DEFAULT_INSTANCE);
+        }
+
+
+        /**
+         * <code>optional .garmin_vivomovehr.FindMyWatchService.ResponseStatus status = 1;</code>
+         */
+        @java.lang.Override
+        public boolean hasStatus() {
+          return instance.hasStatus();
+        }
+        /**
+         * <code>optional .garmin_vivomovehr.FindMyWatchService.ResponseStatus status = 1;</code>
+         */
+        @java.lang.Override
+        public nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.ResponseStatus getStatus() {
+          return instance.getStatus();
+        }
+        /**
+         * <code>optional .garmin_vivomovehr.FindMyWatchService.ResponseStatus status = 1;</code>
+         */
+        public Builder setStatus(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.ResponseStatus value) {
+          copyOnWrite();
+          instance.setStatus(value);
+          return this;
+        }
+        /**
+         * <code>optional .garmin_vivomovehr.FindMyWatchService.ResponseStatus status = 1;</code>
+         */
+        public Builder clearStatus() {
+          copyOnWrite();
+          instance.clearStatus();
+          return this;
+        }
+
+        // @@protoc_insertion_point(builder_scope:garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelResponse)
+      }
+      @java.lang.Override
+      @java.lang.SuppressWarnings({"unchecked", "fallthrough"})
+      protected final java.lang.Object dynamicMethod(
+          com.google.protobuf.GeneratedMessageLite.MethodToInvoke method,
+          java.lang.Object arg0, java.lang.Object arg1) {
+        switch (method) {
+          case NEW_MUTABLE_INSTANCE: {
+            return new nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelResponse();
+          }
+          case NEW_BUILDER: {
+            return new Builder();
+          }
+          case BUILD_MESSAGE_INFO: {
+              java.lang.Object[] objects = new java.lang.Object[] {
+                "bitField0_",
+                "status_",
+                nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.ResponseStatus.internalGetVerifier(),
+              };
+              java.lang.String info =
+                  "\u0001\u0001\u0000\u0001\u0001\u0001\u0001\u0000\u0000\u0000\u0001\f\u0000";
+              return newMessageInfo(DEFAULT_INSTANCE, info, objects);
+          }
+          // fall through
+          case GET_DEFAULT_INSTANCE: {
+            return DEFAULT_INSTANCE;
+          }
+          case GET_PARSER: {
+            com.google.protobuf.Parser<nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelResponse> parser = PARSER;
+            if (parser == null) {
+              synchronized (nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelResponse.class) {
+                parser = PARSER;
+                if (parser == null) {
+                  parser =
+                      new DefaultInstanceBasedParser<nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelResponse>(
+                          DEFAULT_INSTANCE);
+                  PARSER = parser;
+                }
+              }
+            }
+            return parser;
+        }
+        case GET_MEMOIZED_IS_INITIALIZED: {
+          return (byte) 1;
+        }
+        case SET_MEMOIZED_IS_INITIALIZED: {
+          return null;
+        }
+        }
+        throw new UnsupportedOperationException();
+      }
+
+
+      // @@protoc_insertion_point(class_scope:garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelResponse)
+      private static final nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelResponse DEFAULT_INSTANCE;
+      static {
+        FindMyWatchCancelResponse defaultInstance = new FindMyWatchCancelResponse();
+        // New instances are implicitly immutable so no need to make
+        // immutable.
+        DEFAULT_INSTANCE = defaultInstance;
+        com.google.protobuf.GeneratedMessageLite.registerDefaultInstance(
+          FindMyWatchCancelResponse.class, defaultInstance);
+      }
+
+      public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelResponse getDefaultInstance() {
+        return DEFAULT_INSTANCE;
+      }
+
+      private static volatile com.google.protobuf.Parser<FindMyWatchCancelResponse> PARSER;
+
+      public static com.google.protobuf.Parser<FindMyWatchCancelResponse> parser() {
+        return DEFAULT_INSTANCE.getParserForType();
+      }
+    }
+
     private int bitField0_;
     public static final int FIND_REQUEST_FIELD_NUMBER = 1;
-    private nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchRequest findRequest_;
+    private nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchRequest findRequest_;
     /**
-     * <code>optional .garmin_vivomovehr.FindMyWatchRequest find_request = 1;</code>
+     * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchRequest find_request = 1;</code>
      */
     @java.lang.Override
     public boolean hasFindRequest() {
       return ((bitField0_ & 0x00000001) != 0);
     }
     /**
-     * <code>optional .garmin_vivomovehr.FindMyWatchRequest find_request = 1;</code>
+     * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchRequest find_request = 1;</code>
      */
     @java.lang.Override
-    public nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchRequest getFindRequest() {
-      return findRequest_ == null ? nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchRequest.getDefaultInstance() : findRequest_;
+    public nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchRequest getFindRequest() {
+      return findRequest_ == null ? nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchRequest.getDefaultInstance() : findRequest_;
     }
     /**
-     * <code>optional .garmin_vivomovehr.FindMyWatchRequest find_request = 1;</code>
+     * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchRequest find_request = 1;</code>
      */
-    private void setFindRequest(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchRequest value) {
+    private void setFindRequest(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchRequest value) {
       if (value == null) {
         throw new NullPointerException();
       }
@@ -177,57 +1137,57 @@ public final class GdiFindMyWatch {
       bitField0_ |= 0x00000001;
       }
     /**
-     * <code>optional .garmin_vivomovehr.FindMyWatchRequest find_request = 1;</code>
+     * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchRequest find_request = 1;</code>
      */
     private void setFindRequest(
-        nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchRequest.Builder builderForValue) {
+        nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchRequest.Builder builderForValue) {
       findRequest_ = builderForValue.build();
       bitField0_ |= 0x00000001;
     }
     /**
-     * <code>optional .garmin_vivomovehr.FindMyWatchRequest find_request = 1;</code>
+     * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchRequest find_request = 1;</code>
      */
     @java.lang.SuppressWarnings({"ReferenceEquality"})
-    private void mergeFindRequest(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchRequest value) {
+    private void mergeFindRequest(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchRequest value) {
       if (value == null) {
         throw new NullPointerException();
       }
       if (findRequest_ != null &&
-          findRequest_ != nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchRequest.getDefaultInstance()) {
+          findRequest_ != nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchRequest.getDefaultInstance()) {
         findRequest_ =
-          nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchRequest.newBuilder(findRequest_).mergeFrom(value).buildPartial();
+          nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchRequest.newBuilder(findRequest_).mergeFrom(value).buildPartial();
       } else {
         findRequest_ = value;
       }
       bitField0_ |= 0x00000001;
     }
     /**
-     * <code>optional .garmin_vivomovehr.FindMyWatchRequest find_request = 1;</code>
+     * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchRequest find_request = 1;</code>
      */
     private void clearFindRequest() {  findRequest_ = null;
       bitField0_ = (bitField0_ & ~0x00000001);
     }
 
     public static final int FIND_RESPONSE_FIELD_NUMBER = 2;
-    private nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchResponse findResponse_;
+    private nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchResponse findResponse_;
     /**
-     * <code>optional .garmin_vivomovehr.FindMyWatchResponse find_response = 2;</code>
+     * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchResponse find_response = 2;</code>
      */
     @java.lang.Override
     public boolean hasFindResponse() {
       return ((bitField0_ & 0x00000002) != 0);
     }
     /**
-     * <code>optional .garmin_vivomovehr.FindMyWatchResponse find_response = 2;</code>
+     * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchResponse find_response = 2;</code>
      */
     @java.lang.Override
-    public nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchResponse getFindResponse() {
-      return findResponse_ == null ? nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchResponse.getDefaultInstance() : findResponse_;
+    public nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchResponse getFindResponse() {
+      return findResponse_ == null ? nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchResponse.getDefaultInstance() : findResponse_;
     }
     /**
-     * <code>optional .garmin_vivomovehr.FindMyWatchResponse find_response = 2;</code>
+     * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchResponse find_response = 2;</code>
      */
-    private void setFindResponse(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchResponse value) {
+    private void setFindResponse(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchResponse value) {
       if (value == null) {
         throw new NullPointerException();
       }
@@ -235,57 +1195,57 @@ public final class GdiFindMyWatch {
       bitField0_ |= 0x00000002;
       }
     /**
-     * <code>optional .garmin_vivomovehr.FindMyWatchResponse find_response = 2;</code>
+     * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchResponse find_response = 2;</code>
      */
     private void setFindResponse(
-        nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchResponse.Builder builderForValue) {
+        nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchResponse.Builder builderForValue) {
       findResponse_ = builderForValue.build();
       bitField0_ |= 0x00000002;
     }
     /**
-     * <code>optional .garmin_vivomovehr.FindMyWatchResponse find_response = 2;</code>
+     * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchResponse find_response = 2;</code>
      */
     @java.lang.SuppressWarnings({"ReferenceEquality"})
-    private void mergeFindResponse(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchResponse value) {
+    private void mergeFindResponse(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchResponse value) {
       if (value == null) {
         throw new NullPointerException();
       }
       if (findResponse_ != null &&
-          findResponse_ != nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchResponse.getDefaultInstance()) {
+          findResponse_ != nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchResponse.getDefaultInstance()) {
         findResponse_ =
-          nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchResponse.newBuilder(findResponse_).mergeFrom(value).buildPartial();
+          nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchResponse.newBuilder(findResponse_).mergeFrom(value).buildPartial();
       } else {
         findResponse_ = value;
       }
       bitField0_ |= 0x00000002;
     }
     /**
-     * <code>optional .garmin_vivomovehr.FindMyWatchResponse find_response = 2;</code>
+     * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchResponse find_response = 2;</code>
      */
     private void clearFindResponse() {  findResponse_ = null;
       bitField0_ = (bitField0_ & ~0x00000002);
     }
 
     public static final int CANCEL_REQUEST_FIELD_NUMBER = 3;
-    private nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelRequest cancelRequest_;
+    private nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelRequest cancelRequest_;
     /**
-     * <code>optional .garmin_vivomovehr.FindMyWatchCancelRequest cancel_request = 3;</code>
+     * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelRequest cancel_request = 3;</code>
      */
     @java.lang.Override
     public boolean hasCancelRequest() {
       return ((bitField0_ & 0x00000004) != 0);
     }
     /**
-     * <code>optional .garmin_vivomovehr.FindMyWatchCancelRequest cancel_request = 3;</code>
+     * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelRequest cancel_request = 3;</code>
      */
     @java.lang.Override
-    public nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelRequest getCancelRequest() {
-      return cancelRequest_ == null ? nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelRequest.getDefaultInstance() : cancelRequest_;
+    public nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelRequest getCancelRequest() {
+      return cancelRequest_ == null ? nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelRequest.getDefaultInstance() : cancelRequest_;
     }
     /**
-     * <code>optional .garmin_vivomovehr.FindMyWatchCancelRequest cancel_request = 3;</code>
+     * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelRequest cancel_request = 3;</code>
      */
-    private void setCancelRequest(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelRequest value) {
+    private void setCancelRequest(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelRequest value) {
       if (value == null) {
         throw new NullPointerException();
       }
@@ -293,57 +1253,57 @@ public final class GdiFindMyWatch {
       bitField0_ |= 0x00000004;
       }
     /**
-     * <code>optional .garmin_vivomovehr.FindMyWatchCancelRequest cancel_request = 3;</code>
+     * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelRequest cancel_request = 3;</code>
      */
     private void setCancelRequest(
-        nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelRequest.Builder builderForValue) {
+        nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelRequest.Builder builderForValue) {
       cancelRequest_ = builderForValue.build();
       bitField0_ |= 0x00000004;
     }
     /**
-     * <code>optional .garmin_vivomovehr.FindMyWatchCancelRequest cancel_request = 3;</code>
+     * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelRequest cancel_request = 3;</code>
      */
     @java.lang.SuppressWarnings({"ReferenceEquality"})
-    private void mergeCancelRequest(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelRequest value) {
+    private void mergeCancelRequest(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelRequest value) {
       if (value == null) {
         throw new NullPointerException();
       }
       if (cancelRequest_ != null &&
-          cancelRequest_ != nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelRequest.getDefaultInstance()) {
+          cancelRequest_ != nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelRequest.getDefaultInstance()) {
         cancelRequest_ =
-          nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelRequest.newBuilder(cancelRequest_).mergeFrom(value).buildPartial();
+          nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelRequest.newBuilder(cancelRequest_).mergeFrom(value).buildPartial();
       } else {
         cancelRequest_ = value;
       }
       bitField0_ |= 0x00000004;
     }
     /**
-     * <code>optional .garmin_vivomovehr.FindMyWatchCancelRequest cancel_request = 3;</code>
+     * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelRequest cancel_request = 3;</code>
      */
     private void clearCancelRequest() {  cancelRequest_ = null;
       bitField0_ = (bitField0_ & ~0x00000004);
     }
 
     public static final int CANCEL_RESPONSE_FIELD_NUMBER = 4;
-    private nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelResponse cancelResponse_;
+    private nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelResponse cancelResponse_;
     /**
-     * <code>optional .garmin_vivomovehr.FindMyWatchCancelResponse cancel_response = 4;</code>
+     * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelResponse cancel_response = 4;</code>
      */
     @java.lang.Override
     public boolean hasCancelResponse() {
       return ((bitField0_ & 0x00000008) != 0);
     }
     /**
-     * <code>optional .garmin_vivomovehr.FindMyWatchCancelResponse cancel_response = 4;</code>
+     * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelResponse cancel_response = 4;</code>
      */
     @java.lang.Override
-    public nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelResponse getCancelResponse() {
-      return cancelResponse_ == null ? nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelResponse.getDefaultInstance() : cancelResponse_;
+    public nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelResponse getCancelResponse() {
+      return cancelResponse_ == null ? nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelResponse.getDefaultInstance() : cancelResponse_;
     }
     /**
-     * <code>optional .garmin_vivomovehr.FindMyWatchCancelResponse cancel_response = 4;</code>
+     * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelResponse cancel_response = 4;</code>
      */
-    private void setCancelResponse(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelResponse value) {
+    private void setCancelResponse(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelResponse value) {
       if (value == null) {
         throw new NullPointerException();
       }
@@ -351,32 +1311,32 @@ public final class GdiFindMyWatch {
       bitField0_ |= 0x00000008;
       }
     /**
-     * <code>optional .garmin_vivomovehr.FindMyWatchCancelResponse cancel_response = 4;</code>
+     * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelResponse cancel_response = 4;</code>
      */
     private void setCancelResponse(
-        nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelResponse.Builder builderForValue) {
+        nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelResponse.Builder builderForValue) {
       cancelResponse_ = builderForValue.build();
       bitField0_ |= 0x00000008;
     }
     /**
-     * <code>optional .garmin_vivomovehr.FindMyWatchCancelResponse cancel_response = 4;</code>
+     * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelResponse cancel_response = 4;</code>
      */
     @java.lang.SuppressWarnings({"ReferenceEquality"})
-    private void mergeCancelResponse(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelResponse value) {
+    private void mergeCancelResponse(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelResponse value) {
       if (value == null) {
         throw new NullPointerException();
       }
       if (cancelResponse_ != null &&
-          cancelResponse_ != nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelResponse.getDefaultInstance()) {
+          cancelResponse_ != nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelResponse.getDefaultInstance()) {
         cancelResponse_ =
-          nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelResponse.newBuilder(cancelResponse_).mergeFrom(value).buildPartial();
+          nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelResponse.newBuilder(cancelResponse_).mergeFrom(value).buildPartial();
       } else {
         cancelResponse_ = value;
       }
       bitField0_ |= 0x00000008;
     }
     /**
-     * <code>optional .garmin_vivomovehr.FindMyWatchCancelResponse cancel_response = 4;</code>
+     * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelResponse cancel_response = 4;</code>
      */
     private void clearCancelResponse() {  cancelResponse_ = null;
       bitField0_ = (bitField0_ & ~0x00000008);
@@ -478,46 +1438,46 @@ public final class GdiFindMyWatch {
 
 
       /**
-       * <code>optional .garmin_vivomovehr.FindMyWatchRequest find_request = 1;</code>
+       * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchRequest find_request = 1;</code>
        */
       @java.lang.Override
       public boolean hasFindRequest() {
         return instance.hasFindRequest();
       }
       /**
-       * <code>optional .garmin_vivomovehr.FindMyWatchRequest find_request = 1;</code>
+       * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchRequest find_request = 1;</code>
        */
       @java.lang.Override
-      public nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchRequest getFindRequest() {
+      public nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchRequest getFindRequest() {
         return instance.getFindRequest();
       }
       /**
-       * <code>optional .garmin_vivomovehr.FindMyWatchRequest find_request = 1;</code>
+       * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchRequest find_request = 1;</code>
        */
-      public Builder setFindRequest(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchRequest value) {
+      public Builder setFindRequest(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchRequest value) {
         copyOnWrite();
         instance.setFindRequest(value);
         return this;
         }
       /**
-       * <code>optional .garmin_vivomovehr.FindMyWatchRequest find_request = 1;</code>
+       * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchRequest find_request = 1;</code>
        */
       public Builder setFindRequest(
-          nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchRequest.Builder builderForValue) {
+          nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchRequest.Builder builderForValue) {
         copyOnWrite();
         instance.setFindRequest(builderForValue);
         return this;
       }
       /**
-       * <code>optional .garmin_vivomovehr.FindMyWatchRequest find_request = 1;</code>
+       * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchRequest find_request = 1;</code>
        */
-      public Builder mergeFindRequest(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchRequest value) {
+      public Builder mergeFindRequest(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchRequest value) {
         copyOnWrite();
         instance.mergeFindRequest(value);
         return this;
       }
       /**
-       * <code>optional .garmin_vivomovehr.FindMyWatchRequest find_request = 1;</code>
+       * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchRequest find_request = 1;</code>
        */
       public Builder clearFindRequest() {  copyOnWrite();
         instance.clearFindRequest();
@@ -525,46 +1485,46 @@ public final class GdiFindMyWatch {
       }
 
       /**
-       * <code>optional .garmin_vivomovehr.FindMyWatchResponse find_response = 2;</code>
+       * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchResponse find_response = 2;</code>
        */
       @java.lang.Override
       public boolean hasFindResponse() {
         return instance.hasFindResponse();
       }
       /**
-       * <code>optional .garmin_vivomovehr.FindMyWatchResponse find_response = 2;</code>
+       * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchResponse find_response = 2;</code>
        */
       @java.lang.Override
-      public nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchResponse getFindResponse() {
+      public nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchResponse getFindResponse() {
         return instance.getFindResponse();
       }
       /**
-       * <code>optional .garmin_vivomovehr.FindMyWatchResponse find_response = 2;</code>
+       * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchResponse find_response = 2;</code>
        */
-      public Builder setFindResponse(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchResponse value) {
+      public Builder setFindResponse(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchResponse value) {
         copyOnWrite();
         instance.setFindResponse(value);
         return this;
         }
       /**
-       * <code>optional .garmin_vivomovehr.FindMyWatchResponse find_response = 2;</code>
+       * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchResponse find_response = 2;</code>
        */
       public Builder setFindResponse(
-          nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchResponse.Builder builderForValue) {
+          nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchResponse.Builder builderForValue) {
         copyOnWrite();
         instance.setFindResponse(builderForValue);
         return this;
       }
       /**
-       * <code>optional .garmin_vivomovehr.FindMyWatchResponse find_response = 2;</code>
+       * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchResponse find_response = 2;</code>
        */
-      public Builder mergeFindResponse(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchResponse value) {
+      public Builder mergeFindResponse(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchResponse value) {
         copyOnWrite();
         instance.mergeFindResponse(value);
         return this;
       }
       /**
-       * <code>optional .garmin_vivomovehr.FindMyWatchResponse find_response = 2;</code>
+       * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchResponse find_response = 2;</code>
        */
       public Builder clearFindResponse() {  copyOnWrite();
         instance.clearFindResponse();
@@ -572,46 +1532,46 @@ public final class GdiFindMyWatch {
       }
 
       /**
-       * <code>optional .garmin_vivomovehr.FindMyWatchCancelRequest cancel_request = 3;</code>
+       * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelRequest cancel_request = 3;</code>
        */
       @java.lang.Override
       public boolean hasCancelRequest() {
         return instance.hasCancelRequest();
       }
       /**
-       * <code>optional .garmin_vivomovehr.FindMyWatchCancelRequest cancel_request = 3;</code>
+       * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelRequest cancel_request = 3;</code>
        */
       @java.lang.Override
-      public nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelRequest getCancelRequest() {
+      public nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelRequest getCancelRequest() {
         return instance.getCancelRequest();
       }
       /**
-       * <code>optional .garmin_vivomovehr.FindMyWatchCancelRequest cancel_request = 3;</code>
+       * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelRequest cancel_request = 3;</code>
        */
-      public Builder setCancelRequest(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelRequest value) {
+      public Builder setCancelRequest(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelRequest value) {
         copyOnWrite();
         instance.setCancelRequest(value);
         return this;
         }
       /**
-       * <code>optional .garmin_vivomovehr.FindMyWatchCancelRequest cancel_request = 3;</code>
+       * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelRequest cancel_request = 3;</code>
        */
       public Builder setCancelRequest(
-          nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelRequest.Builder builderForValue) {
+          nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelRequest.Builder builderForValue) {
         copyOnWrite();
         instance.setCancelRequest(builderForValue);
         return this;
       }
       /**
-       * <code>optional .garmin_vivomovehr.FindMyWatchCancelRequest cancel_request = 3;</code>
+       * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelRequest cancel_request = 3;</code>
        */
-      public Builder mergeCancelRequest(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelRequest value) {
+      public Builder mergeCancelRequest(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelRequest value) {
         copyOnWrite();
         instance.mergeCancelRequest(value);
         return this;
       }
       /**
-       * <code>optional .garmin_vivomovehr.FindMyWatchCancelRequest cancel_request = 3;</code>
+       * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelRequest cancel_request = 3;</code>
        */
       public Builder clearCancelRequest() {  copyOnWrite();
         instance.clearCancelRequest();
@@ -619,46 +1579,46 @@ public final class GdiFindMyWatch {
       }
 
       /**
-       * <code>optional .garmin_vivomovehr.FindMyWatchCancelResponse cancel_response = 4;</code>
+       * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelResponse cancel_response = 4;</code>
        */
       @java.lang.Override
       public boolean hasCancelResponse() {
         return instance.hasCancelResponse();
       }
       /**
-       * <code>optional .garmin_vivomovehr.FindMyWatchCancelResponse cancel_response = 4;</code>
+       * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelResponse cancel_response = 4;</code>
        */
       @java.lang.Override
-      public nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelResponse getCancelResponse() {
+      public nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelResponse getCancelResponse() {
         return instance.getCancelResponse();
       }
       /**
-       * <code>optional .garmin_vivomovehr.FindMyWatchCancelResponse cancel_response = 4;</code>
+       * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelResponse cancel_response = 4;</code>
        */
-      public Builder setCancelResponse(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelResponse value) {
+      public Builder setCancelResponse(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelResponse value) {
         copyOnWrite();
         instance.setCancelResponse(value);
         return this;
         }
       /**
-       * <code>optional .garmin_vivomovehr.FindMyWatchCancelResponse cancel_response = 4;</code>
+       * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelResponse cancel_response = 4;</code>
        */
       public Builder setCancelResponse(
-          nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelResponse.Builder builderForValue) {
+          nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelResponse.Builder builderForValue) {
         copyOnWrite();
         instance.setCancelResponse(builderForValue);
         return this;
       }
       /**
-       * <code>optional .garmin_vivomovehr.FindMyWatchCancelResponse cancel_response = 4;</code>
+       * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelResponse cancel_response = 4;</code>
        */
-      public Builder mergeCancelResponse(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelResponse value) {
+      public Builder mergeCancelResponse(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.FindMyWatchCancelResponse value) {
         copyOnWrite();
         instance.mergeCancelResponse(value);
         return this;
       }
       /**
-       * <code>optional .garmin_vivomovehr.FindMyWatchCancelResponse cancel_response = 4;</code>
+       * <code>optional .garmin_vivomovehr.FindMyWatchService.FindMyWatchCancelResponse cancel_response = 4;</code>
        */
       public Builder clearCancelResponse() {  copyOnWrite();
         instance.clearCancelResponse();
@@ -689,8 +1649,8 @@ public final class GdiFindMyWatch {
               "cancelResponse_",
             };
             java.lang.String info =
-                "\u0001\u0004\u0000\u0001\u0001\u0004\u0004\u0000\u0000\u0003\u0001\u0409\u0000\u0002" +
-                "\u0409\u0001\u0003\t\u0002\u0004\u0409\u0003";
+                "\u0001\u0004\u0000\u0001\u0001\u0004\u0004\u0000\u0000\u0001\u0001\u0409\u0000\u0002" +
+                "\t\u0001\u0003\t\u0002\u0004\t\u0003";
             return newMessageInfo(DEFAULT_INSTANCE, info, objects);
         }
         // fall through
@@ -742,970 +1702,6 @@ public final class GdiFindMyWatch {
     private static volatile com.google.protobuf.Parser<FindMyWatchService> PARSER;
 
     public static com.google.protobuf.Parser<FindMyWatchService> parser() {
-      return DEFAULT_INSTANCE.getParserForType();
-    }
-  }
-
-  public interface FindMyWatchRequestOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:garmin_vivomovehr.FindMyWatchRequest)
-      com.google.protobuf.MessageLiteOrBuilder {
-
-    /**
-     * <code>required int32 timeout = 1;</code>
-     */
-    boolean hasTimeout();
-    /**
-     * <code>required int32 timeout = 1;</code>
-     */
-    int getTimeout();
-  }
-  /**
-   * Protobuf type {@code garmin_vivomovehr.FindMyWatchRequest}
-   */
-  public  static final class FindMyWatchRequest extends
-      com.google.protobuf.GeneratedMessageLite<
-          FindMyWatchRequest, FindMyWatchRequest.Builder> implements
-      // @@protoc_insertion_point(message_implements:garmin_vivomovehr.FindMyWatchRequest)
-      FindMyWatchRequestOrBuilder {
-    private FindMyWatchRequest() {
-    }
-    private int bitField0_;
-    public static final int TIMEOUT_FIELD_NUMBER = 1;
-    private int timeout_;
-    /**
-     * <code>required int32 timeout = 1;</code>
-     */
-    @java.lang.Override
-    public boolean hasTimeout() {
-      return ((bitField0_ & 0x00000001) != 0);
-    }
-    /**
-     * <code>required int32 timeout = 1;</code>
-     */
-    @java.lang.Override
-    public int getTimeout() {
-      return timeout_;
-    }
-    /**
-     * <code>required int32 timeout = 1;</code>
-     */
-    private void setTimeout(int value) {
-      bitField0_ |= 0x00000001;
-      timeout_ = value;
-    }
-    /**
-     * <code>required int32 timeout = 1;</code>
-     */
-    private void clearTimeout() {
-      bitField0_ = (bitField0_ & ~0x00000001);
-      timeout_ = 0;
-    }
-
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchRequest parseFrom(
-        java.nio.ByteBuffer data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchRequest parseFrom(
-        java.nio.ByteBuffer data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data, extensionRegistry);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchRequest parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchRequest parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data, extensionRegistry);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchRequest parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchRequest parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data, extensionRegistry);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchRequest parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, input);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchRequest parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, input, extensionRegistry);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchRequest parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return parseDelimitedFrom(DEFAULT_INSTANCE, input);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchRequest parseDelimitedFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchRequest parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, input);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchRequest parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, input, extensionRegistry);
-    }
-
-    public static Builder newBuilder() {
-      return (Builder) DEFAULT_INSTANCE.createBuilder();
-    }
-    public static Builder newBuilder(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchRequest prototype) {
-      return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
-    }
-
-    /**
-     * Protobuf type {@code garmin_vivomovehr.FindMyWatchRequest}
-     */
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessageLite.Builder<
-          nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchRequest, Builder> implements
-        // @@protoc_insertion_point(builder_implements:garmin_vivomovehr.FindMyWatchRequest)
-        nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchRequestOrBuilder {
-      // Construct using nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchRequest.newBuilder()
-      private Builder() {
-        super(DEFAULT_INSTANCE);
-      }
-
-
-      /**
-       * <code>required int32 timeout = 1;</code>
-       */
-      @java.lang.Override
-      public boolean hasTimeout() {
-        return instance.hasTimeout();
-      }
-      /**
-       * <code>required int32 timeout = 1;</code>
-       */
-      @java.lang.Override
-      public int getTimeout() {
-        return instance.getTimeout();
-      }
-      /**
-       * <code>required int32 timeout = 1;</code>
-       */
-      public Builder setTimeout(int value) {
-        copyOnWrite();
-        instance.setTimeout(value);
-        return this;
-      }
-      /**
-       * <code>required int32 timeout = 1;</code>
-       */
-      public Builder clearTimeout() {
-        copyOnWrite();
-        instance.clearTimeout();
-        return this;
-      }
-
-      // @@protoc_insertion_point(builder_scope:garmin_vivomovehr.FindMyWatchRequest)
-    }
-    private byte memoizedIsInitialized = 2;
-    @java.lang.Override
-    @java.lang.SuppressWarnings({"unchecked", "fallthrough"})
-    protected final java.lang.Object dynamicMethod(
-        com.google.protobuf.GeneratedMessageLite.MethodToInvoke method,
-        java.lang.Object arg0, java.lang.Object arg1) {
-      switch (method) {
-        case NEW_MUTABLE_INSTANCE: {
-          return new nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchRequest();
-        }
-        case NEW_BUILDER: {
-          return new Builder();
-        }
-        case BUILD_MESSAGE_INFO: {
-            java.lang.Object[] objects = new java.lang.Object[] {
-              "bitField0_",
-              "timeout_",
-            };
-            java.lang.String info =
-                "\u0001\u0001\u0000\u0001\u0001\u0001\u0001\u0000\u0000\u0001\u0001\u0504\u0000";
-            return newMessageInfo(DEFAULT_INSTANCE, info, objects);
-        }
-        // fall through
-        case GET_DEFAULT_INSTANCE: {
-          return DEFAULT_INSTANCE;
-        }
-        case GET_PARSER: {
-          com.google.protobuf.Parser<nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchRequest> parser = PARSER;
-          if (parser == null) {
-            synchronized (nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchRequest.class) {
-              parser = PARSER;
-              if (parser == null) {
-                parser =
-                    new DefaultInstanceBasedParser<nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchRequest>(
-                        DEFAULT_INSTANCE);
-                PARSER = parser;
-              }
-            }
-          }
-          return parser;
-      }
-      case GET_MEMOIZED_IS_INITIALIZED: {
-        return memoizedIsInitialized;
-      }
-      case SET_MEMOIZED_IS_INITIALIZED: {
-        memoizedIsInitialized = (byte) (arg0 == null ? 0 : 1);
-        return null;
-      }
-      }
-      throw new UnsupportedOperationException();
-    }
-
-
-    // @@protoc_insertion_point(class_scope:garmin_vivomovehr.FindMyWatchRequest)
-    private static final nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchRequest DEFAULT_INSTANCE;
-    static {
-      FindMyWatchRequest defaultInstance = new FindMyWatchRequest();
-      // New instances are implicitly immutable so no need to make
-      // immutable.
-      DEFAULT_INSTANCE = defaultInstance;
-      com.google.protobuf.GeneratedMessageLite.registerDefaultInstance(
-        FindMyWatchRequest.class, defaultInstance);
-    }
-
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchRequest getDefaultInstance() {
-      return DEFAULT_INSTANCE;
-    }
-
-    private static volatile com.google.protobuf.Parser<FindMyWatchRequest> PARSER;
-
-    public static com.google.protobuf.Parser<FindMyWatchRequest> parser() {
-      return DEFAULT_INSTANCE.getParserForType();
-    }
-  }
-
-  public interface FindMyWatchResponseOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:garmin_vivomovehr.FindMyWatchResponse)
-      com.google.protobuf.MessageLiteOrBuilder {
-
-    /**
-     * <code>required .garmin_vivomovehr.ResponseStatus status = 1;</code>
-     */
-    boolean hasStatus();
-    /**
-     * <code>required .garmin_vivomovehr.ResponseStatus status = 1;</code>
-     */
-    nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.ResponseStatus getStatus();
-  }
-  /**
-   * Protobuf type {@code garmin_vivomovehr.FindMyWatchResponse}
-   */
-  public  static final class FindMyWatchResponse extends
-      com.google.protobuf.GeneratedMessageLite<
-          FindMyWatchResponse, FindMyWatchResponse.Builder> implements
-      // @@protoc_insertion_point(message_implements:garmin_vivomovehr.FindMyWatchResponse)
-      FindMyWatchResponseOrBuilder {
-    private FindMyWatchResponse() {
-    }
-    private int bitField0_;
-    public static final int STATUS_FIELD_NUMBER = 1;
-    private int status_;
-    /**
-     * <code>required .garmin_vivomovehr.ResponseStatus status = 1;</code>
-     */
-    @java.lang.Override
-    public boolean hasStatus() {
-      return ((bitField0_ & 0x00000001) != 0);
-    }
-    /**
-     * <code>required .garmin_vivomovehr.ResponseStatus status = 1;</code>
-     */
-    @java.lang.Override
-    public nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.ResponseStatus getStatus() {
-      nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.ResponseStatus result = nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.ResponseStatus.forNumber(status_);
-      return result == null ? nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.ResponseStatus.UNKNOWN_RESPONSE_STATUS : result;
-    }
-    /**
-     * <code>required .garmin_vivomovehr.ResponseStatus status = 1;</code>
-     */
-    private void setStatus(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.ResponseStatus value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      bitField0_ |= 0x00000001;
-      status_ = value.getNumber();
-    }
-    /**
-     * <code>required .garmin_vivomovehr.ResponseStatus status = 1;</code>
-     */
-    private void clearStatus() {
-      bitField0_ = (bitField0_ & ~0x00000001);
-      status_ = 0;
-    }
-
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchResponse parseFrom(
-        java.nio.ByteBuffer data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchResponse parseFrom(
-        java.nio.ByteBuffer data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data, extensionRegistry);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchResponse parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchResponse parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data, extensionRegistry);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchResponse parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchResponse parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data, extensionRegistry);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchResponse parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, input);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchResponse parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, input, extensionRegistry);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchResponse parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return parseDelimitedFrom(DEFAULT_INSTANCE, input);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchResponse parseDelimitedFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchResponse parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, input);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchResponse parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, input, extensionRegistry);
-    }
-
-    public static Builder newBuilder() {
-      return (Builder) DEFAULT_INSTANCE.createBuilder();
-    }
-    public static Builder newBuilder(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchResponse prototype) {
-      return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
-    }
-
-    /**
-     * Protobuf type {@code garmin_vivomovehr.FindMyWatchResponse}
-     */
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessageLite.Builder<
-          nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchResponse, Builder> implements
-        // @@protoc_insertion_point(builder_implements:garmin_vivomovehr.FindMyWatchResponse)
-        nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchResponseOrBuilder {
-      // Construct using nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchResponse.newBuilder()
-      private Builder() {
-        super(DEFAULT_INSTANCE);
-      }
-
-
-      /**
-       * <code>required .garmin_vivomovehr.ResponseStatus status = 1;</code>
-       */
-      @java.lang.Override
-      public boolean hasStatus() {
-        return instance.hasStatus();
-      }
-      /**
-       * <code>required .garmin_vivomovehr.ResponseStatus status = 1;</code>
-       */
-      @java.lang.Override
-      public nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.ResponseStatus getStatus() {
-        return instance.getStatus();
-      }
-      /**
-       * <code>required .garmin_vivomovehr.ResponseStatus status = 1;</code>
-       */
-      public Builder setStatus(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.ResponseStatus value) {
-        copyOnWrite();
-        instance.setStatus(value);
-        return this;
-      }
-      /**
-       * <code>required .garmin_vivomovehr.ResponseStatus status = 1;</code>
-       */
-      public Builder clearStatus() {
-        copyOnWrite();
-        instance.clearStatus();
-        return this;
-      }
-
-      // @@protoc_insertion_point(builder_scope:garmin_vivomovehr.FindMyWatchResponse)
-    }
-    private byte memoizedIsInitialized = 2;
-    @java.lang.Override
-    @java.lang.SuppressWarnings({"unchecked", "fallthrough"})
-    protected final java.lang.Object dynamicMethod(
-        com.google.protobuf.GeneratedMessageLite.MethodToInvoke method,
-        java.lang.Object arg0, java.lang.Object arg1) {
-      switch (method) {
-        case NEW_MUTABLE_INSTANCE: {
-          return new nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchResponse();
-        }
-        case NEW_BUILDER: {
-          return new Builder();
-        }
-        case BUILD_MESSAGE_INFO: {
-            java.lang.Object[] objects = new java.lang.Object[] {
-              "bitField0_",
-              "status_",
-              nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.ResponseStatus.internalGetVerifier(),
-            };
-            java.lang.String info =
-                "\u0001\u0001\u0000\u0001\u0001\u0001\u0001\u0000\u0000\u0001\u0001\u050c\u0000";
-            return newMessageInfo(DEFAULT_INSTANCE, info, objects);
-        }
-        // fall through
-        case GET_DEFAULT_INSTANCE: {
-          return DEFAULT_INSTANCE;
-        }
-        case GET_PARSER: {
-          com.google.protobuf.Parser<nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchResponse> parser = PARSER;
-          if (parser == null) {
-            synchronized (nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchResponse.class) {
-              parser = PARSER;
-              if (parser == null) {
-                parser =
-                    new DefaultInstanceBasedParser<nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchResponse>(
-                        DEFAULT_INSTANCE);
-                PARSER = parser;
-              }
-            }
-          }
-          return parser;
-      }
-      case GET_MEMOIZED_IS_INITIALIZED: {
-        return memoizedIsInitialized;
-      }
-      case SET_MEMOIZED_IS_INITIALIZED: {
-        memoizedIsInitialized = (byte) (arg0 == null ? 0 : 1);
-        return null;
-      }
-      }
-      throw new UnsupportedOperationException();
-    }
-
-
-    // @@protoc_insertion_point(class_scope:garmin_vivomovehr.FindMyWatchResponse)
-    private static final nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchResponse DEFAULT_INSTANCE;
-    static {
-      FindMyWatchResponse defaultInstance = new FindMyWatchResponse();
-      // New instances are implicitly immutable so no need to make
-      // immutable.
-      DEFAULT_INSTANCE = defaultInstance;
-      com.google.protobuf.GeneratedMessageLite.registerDefaultInstance(
-        FindMyWatchResponse.class, defaultInstance);
-    }
-
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchResponse getDefaultInstance() {
-      return DEFAULT_INSTANCE;
-    }
-
-    private static volatile com.google.protobuf.Parser<FindMyWatchResponse> PARSER;
-
-    public static com.google.protobuf.Parser<FindMyWatchResponse> parser() {
-      return DEFAULT_INSTANCE.getParserForType();
-    }
-  }
-
-  public interface FindMyWatchCancelRequestOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:garmin_vivomovehr.FindMyWatchCancelRequest)
-      com.google.protobuf.MessageLiteOrBuilder {
-  }
-  /**
-   * Protobuf type {@code garmin_vivomovehr.FindMyWatchCancelRequest}
-   */
-  public  static final class FindMyWatchCancelRequest extends
-      com.google.protobuf.GeneratedMessageLite<
-          FindMyWatchCancelRequest, FindMyWatchCancelRequest.Builder> implements
-      // @@protoc_insertion_point(message_implements:garmin_vivomovehr.FindMyWatchCancelRequest)
-      FindMyWatchCancelRequestOrBuilder {
-    private FindMyWatchCancelRequest() {
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelRequest parseFrom(
-        java.nio.ByteBuffer data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelRequest parseFrom(
-        java.nio.ByteBuffer data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data, extensionRegistry);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelRequest parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelRequest parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data, extensionRegistry);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelRequest parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelRequest parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data, extensionRegistry);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelRequest parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, input);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelRequest parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, input, extensionRegistry);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelRequest parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return parseDelimitedFrom(DEFAULT_INSTANCE, input);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelRequest parseDelimitedFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelRequest parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, input);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelRequest parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, input, extensionRegistry);
-    }
-
-    public static Builder newBuilder() {
-      return (Builder) DEFAULT_INSTANCE.createBuilder();
-    }
-    public static Builder newBuilder(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelRequest prototype) {
-      return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
-    }
-
-    /**
-     * Protobuf type {@code garmin_vivomovehr.FindMyWatchCancelRequest}
-     */
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessageLite.Builder<
-          nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelRequest, Builder> implements
-        // @@protoc_insertion_point(builder_implements:garmin_vivomovehr.FindMyWatchCancelRequest)
-        nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelRequestOrBuilder {
-      // Construct using nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelRequest.newBuilder()
-      private Builder() {
-        super(DEFAULT_INSTANCE);
-      }
-
-
-      // @@protoc_insertion_point(builder_scope:garmin_vivomovehr.FindMyWatchCancelRequest)
-    }
-    @java.lang.Override
-    @java.lang.SuppressWarnings({"unchecked", "fallthrough"})
-    protected final java.lang.Object dynamicMethod(
-        com.google.protobuf.GeneratedMessageLite.MethodToInvoke method,
-        java.lang.Object arg0, java.lang.Object arg1) {
-      switch (method) {
-        case NEW_MUTABLE_INSTANCE: {
-          return new nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelRequest();
-        }
-        case NEW_BUILDER: {
-          return new Builder();
-        }
-        case BUILD_MESSAGE_INFO: {
-            java.lang.Object[] objects = null;java.lang.String info =
-                "\u0001\u0000";
-            return newMessageInfo(DEFAULT_INSTANCE, info, objects);
-        }
-        // fall through
-        case GET_DEFAULT_INSTANCE: {
-          return DEFAULT_INSTANCE;
-        }
-        case GET_PARSER: {
-          com.google.protobuf.Parser<nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelRequest> parser = PARSER;
-          if (parser == null) {
-            synchronized (nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelRequest.class) {
-              parser = PARSER;
-              if (parser == null) {
-                parser =
-                    new DefaultInstanceBasedParser<nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelRequest>(
-                        DEFAULT_INSTANCE);
-                PARSER = parser;
-              }
-            }
-          }
-          return parser;
-      }
-      case GET_MEMOIZED_IS_INITIALIZED: {
-        return (byte) 1;
-      }
-      case SET_MEMOIZED_IS_INITIALIZED: {
-        return null;
-      }
-      }
-      throw new UnsupportedOperationException();
-    }
-
-
-    // @@protoc_insertion_point(class_scope:garmin_vivomovehr.FindMyWatchCancelRequest)
-    private static final nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelRequest DEFAULT_INSTANCE;
-    static {
-      FindMyWatchCancelRequest defaultInstance = new FindMyWatchCancelRequest();
-      // New instances are implicitly immutable so no need to make
-      // immutable.
-      DEFAULT_INSTANCE = defaultInstance;
-      com.google.protobuf.GeneratedMessageLite.registerDefaultInstance(
-        FindMyWatchCancelRequest.class, defaultInstance);
-    }
-
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelRequest getDefaultInstance() {
-      return DEFAULT_INSTANCE;
-    }
-
-    private static volatile com.google.protobuf.Parser<FindMyWatchCancelRequest> PARSER;
-
-    public static com.google.protobuf.Parser<FindMyWatchCancelRequest> parser() {
-      return DEFAULT_INSTANCE.getParserForType();
-    }
-  }
-
-  public interface FindMyWatchCancelResponseOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:garmin_vivomovehr.FindMyWatchCancelResponse)
-      com.google.protobuf.MessageLiteOrBuilder {
-
-    /**
-     * <code>required .garmin_vivomovehr.ResponseStatus status = 1;</code>
-     */
-    boolean hasStatus();
-    /**
-     * <code>required .garmin_vivomovehr.ResponseStatus status = 1;</code>
-     */
-    nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.ResponseStatus getStatus();
-  }
-  /**
-   * Protobuf type {@code garmin_vivomovehr.FindMyWatchCancelResponse}
-   */
-  public  static final class FindMyWatchCancelResponse extends
-      com.google.protobuf.GeneratedMessageLite<
-          FindMyWatchCancelResponse, FindMyWatchCancelResponse.Builder> implements
-      // @@protoc_insertion_point(message_implements:garmin_vivomovehr.FindMyWatchCancelResponse)
-      FindMyWatchCancelResponseOrBuilder {
-    private FindMyWatchCancelResponse() {
-    }
-    private int bitField0_;
-    public static final int STATUS_FIELD_NUMBER = 1;
-    private int status_;
-    /**
-     * <code>required .garmin_vivomovehr.ResponseStatus status = 1;</code>
-     */
-    @java.lang.Override
-    public boolean hasStatus() {
-      return ((bitField0_ & 0x00000001) != 0);
-    }
-    /**
-     * <code>required .garmin_vivomovehr.ResponseStatus status = 1;</code>
-     */
-    @java.lang.Override
-    public nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.ResponseStatus getStatus() {
-      nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.ResponseStatus result = nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.ResponseStatus.forNumber(status_);
-      return result == null ? nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.ResponseStatus.UNKNOWN_RESPONSE_STATUS : result;
-    }
-    /**
-     * <code>required .garmin_vivomovehr.ResponseStatus status = 1;</code>
-     */
-    private void setStatus(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.ResponseStatus value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      bitField0_ |= 0x00000001;
-      status_ = value.getNumber();
-    }
-    /**
-     * <code>required .garmin_vivomovehr.ResponseStatus status = 1;</code>
-     */
-    private void clearStatus() {
-      bitField0_ = (bitField0_ & ~0x00000001);
-      status_ = 0;
-    }
-
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelResponse parseFrom(
-        java.nio.ByteBuffer data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelResponse parseFrom(
-        java.nio.ByteBuffer data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data, extensionRegistry);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelResponse parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelResponse parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data, extensionRegistry);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelResponse parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelResponse parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data, extensionRegistry);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelResponse parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, input);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelResponse parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, input, extensionRegistry);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelResponse parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return parseDelimitedFrom(DEFAULT_INSTANCE, input);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelResponse parseDelimitedFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelResponse parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, input);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelResponse parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, input, extensionRegistry);
-    }
-
-    public static Builder newBuilder() {
-      return (Builder) DEFAULT_INSTANCE.createBuilder();
-    }
-    public static Builder newBuilder(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelResponse prototype) {
-      return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
-    }
-
-    /**
-     * Protobuf type {@code garmin_vivomovehr.FindMyWatchCancelResponse}
-     */
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessageLite.Builder<
-          nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelResponse, Builder> implements
-        // @@protoc_insertion_point(builder_implements:garmin_vivomovehr.FindMyWatchCancelResponse)
-        nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelResponseOrBuilder {
-      // Construct using nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelResponse.newBuilder()
-      private Builder() {
-        super(DEFAULT_INSTANCE);
-      }
-
-
-      /**
-       * <code>required .garmin_vivomovehr.ResponseStatus status = 1;</code>
-       */
-      @java.lang.Override
-      public boolean hasStatus() {
-        return instance.hasStatus();
-      }
-      /**
-       * <code>required .garmin_vivomovehr.ResponseStatus status = 1;</code>
-       */
-      @java.lang.Override
-      public nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.ResponseStatus getStatus() {
-        return instance.getStatus();
-      }
-      /**
-       * <code>required .garmin_vivomovehr.ResponseStatus status = 1;</code>
-       */
-      public Builder setStatus(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.ResponseStatus value) {
-        copyOnWrite();
-        instance.setStatus(value);
-        return this;
-      }
-      /**
-       * <code>required .garmin_vivomovehr.ResponseStatus status = 1;</code>
-       */
-      public Builder clearStatus() {
-        copyOnWrite();
-        instance.clearStatus();
-        return this;
-      }
-
-      // @@protoc_insertion_point(builder_scope:garmin_vivomovehr.FindMyWatchCancelResponse)
-    }
-    private byte memoizedIsInitialized = 2;
-    @java.lang.Override
-    @java.lang.SuppressWarnings({"unchecked", "fallthrough"})
-    protected final java.lang.Object dynamicMethod(
-        com.google.protobuf.GeneratedMessageLite.MethodToInvoke method,
-        java.lang.Object arg0, java.lang.Object arg1) {
-      switch (method) {
-        case NEW_MUTABLE_INSTANCE: {
-          return new nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelResponse();
-        }
-        case NEW_BUILDER: {
-          return new Builder();
-        }
-        case BUILD_MESSAGE_INFO: {
-            java.lang.Object[] objects = new java.lang.Object[] {
-              "bitField0_",
-              "status_",
-              nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.ResponseStatus.internalGetVerifier(),
-            };
-            java.lang.String info =
-                "\u0001\u0001\u0000\u0001\u0001\u0001\u0001\u0000\u0000\u0001\u0001\u050c\u0000";
-            return newMessageInfo(DEFAULT_INSTANCE, info, objects);
-        }
-        // fall through
-        case GET_DEFAULT_INSTANCE: {
-          return DEFAULT_INSTANCE;
-        }
-        case GET_PARSER: {
-          com.google.protobuf.Parser<nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelResponse> parser = PARSER;
-          if (parser == null) {
-            synchronized (nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelResponse.class) {
-              parser = PARSER;
-              if (parser == null) {
-                parser =
-                    new DefaultInstanceBasedParser<nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelResponse>(
-                        DEFAULT_INSTANCE);
-                PARSER = parser;
-              }
-            }
-          }
-          return parser;
-      }
-      case GET_MEMOIZED_IS_INITIALIZED: {
-        return memoizedIsInitialized;
-      }
-      case SET_MEMOIZED_IS_INITIALIZED: {
-        memoizedIsInitialized = (byte) (arg0 == null ? 0 : 1);
-        return null;
-      }
-      }
-      throw new UnsupportedOperationException();
-    }
-
-
-    // @@protoc_insertion_point(class_scope:garmin_vivomovehr.FindMyWatchCancelResponse)
-    private static final nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelResponse DEFAULT_INSTANCE;
-    static {
-      FindMyWatchCancelResponse defaultInstance = new FindMyWatchCancelResponse();
-      // New instances are implicitly immutable so no need to make
-      // immutable.
-      DEFAULT_INSTANCE = defaultInstance;
-      com.google.protobuf.GeneratedMessageLite.registerDefaultInstance(
-        FindMyWatchCancelResponse.class, defaultInstance);
-    }
-
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchCancelResponse getDefaultInstance() {
-      return DEFAULT_INSTANCE;
-    }
-
-    private static volatile com.google.protobuf.Parser<FindMyWatchCancelResponse> PARSER;
-
-    public static com.google.protobuf.Parser<FindMyWatchCancelResponse> parser() {
       return DEFAULT_INSTANCE.getParserForType();
     }
   }
