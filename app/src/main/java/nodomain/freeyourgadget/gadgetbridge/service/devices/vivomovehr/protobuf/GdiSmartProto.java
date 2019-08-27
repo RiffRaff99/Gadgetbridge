@@ -38,6 +38,15 @@ public final class GdiSmartProto {
      * <code>optional .garmin_vivomovehr.FindMyWatchService find_my_watch_service = 12;</code>
      */
     nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService getFindMyWatchService();
+
+    /**
+     * <code>optional .garmin_vivomovehr.SmsNotificationService sms_notification_service = 16;</code>
+     */
+    boolean hasSmsNotificationService();
+    /**
+     * <code>optional .garmin_vivomovehr.SmsNotificationService sms_notification_service = 16;</code>
+     */
+    nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmsNotification.SmsNotificationService getSmsNotificationService();
   }
   /**
    * Protobuf type {@code garmin_vivomovehr.Smart}
@@ -222,6 +231,64 @@ public final class GdiSmartProto {
      */
     private void clearFindMyWatchService() {  findMyWatchService_ = null;
       bitField0_ = (bitField0_ & ~0x00000004);
+    }
+
+    public static final int SMS_NOTIFICATION_SERVICE_FIELD_NUMBER = 16;
+    private nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmsNotification.SmsNotificationService smsNotificationService_;
+    /**
+     * <code>optional .garmin_vivomovehr.SmsNotificationService sms_notification_service = 16;</code>
+     */
+    @java.lang.Override
+    public boolean hasSmsNotificationService() {
+      return ((bitField0_ & 0x00000008) != 0);
+    }
+    /**
+     * <code>optional .garmin_vivomovehr.SmsNotificationService sms_notification_service = 16;</code>
+     */
+    @java.lang.Override
+    public nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmsNotification.SmsNotificationService getSmsNotificationService() {
+      return smsNotificationService_ == null ? nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmsNotification.SmsNotificationService.getDefaultInstance() : smsNotificationService_;
+    }
+    /**
+     * <code>optional .garmin_vivomovehr.SmsNotificationService sms_notification_service = 16;</code>
+     */
+    private void setSmsNotificationService(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmsNotification.SmsNotificationService value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      smsNotificationService_ = value;
+      bitField0_ |= 0x00000008;
+      }
+    /**
+     * <code>optional .garmin_vivomovehr.SmsNotificationService sms_notification_service = 16;</code>
+     */
+    private void setSmsNotificationService(
+        nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmsNotification.SmsNotificationService.Builder builderForValue) {
+      smsNotificationService_ = builderForValue.build();
+      bitField0_ |= 0x00000008;
+    }
+    /**
+     * <code>optional .garmin_vivomovehr.SmsNotificationService sms_notification_service = 16;</code>
+     */
+    @java.lang.SuppressWarnings({"ReferenceEquality"})
+    private void mergeSmsNotificationService(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmsNotification.SmsNotificationService value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      if (smsNotificationService_ != null &&
+          smsNotificationService_ != nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmsNotification.SmsNotificationService.getDefaultInstance()) {
+        smsNotificationService_ =
+          nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmsNotification.SmsNotificationService.newBuilder(smsNotificationService_).mergeFrom(value).buildPartial();
+      } else {
+        smsNotificationService_ = value;
+      }
+      bitField0_ |= 0x00000008;
+    }
+    /**
+     * <code>optional .garmin_vivomovehr.SmsNotificationService sms_notification_service = 16;</code>
+     */
+    private void clearSmsNotificationService() {  smsNotificationService_ = null;
+      bitField0_ = (bitField0_ & ~0x00000008);
     }
 
     public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto.Smart parseFrom(
@@ -460,6 +527,53 @@ public final class GdiSmartProto {
         return this;
       }
 
+      /**
+       * <code>optional .garmin_vivomovehr.SmsNotificationService sms_notification_service = 16;</code>
+       */
+      @java.lang.Override
+      public boolean hasSmsNotificationService() {
+        return instance.hasSmsNotificationService();
+      }
+      /**
+       * <code>optional .garmin_vivomovehr.SmsNotificationService sms_notification_service = 16;</code>
+       */
+      @java.lang.Override
+      public nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmsNotification.SmsNotificationService getSmsNotificationService() {
+        return instance.getSmsNotificationService();
+      }
+      /**
+       * <code>optional .garmin_vivomovehr.SmsNotificationService sms_notification_service = 16;</code>
+       */
+      public Builder setSmsNotificationService(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmsNotification.SmsNotificationService value) {
+        copyOnWrite();
+        instance.setSmsNotificationService(value);
+        return this;
+        }
+      /**
+       * <code>optional .garmin_vivomovehr.SmsNotificationService sms_notification_service = 16;</code>
+       */
+      public Builder setSmsNotificationService(
+          nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmsNotification.SmsNotificationService.Builder builderForValue) {
+        copyOnWrite();
+        instance.setSmsNotificationService(builderForValue);
+        return this;
+      }
+      /**
+       * <code>optional .garmin_vivomovehr.SmsNotificationService sms_notification_service = 16;</code>
+       */
+      public Builder mergeSmsNotificationService(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmsNotification.SmsNotificationService value) {
+        copyOnWrite();
+        instance.mergeSmsNotificationService(value);
+        return this;
+      }
+      /**
+       * <code>optional .garmin_vivomovehr.SmsNotificationService sms_notification_service = 16;</code>
+       */
+      public Builder clearSmsNotificationService() {  copyOnWrite();
+        instance.clearSmsNotificationService();
+        return this;
+      }
+
       // @@protoc_insertion_point(builder_scope:garmin_vivomovehr.Smart)
     }
     private byte memoizedIsInitialized = 2;
@@ -481,10 +595,11 @@ public final class GdiSmartProto {
               "calendarEventsService_",
               "deviceStatusService_",
               "findMyWatchService_",
+              "smsNotificationService_",
             };
             java.lang.String info =
-                "\u0001\u0003\u0000\u0001\u0001\f\u0003\u0000\u0000\u0001\u0001\t\u0000\b\t\u0001" +
-                "\f\u0409\u0002";
+                "\u0001\u0004\u0000\u0001\u0001\u0010\u0004\u0000\u0000\u0001\u0001\t\u0000\b\t\u0001" +
+                "\f\u0409\u0002\u0010\t\u0003";
             return newMessageInfo(DEFAULT_INSTANCE, info, objects);
         }
         // fall through

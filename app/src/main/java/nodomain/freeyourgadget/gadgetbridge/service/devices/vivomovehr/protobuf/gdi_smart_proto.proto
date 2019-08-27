@@ -6,11 +6,13 @@ option java_package = "nodomain.freeyourgadget.gadgetbridge.service.devices.vivo
 
 import "gdi_find_my_watch.proto";
 import "gdi_device_status.proto";
+import "gdi_sms_notification.proto";
 
 message Smart {
     optional CalendarService calendar_events_service = 1;
     optional DeviceStatusService device_status_service = 8;
     optional FindMyWatchService find_my_watch_service = 12;
+    optional SmsNotificationService sms_notification_service = 16;
 }
 
 message CalendarService {

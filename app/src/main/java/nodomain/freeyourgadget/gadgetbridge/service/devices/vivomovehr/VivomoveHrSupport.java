@@ -27,6 +27,9 @@ import nodomain.freeyourgadget.gadgetbridge.impl.GBDevice;
 import nodomain.freeyourgadget.gadgetbridge.model.*;
 import nodomain.freeyourgadget.gadgetbridge.service.btle.AbstractBTLEDeviceSupport;
 import nodomain.freeyourgadget.gadgetbridge.service.btle.TransactionBuilder;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.FitBool;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.FitMessage;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.FitMessageDefinitions;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.*;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiDeviceStatus;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch;
@@ -402,6 +405,12 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
 
     private void processResponseMessage(ResponseMessage responseMessage, byte[] packet) {
         switch (responseMessage.requestID) {
+            case VivomoveConstants.MESSAGE_FIT_DEFINITION:
+                processFitDefinitionResponse(FitDefinitionResponseMessage.parsePacket(packet));
+                break;
+            case VivomoveConstants.MESSAGE_FIT_DATA:
+                processFitDataResponse(FitDataResponseMessage.parsePacket(packet));
+                break;
             case VivomoveConstants.MESSAGE_PROTOBUF_REQUEST:
                 processProtobufRequestResponse(ProtobufRequestResponseMessage.parsePacket(packet));
                 break;
@@ -409,6 +418,14 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
                 LOG.info("Received response to message {}: {}", responseMessage.requestID, responseMessage.getStatusStr());
                 break;
         }
+    }
+
+    private void processFitDefinitionResponse(FitDefinitionResponseMessage responseMessage) {
+        LOG.info("Received response to FIT definition message: status={}, FIT response={}", responseMessage.status, responseMessage.fitResponse);
+    }
+
+    private void processFitDataResponse(FitDataResponseMessage responseMessage) {
+        LOG.info("Received response to FIT data message: status={}, FIT response={}", responseMessage.status, responseMessage.fitResponse);
     }
 
     private void processProtobufRequestResponse(ProtobufRequestResponseMessage responseMessage) {
@@ -499,6 +516,19 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
                                 GdiDeviceStatus.DeviceStatusService.newBuilder()
                                         .setRemoteDeviceBatteryStatusRequest(
                                                 GdiDeviceStatus.DeviceStatusService.RemoteDeviceBatteryStatusRequest.newBuilder()
+                                        )
+                        )
+                        .build()
+                        .toByteArray());
+    }
+
+    private void requestActivityStatus() {
+        sendProtobufRequest(
+                GdiSmartProto.Smart.newBuilder()
+                        .setDeviceStatusService(
+                                GdiDeviceStatus.DeviceStatusService.newBuilder()
+                                        .setActivityStatusRequest(
+                                                GdiDeviceStatus.DeviceStatusService.ActivityStatusRequest.newBuilder()
                                         )
                         )
                         .build()
@@ -675,17 +705,14 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
 
     @Override
     public void onSetConstantVibration(int integer) {
-
     }
 
     @Override
     public void onScreenshotReq() {
-
     }
 
     @Override
     public void onEnableHeartRateSleepSupport(boolean enable) {
-
     }
 
     @Override
@@ -695,37 +722,36 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
 
     @Override
     public void onAddCalendarEvent(CalendarEventSpec calendarEventSpec) {
-
     }
 
     @Override
     public void onDeleteCalendarEvent(byte type, long id) {
-
     }
 
     @Override
     public void onSendConfiguration(String config) {
-
     }
 
     @Override
     public void onReadConfiguration(String config) {
-
     }
 
     @Override
     public void onTestNewFunction() {
         dbg("onTestNewFunction()");
-        sendProtobufRequest(
-                GdiSmartProto.Smart.newBuilder()
-                        .setDeviceStatusService(
-                                GdiDeviceStatus.DeviceStatusService.newBuilder()
-                                        .setActivityStatusRequest(
-                                                GdiDeviceStatus.DeviceStatusService.ActivityStatusRequest.newBuilder()
-                                        )
-                        )
-                        .build()
-                        .toByteArray());
+        sendMessage(new FitDefinitionMessage(Arrays.asList(FitMessageDefinitions.definitionConnectivity)).packet);
+        final FitMessage connectivityMessage = new FitMessage(FitMessageDefinitions.definitionConnectivity);
+        connectivityMessage.setField(0, FitBool.TRUE);
+        connectivityMessage.setField(1, FitBool.TRUE);
+        connectivityMessage.setField(2, FitBool.INVALID);
+        connectivityMessage.setField(4, FitBool.TRUE);
+        connectivityMessage.setField(5, FitBool.TRUE);
+        connectivityMessage.setField(6, FitBool.TRUE);
+        connectivityMessage.setField(8, FitBool.TRUE);
+        connectivityMessage.setField(9, FitBool.TRUE);
+        connectivityMessage.setField(10, FitBool.TRUE);
+        connectivityMessage.setField(13, FitBool.TRUE);
+        sendMessage(new FitDataMessage(Arrays.asList(connectivityMessage)).packet);
     }
 
     @Override

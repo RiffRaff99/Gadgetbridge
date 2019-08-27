@@ -1,6 +1,14 @@
 package nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages;
 
 public class ProtobufRequestResponseMessage {
+    public static final int NO_ERROR = 0;
+    public static final int UNKNOWN_REQUEST_ID = 100;
+    public static final int DUPLICATE_PACKET = 101;
+    public static final int MISSING_PACKET = 102;
+    public static final int EXCEEDED_TOTAL_PROTOBUF_LENGTH = 103;
+    public static final int PROTOBUF_PARSE_ERROR = 200;
+    public static final int UNKNOWN_PROTOBUF_MESSAGE = 201;
+
     public final int status;
     public final int requestId;
     public final int dataOffset;

@@ -54,6 +54,8 @@ public class VivomoveConstants {
     public static final int GARMIN_TIME_EPOCH = 631065600;
 
     public static final int MESSAGE_RESPONSE = 5000;
+    public static final int MESSAGE_FIT_DEFINITION = 5011;
+    public static final int MESSAGE_FIT_DATA = 5012;
     public static final int MESSAGE_WEATHER_REQUEST = 5014;
     public static final int MESSAGE_BATTERY_STATUS = 5023;
     public static final int MESSAGE_DEVICE_INFORMATION = 5024;
