@@ -27,13 +27,12 @@ import nodomain.freeyourgadget.gadgetbridge.impl.GBDevice;
 import nodomain.freeyourgadget.gadgetbridge.model.*;
 import nodomain.freeyourgadget.gadgetbridge.service.btle.AbstractBTLEDeviceSupport;
 import nodomain.freeyourgadget.gadgetbridge.service.btle.TransactionBuilder;
-import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.FitBool;
-import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.FitMessage;
-import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.FitMessageDefinitions;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.*;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.*;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiDeviceStatus;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto;
+import nodomain.freeyourgadget.gadgetbridge.util.DateTimeUtils;
 import nodomain.freeyourgadget.gadgetbridge.util.GB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +62,22 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
     private Set<GarminCapability> capabilities;
 
     private int lastProtobufRequestId;
+    private WeatherSpec lastWeatherSpec = defaultWeatherSpec();
+
+    private static WeatherSpec defaultWeatherSpec() {
+        final WeatherSpec weatherSpec = new WeatherSpec();
+        weatherSpec.timestamp = (int) (System.currentTimeMillis() / 1000);
+        weatherSpec.currentConditionCode = 212;
+        weatherSpec.currentCondition = Weather.getConditionString(weatherSpec.currentConditionCode);
+        weatherSpec.currentHumidity = 76;
+        weatherSpec.location = "Test";
+        weatherSpec.currentTemp = 27;
+        weatherSpec.todayMaxTemp = 29;
+        weatherSpec.todayMinTemp = 16;
+        weatherSpec.windSpeed = 18;
+        weatherSpec.windDirection = 244;
+        weatherSpec.forecasts.add(new WeatherSpec.Forecast(17, 28, 905, 65));
+    }
 
     public VivomoveHrSupport() {
         super(LOG);
@@ -397,7 +412,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
         calendar.setTimeInMillis(now);
         int dstOffset = calendar.get(Calendar.DST_OFFSET) / 1000;
         int timeZoneOffset = timeZone.getOffset(now) / 1000;
-        int garminTimestamp = (int) (now / 1000) - VivomoveConstants.GARMIN_TIME_EPOCH;
+        int garminTimestamp = GarminTimeUtils.javaMillisToGarminTimestamp(now);
 
         LOG.info("Processing current time request #{}: time={}, DST={}, ofs={}", requestMessage.referenceID, garminTimestamp, dstOffset, timeZoneOffset);
         sendMessage(new CurrentTimeRequestResponseMessage(0, requestMessage.referenceID, garminTimestamp, timeZoneOffset, dstOffset).packet);
@@ -469,6 +484,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
         // and everything is ready now
         sendSyncReady();
         requestBatteryStatusUpdate();
+        sendFitDefinitions();
     }
 
     private void sendMessage(byte[] messageBytes) {
@@ -548,7 +564,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
         calendar.setTimeInMillis(now);
         int dstOffset = calendar.get(Calendar.DST_OFFSET) / 1000;
         int timeZoneOffset = 0; // timeZone.getOffset(now) / 1000;
-        int garminTimestamp = (int) (now / 1000) - VivomoveConstants.GARMIN_TIME_EPOCH;
+        int garminTimestamp = GarminTimeUtils.javaMillisToGarminTimestamp(now);
 
         settings.put(GarminDeviceSetting.CURRENT_TIME, garminTimestamp);
         settings.put(GarminDeviceSetting.DAYLIGHT_SAVINGS_TIME_OFFSET, dstOffset);
@@ -566,6 +582,128 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
         settings.put(GarminDeviceSetting.AUTO_UPLOAD_ENABLED, true);
         LOG.info("Sending settings");
         sendMessage(builder, new SetDeviceSettingsMessage(settings).packet);
+    }
+
+    private void sendFitDefinitions() {
+        sendMessage(new FitDefinitionMessage(Arrays.asList(
+                FitMessageDefinitions.definitionConnectivity,
+                FitMessageDefinitions.definitionWeatherConditions
+        )).packet);
+    }
+
+    private void sendFitConnectivityMessage() {
+        final FitMessage connectivityMessage = new FitMessage(FitMessageDefinitions.definitionConnectivity);
+        connectivityMessage.setField(0, FitBool.TRUE);
+        connectivityMessage.setField(1, FitBool.TRUE);
+        connectivityMessage.setField(2, FitBool.INVALID);
+        connectivityMessage.setField(4, FitBool.TRUE);
+        connectivityMessage.setField(5, FitBool.TRUE);
+        connectivityMessage.setField(6, FitBool.TRUE);
+        connectivityMessage.setField(8, FitBool.TRUE);
+        connectivityMessage.setField(9, FitBool.TRUE);
+        connectivityMessage.setField(10, FitBool.TRUE);
+        connectivityMessage.setField(13, FitBool.TRUE);
+        sendMessage(new FitDataMessage(Collections.singletonList(connectivityMessage)).packet);
+    }
+
+    private void sendWeatherConditions() {
+        final WeatherSpec weather = lastWeatherSpec;
+        final FitMessage weatherConditionsMessage = new FitMessage(FitMessageDefinitions.definitionWeatherConditions);
+        weatherConditionsMessage.setField(253, GarminTimeUtils.unixTimeToGarminTimestamp(weather.timestamp));
+        weatherConditionsMessage.setField(0, 0); // 0 = current, 2 = hourly_forecast, 3 = daily_forecast
+        weatherConditionsMessage.setField(1, weather.currentTemp);
+        weatherConditionsMessage.setField(2, openWeatherCodeToFitWeatherStatus(weather.currentConditionCode));
+        weatherConditionsMessage.setField(3, weather.windDirection);
+        weatherConditionsMessage.setField(4, weather.windSpeed);
+        weatherConditionsMessage.setField(7, weather.currentHumidity);
+        weatherConditionsMessage.setField(8, weather.location);
+        final Calendar timestamp = Calendar.getInstance();
+        timestamp.setTimeInMillis(weather.timestamp * 1000L);
+        weatherConditionsMessage.setField(12, timestamp.get(Calendar.DAY_OF_WEEK));
+        weatherConditionsMessage.setField(13, weather.todayMaxTemp);
+        weatherConditionsMessage.setField(14, weather.todayMinTemp);
+
+        sendMessage(new FitDataMessage(Collections.singletonList(weatherConditionsMessage)).packet);
+    }
+
+    private int openWeatherCodeToFitWeatherStatus(int openWeatherCode) {
+        switch (openWeatherCode) {
+            case 800:
+                // clear
+                return 0;
+            case 801:
+            case 802:
+                // partly_cloudy
+                return 1;
+            case 803:
+                // mostly cloudy
+                return 2;
+            case 804:
+                // cloudy
+                return 22;
+            case 701:
+            case 721:
+                // hazy
+                return 11;
+            case 741:
+                // fog
+                return 8;
+            case 771:
+            case 781:
+                // windy
+                return 5;
+            case 615:
+                // light_rain_snow
+                return 20;
+            case 616:
+                // heavy_rain_snow
+                return 21;
+            case 611:
+            case 612:
+            case 613:
+                // wintry_mix
+                return 7;
+            case 500:
+            case 520:
+            case 521:
+            case 300:
+            case 310:
+            case 313:
+                // light_rain
+                return 16;
+            case 501:
+            case 531:
+            case 301:
+            case 311:
+                // rain
+                return 3;
+            case 502:
+            case 503:
+            case 504:
+            case 522:
+            case 302:
+            case 312:
+            case 314:
+            case 321:
+                // heavy_rain
+                return 17;
+            case 511:
+                // unknown_precipitation
+                return 15;
+
+        }
+/*
+        rain	3
+        snow	4
+        thunderstorms	6
+        scattered_showers	13
+        scattered_thunderstorms	14
+        unknown_precipitation	15
+        light_rain	16
+        heavy_rain	17
+        light_snow	18
+        heavy_snow	19
+*/
     }
 
     private void sendBatteryStatus() {
@@ -739,23 +877,13 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
     @Override
     public void onTestNewFunction() {
         dbg("onTestNewFunction()");
-        sendMessage(new FitDefinitionMessage(Arrays.asList(FitMessageDefinitions.definitionConnectivity)).packet);
-        final FitMessage connectivityMessage = new FitMessage(FitMessageDefinitions.definitionConnectivity);
-        connectivityMessage.setField(0, FitBool.TRUE);
-        connectivityMessage.setField(1, FitBool.TRUE);
-        connectivityMessage.setField(2, FitBool.INVALID);
-        connectivityMessage.setField(4, FitBool.TRUE);
-        connectivityMessage.setField(5, FitBool.TRUE);
-        connectivityMessage.setField(6, FitBool.TRUE);
-        connectivityMessage.setField(8, FitBool.TRUE);
-        connectivityMessage.setField(9, FitBool.TRUE);
-        connectivityMessage.setField(10, FitBool.TRUE);
-        connectivityMessage.setField(13, FitBool.TRUE);
-        sendMessage(new FitDataMessage(Arrays.asList(connectivityMessage)).packet);
+        sendWeatherConditions();
     }
 
     @Override
     public void onSendWeather(WeatherSpec weatherSpec) {
         dbg("onSendWeather");
+        this.lastWeatherSpec = weatherSpec;
+        sendWeatherConditions();
     }
 }

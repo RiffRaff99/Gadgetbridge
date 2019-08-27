@@ -14,12 +14,12 @@ public class FitMessageFieldDefinition {
         this.fieldNumber = fieldNumber;
         this.fieldSize = fieldSize;
         this.fieldType = fieldType;
-        this.defaultValue = defaultValue;
+        this.defaultValue = defaultValue == null ? fieldType.invalidValue : defaultValue;
     }
 
     public void writeToMessage(MessageWriter writer) {
         writer.writeByte(fieldNumber);
         writer.writeByte(fieldSize);
-        writer.writeByte(fieldType.ordinal());
+        writer.writeByte(fieldType.typeID);
     }
 }
