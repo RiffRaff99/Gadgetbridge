@@ -19,14 +19,17 @@ public class FileDownloadQueue {
     private static final Logger LOG = LoggerFactory.getLogger(FileDownloadQueue.class);
 
     private final VivomoveHrCommunicator communicator;
+    private final FileDownloadListener listener;
 
     private final Queue<QueueItem> queue = new LinkedList<>();
     private final Set<Integer> queuedFileIndices = new HashSet<>();
 
     private QueueItem currentlyDownloadingItem;
+    private long totalRemainingBytes;
 
-    public FileDownloadQueue(VivomoveHrCommunicator communicator) {
+    public FileDownloadQueue(VivomoveHrCommunicator communicator, FileDownloadListener listener) {
         this.communicator = communicator;
+        this.listener = listener;
     }
 
     public void addToDownloadQueue(int fileIndex, int dataSize) {
@@ -36,7 +39,14 @@ public class FileDownloadQueue {
         }
         queue.add(new QueueItem(fileIndex, dataSize));
         queuedFileIndices.add(fileIndex);
+        totalRemainingBytes += dataSize;
         checkRequestNextDownload();
+    }
+
+    public void cancelAllDownloads() {
+        queue.clear();
+        currentlyDownloadingItem = null;
+        communicator.sendMessage(new FileTransferDataResponseMessage(VivomoveConstants.STATUS_ACK, FileTransferDataResponseMessage.RESPONSE_ABORT_DOWNLOAD_REQUEST, 0).packet);
     }
 
     private void checkRequestNextDownload() {
@@ -51,7 +61,7 @@ public class FileDownloadQueue {
         requestNextDownload();
     }
 
-    public void requestNextDownload() {
+    private void requestNextDownload() {
         currentlyDownloadingItem = queue.remove();
         final int fileIndex = currentlyDownloadingItem.fileIndex;
         LOG.info("Requesting download of {}", fileIndex);
@@ -67,9 +77,12 @@ public class FileDownloadQueue {
 
         if (responseMessage.status == VivomoveConstants.STATUS_ACK && responseMessage.response == DownloadRequestResponseMessage.RESPONSE_DOWNLOAD_REQUEST_OKAY) {
             LOG.info("Received response for download request of {}: {}/{}, {}B", currentlyDownloadingItem.fileIndex, responseMessage.status, responseMessage.response, responseMessage.fileSize);
+            totalRemainingBytes += responseMessage.fileSize - currentlyDownloadingItem.dataSize;
             currentlyDownloadingItem.setDataSize(responseMessage.fileSize);
         } else {
             LOG.error("Received error response for download request of {}: {}/{}", currentlyDownloadingItem.fileIndex, responseMessage.status, responseMessage.response);
+            listener.onFileDownloadError(currentlyDownloadingItem.fileIndex);
+            totalRemainingBytes -= currentlyDownloadingItem.dataSize;
             currentlyDownloadingItem = null;
         }
     }
@@ -96,13 +109,16 @@ public class FileDownloadQueue {
         final int dataCrc = ChecksumCalculator.computeCrc(dataMessage.data, 0, dataMessage.data.length);
         if (dataCrc != dataMessage.crc) {
             LOG.warn("Invalid CRC ({} vs {}) for {}B data @{} of {}", dataCrc, dataMessage.crc, dataMessage.data.length, dataMessage.dataOffset, currentlyDownloadingItem.fileIndex);
-            communicator.sendMessage(new FileTransferDataResponseMessage(VivomoveConstants.STATUS_ACK, FileTransferDataResponseMessage.RESPONSE_ERROR_CRC_MISMATCH, currentlyDownloadingItem.dataOffset).packet);
-            return;
+            //communicator.sendMessage(new FileTransferDataResponseMessage(VivomoveConstants.STATUS_ACK, FileTransferDataResponseMessage.RESPONSE_ERROR_CRC_MISMATCH, currentlyDownloadingItem.dataOffset).packet);
+            //return;
         }
 
-        LOG.info("Received {}B@{} of {}", dataMessage.data.length, dataMessage.dataOffset, currentlyDownloadingItem.fileIndex);
+        LOG.info("Received {}B@{}/{} of {}", dataMessage.data.length, dataMessage.dataOffset, currentlyDownloadingItem.dataSize, currentlyDownloadingItem.fileIndex);
         currentlyDownloadingItem.appendData(dataMessage.data);
         communicator.sendMessage(new FileTransferDataResponseMessage(VivomoveConstants.STATUS_ACK, FileTransferDataResponseMessage.RESPONSE_TRANSFER_SUCCESSFUL, currentlyDownloadingItem.dataOffset).packet);
+
+        totalRemainingBytes -= dataMessage.data.length;
+        listener.onDownloadProgress(totalRemainingBytes);
 
         if (currentlyDownloadingItem.dataOffset >= currentlyDownloadingItem.dataSize) {
             LOG.info("Transfer of file #{} complete, {}/{}B downloaded", currentlyDownloadingItem.fileIndex, currentlyDownloadingItem.dataOffset, currentlyDownloadingItem.dataSize);
@@ -115,9 +131,9 @@ public class FileDownloadQueue {
     private void reportCompletedDownload(QueueItem downloadedItem) {
         if (downloadedItem.fileIndex == 0) {
             final DirectoryData directoryData = DirectoryData.parse(downloadedItem.data);
-            // TODO: report downloaded directory data
+            listener.onDirectoryDownloaded(directoryData);
         } else {
-            // TODO: report downloaded file
+            listener.onFileDownloadComplete(downloadedItem.fileIndex, downloadedItem.data);
         }
     }
 

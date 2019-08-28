@@ -77,7 +77,7 @@ public class GfdiPacketParser {
             }
             insidePacket = true;
         }
-        boolean singleZeroLast = false;
+        boolean endedWithFullChunk = false;
         while (bufferPos < buffer.length) {
             int chunkSize = -1;
             int chunkStart = bufferPos;
@@ -98,7 +98,7 @@ public class GfdiPacketParser {
             if (chunkSize == 0) {
                 // end of packet
                 // drop the last zero
-                if (singleZeroLast && false) {
+                if (endedWithFullChunk) {
                     // except when it was explicitly added (TODO: ugly, is it correct?)
                     packet = packetBuffer;
                 } else {
@@ -128,7 +128,7 @@ public class GfdiPacketParser {
             System.arraycopy(buffer, chunkStart + 1, packetBuffer, packetPos, chunkSize - 1);
             bufferPos = chunkStart + chunkSize;
 
-            singleZeroLast = chunkSize == 1;
+            endedWithFullChunk = chunkSize == 255;
             startOfPacket = false;
         }
     }

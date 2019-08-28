@@ -27,6 +27,9 @@ import nodomain.freeyourgadget.gadgetbridge.impl.GBDevice;
 import nodomain.freeyourgadget.gadgetbridge.model.*;
 import nodomain.freeyourgadget.gadgetbridge.service.btle.AbstractBTLEDeviceSupport;
 import nodomain.freeyourgadget.gadgetbridge.service.btle.TransactionBuilder;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.downloads.DirectoryData;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.downloads.DirectoryEntry;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.downloads.FileDownloadListener;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.downloads.FileDownloadQueue;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.FitBool;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.FitMessage;
@@ -38,15 +41,20 @@ import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto;
 import nodomain.freeyourgadget.gadgetbridge.service.serial.GBDeviceProtocol;
+import nodomain.freeyourgadget.gadgetbridge.util.FileUtils;
 import nodomain.freeyourgadget.gadgetbridge.util.GB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.*;
 
 import static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.BinaryUtils.*;
 
-public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
+public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements FileDownloadListener {
     private static final Logger LOG = LoggerFactory.getLogger(VivomoveHrSupport.class);
 
     private Handler handler;
@@ -106,7 +114,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
 
         builder.setGattCallback(this);
         communicator.start(builder);
-        fileDownloadQueue = new FileDownloadQueue(communicator);
+        fileDownloadQueue = new FileDownloadQueue(communicator, this);
 
         gbDevice.setState(GBDevice.State.INITIALIZED);
         gbDevice.sendDeviceUpdateIntent(getContext());
@@ -294,7 +302,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
                 break;
 
             case VivomoveConstants.MESSAGE_FILE_TRANSFER_DATA:
-                processFileTransferDataMessage(FileTransferDataMessage.parsePacket(packet));
+                fileDownloadQueue.onFileTransferData(FileTransferDataMessage.parsePacket(packet));
                 break;
 
             case VivomoveConstants.MESSAGE_DEVICE_INFORMATION:
@@ -329,11 +337,6 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
                 LOG.info("Unknown message type {}: {}", messageType, GB.hexdump(packet, 0, packet.length));
                 break;
         }
-    }
-
-    private void processFileTransferDataMessage(FileTransferDataMessage message) {
-        LOG.info("Received file transfer: {}B@{}, flags={}, crc={}: {}", message.data.length, message.dataOffset, message.flags, message.crc, GB.hexdump(message.data, 0, message.data.length));
-        sendMessage(new FileTransferDataResponseMessage(VivomoveConstants.STATUS_ACK, FileTransferDataResponseMessage.RESPONSE_TRANSFER_SUCCESSFUL, 0).packet);
     }
 
     private void processSyncRequest(SyncRequestMessage requestMessage) {
@@ -441,6 +444,9 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
             case VivomoveConstants.MESSAGE_DIRECTORY_FILE_FILTER_REQUEST:
                 processDirectoryFileFilterResponse(DirectoryFileFilterResponseMessage.parsePacket(packet));
                 break;
+            case VivomoveConstants.MESSAGE_DOWNLOAD_REQUEST:
+                fileDownloadQueue.onDownloadRequestResponse(DownloadRequestResponseMessage.parsePacket(packet));
+                break;
             case VivomoveConstants.MESSAGE_FIT_DEFINITION:
                 processFitDefinitionResponse(FitDefinitionResponseMessage.parsePacket(packet));
                 break;
@@ -468,7 +474,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
     private void processDirectoryFileFilterResponse(DirectoryFileFilterResponseMessage responseMessage) {
         if (responseMessage.status == VivomoveConstants.STATUS_ACK && responseMessage.response == DirectoryFileFilterResponseMessage.RESPONSE_DIRECTORY_FILTER_APPLIED) {
             LOG.info("Received response to directory file filter request: {}/{}, requesting download of directory data", responseMessage.status, responseMessage.response);
-            sendMessage(new DownloadRequestMessage(0, 0, 1, 0, 0).packet);
+            fileDownloadQueue.addToDownloadQueue(0, 0);
         } else {
             LOG.error("Directory file filter request failed: {}/{}", responseMessage.status, responseMessage.response);
         }
@@ -803,6 +809,9 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
         */
 
         dbg("onFetchRecordedData " + dataTypes);
+        listFiles(0);
+        // TODO: Localization
+        GB.updateTransferNotification(null, "Downloading list of files", true, 0, getContext());
     }
 
     @Override
@@ -894,7 +903,6 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
     @Override
     public void onTestNewFunction() {
         dbg("onTestNewFunction()");
-        listFiles(DirectoryFileFilterRequestMessage.FILTER_NO_FILTER);
     }
 
     @Override
@@ -902,5 +910,50 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
         dbg("onSendWeather");
         this.lastWeatherSpec = weatherSpec;
         sendWeatherConditions();
+    }
+
+    private long totalDownloadSize;
+    private long lastTransferNotificationTimestamp;
+
+    @Override
+    public void onDirectoryDownloaded(DirectoryData directoryData) {
+        long totalSize = 0;
+        for (DirectoryEntry entry : directoryData.entries) {
+            LOG.info("File #{}: type {}/{}, {}B, flags {}/{}, timestamp {}", entry.fileIndex, entry.fileDataType, entry.fileSubType, entry.fileSize, entry.specificFlags, entry.fileFlags, entry.fileDate);
+            fileDownloadQueue.addToDownloadQueue(entry.fileIndex, entry.fileSize);
+            totalSize += entry.fileSize;
+        }
+        totalDownloadSize = totalSize;
+    }
+
+    @Override
+    public void onFileDownloadComplete(int fileIndex, byte[] data) {
+        LOG.info("Downloaded file {}: {} bytes", fileIndex, data.length);
+        try {
+            final File outputFile = new File(FileUtils.getExternalFilesDir(), "vivomovehr-" + fileIndex + ".fit");
+            FileUtils.copyStreamToFile(new ByteArrayInputStream(data), outputFile);
+        } catch (IOException e) {
+            LOG.error("Unable to save file {}", fileIndex, e);
+        }
+    }
+
+    @Override
+    public void onFileDownloadError(int fileIndex) {
+        LOG.error("Failed to download file {}", fileIndex);
+    }
+
+    @Override
+    public void onDownloadProgress(long remainingBytes) {
+        LOG.info("{}B/{} remaining to download", remainingBytes, totalDownloadSize);
+        final long now = System.currentTimeMillis();
+        if (now - lastTransferNotificationTimestamp < 1000) {
+            // do not issue updates too often
+            return;
+        }
+        if (remainingBytes == 0) {
+            GB.updateTransferNotification(null, null, false, 100, getContext());
+        } else if (totalDownloadSize > 0) {
+            GB.updateTransferNotification(null, "Downloading data", true, Math.round(100.0f * (totalDownloadSize - remainingBytes) / totalDownloadSize), getContext());
+        }
     }
 }
