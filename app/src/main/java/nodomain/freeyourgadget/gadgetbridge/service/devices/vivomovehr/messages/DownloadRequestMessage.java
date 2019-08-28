@@ -3,18 +3,19 @@ package nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages
 import nodomain.freeyourgadget.gadgetbridge.devices.vivomovehr.VivomoveConstants;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.BinaryUtils;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.ChecksumCalculator;
-import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.FitMessage;
 
-public class FitDataMessage {
+public class DownloadRequestMessage {
     public final byte[] packet;
 
-    public FitDataMessage(FitMessage... messages) {
-        final MessageWriter writer = new MessageWriter();
+    public DownloadRequestMessage(int fileIndex, int dataOffset, int request, int crcSeed, int dataSize) {
+        final MessageWriter writer = new MessageWriter(19);
         writer.writeShort(0); // packet size will be filled below
-        writer.writeShort(VivomoveConstants.MESSAGE_FIT_DATA);
-        for (FitMessage message : messages) {
-            message.writeToMessage(writer);
-        }
+        writer.writeShort(VivomoveConstants.MESSAGE_DOWNLOAD_REQUEST);
+        writer.writeShort(fileIndex);
+        writer.writeInt(dataOffset);
+        writer.writeByte(request);
+        writer.writeShort(crcSeed);
+        writer.writeInt(dataSize);
         writer.writeShort(0); // CRC will be filled below
         final byte[] packet = writer.getBytes();
         BinaryUtils.writeShort(packet, 0, packet.length);

@@ -13,15 +13,6 @@ public final class GdiSmartProto {
       com.google.protobuf.MessageLiteOrBuilder {
 
     /**
-     * <code>optional .garmin_vivomovehr.CalendarService calendar_events_service = 1;</code>
-     */
-    boolean hasCalendarEventsService();
-    /**
-     * <code>optional .garmin_vivomovehr.CalendarService calendar_events_service = 1;</code>
-     */
-    nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto.CalendarService getCalendarEventsService();
-
-    /**
      * <code>optional .garmin_vivomovehr.DeviceStatusService device_status_service = 8;</code>
      */
     boolean hasDeviceStatusService();
@@ -38,6 +29,15 @@ public final class GdiSmartProto {
      * <code>optional .garmin_vivomovehr.FindMyWatchService find_my_watch_service = 12;</code>
      */
     nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService getFindMyWatchService();
+
+    /**
+     * <code>optional .garmin_vivomovehr.CoreService core_service = 13;</code>
+     */
+    boolean hasCoreService();
+    /**
+     * <code>optional .garmin_vivomovehr.CoreService core_service = 13;</code>
+     */
+    nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiCore.CoreService getCoreService();
 
     /**
      * <code>optional .garmin_vivomovehr.SmsNotificationService sms_notification_service = 16;</code>
@@ -59,64 +59,6 @@ public final class GdiSmartProto {
     private Smart() {
     }
     private int bitField0_;
-    public static final int CALENDAR_EVENTS_SERVICE_FIELD_NUMBER = 1;
-    private nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto.CalendarService calendarEventsService_;
-    /**
-     * <code>optional .garmin_vivomovehr.CalendarService calendar_events_service = 1;</code>
-     */
-    @java.lang.Override
-    public boolean hasCalendarEventsService() {
-      return ((bitField0_ & 0x00000001) != 0);
-    }
-    /**
-     * <code>optional .garmin_vivomovehr.CalendarService calendar_events_service = 1;</code>
-     */
-    @java.lang.Override
-    public nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto.CalendarService getCalendarEventsService() {
-      return calendarEventsService_ == null ? nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto.CalendarService.getDefaultInstance() : calendarEventsService_;
-    }
-    /**
-     * <code>optional .garmin_vivomovehr.CalendarService calendar_events_service = 1;</code>
-     */
-    private void setCalendarEventsService(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto.CalendarService value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      calendarEventsService_ = value;
-      bitField0_ |= 0x00000001;
-      }
-    /**
-     * <code>optional .garmin_vivomovehr.CalendarService calendar_events_service = 1;</code>
-     */
-    private void setCalendarEventsService(
-        nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto.CalendarService.Builder builderForValue) {
-      calendarEventsService_ = builderForValue.build();
-      bitField0_ |= 0x00000001;
-    }
-    /**
-     * <code>optional .garmin_vivomovehr.CalendarService calendar_events_service = 1;</code>
-     */
-    @java.lang.SuppressWarnings({"ReferenceEquality"})
-    private void mergeCalendarEventsService(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto.CalendarService value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      if (calendarEventsService_ != null &&
-          calendarEventsService_ != nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto.CalendarService.getDefaultInstance()) {
-        calendarEventsService_ =
-          nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto.CalendarService.newBuilder(calendarEventsService_).mergeFrom(value).buildPartial();
-      } else {
-        calendarEventsService_ = value;
-      }
-      bitField0_ |= 0x00000001;
-    }
-    /**
-     * <code>optional .garmin_vivomovehr.CalendarService calendar_events_service = 1;</code>
-     */
-    private void clearCalendarEventsService() {  calendarEventsService_ = null;
-      bitField0_ = (bitField0_ & ~0x00000001);
-    }
-
     public static final int DEVICE_STATUS_SERVICE_FIELD_NUMBER = 8;
     private nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiDeviceStatus.DeviceStatusService deviceStatusService_;
     /**
@@ -124,7 +66,7 @@ public final class GdiSmartProto {
      */
     @java.lang.Override
     public boolean hasDeviceStatusService() {
-      return ((bitField0_ & 0x00000002) != 0);
+      return ((bitField0_ & 0x00000001) != 0);
     }
     /**
      * <code>optional .garmin_vivomovehr.DeviceStatusService device_status_service = 8;</code>
@@ -141,7 +83,7 @@ public final class GdiSmartProto {
         throw new NullPointerException();
       }
       deviceStatusService_ = value;
-      bitField0_ |= 0x00000002;
+      bitField0_ |= 0x00000001;
       }
     /**
      * <code>optional .garmin_vivomovehr.DeviceStatusService device_status_service = 8;</code>
@@ -149,7 +91,7 @@ public final class GdiSmartProto {
     private void setDeviceStatusService(
         nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiDeviceStatus.DeviceStatusService.Builder builderForValue) {
       deviceStatusService_ = builderForValue.build();
-      bitField0_ |= 0x00000002;
+      bitField0_ |= 0x00000001;
     }
     /**
      * <code>optional .garmin_vivomovehr.DeviceStatusService device_status_service = 8;</code>
@@ -166,13 +108,13 @@ public final class GdiSmartProto {
       } else {
         deviceStatusService_ = value;
       }
-      bitField0_ |= 0x00000002;
+      bitField0_ |= 0x00000001;
     }
     /**
      * <code>optional .garmin_vivomovehr.DeviceStatusService device_status_service = 8;</code>
      */
     private void clearDeviceStatusService() {  deviceStatusService_ = null;
-      bitField0_ = (bitField0_ & ~0x00000002);
+      bitField0_ = (bitField0_ & ~0x00000001);
     }
 
     public static final int FIND_MY_WATCH_SERVICE_FIELD_NUMBER = 12;
@@ -182,7 +124,7 @@ public final class GdiSmartProto {
      */
     @java.lang.Override
     public boolean hasFindMyWatchService() {
-      return ((bitField0_ & 0x00000004) != 0);
+      return ((bitField0_ & 0x00000002) != 0);
     }
     /**
      * <code>optional .garmin_vivomovehr.FindMyWatchService find_my_watch_service = 12;</code>
@@ -199,7 +141,7 @@ public final class GdiSmartProto {
         throw new NullPointerException();
       }
       findMyWatchService_ = value;
-      bitField0_ |= 0x00000004;
+      bitField0_ |= 0x00000002;
       }
     /**
      * <code>optional .garmin_vivomovehr.FindMyWatchService find_my_watch_service = 12;</code>
@@ -207,7 +149,7 @@ public final class GdiSmartProto {
     private void setFindMyWatchService(
         nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch.FindMyWatchService.Builder builderForValue) {
       findMyWatchService_ = builderForValue.build();
-      bitField0_ |= 0x00000004;
+      bitField0_ |= 0x00000002;
     }
     /**
      * <code>optional .garmin_vivomovehr.FindMyWatchService find_my_watch_service = 12;</code>
@@ -224,12 +166,70 @@ public final class GdiSmartProto {
       } else {
         findMyWatchService_ = value;
       }
-      bitField0_ |= 0x00000004;
+      bitField0_ |= 0x00000002;
     }
     /**
      * <code>optional .garmin_vivomovehr.FindMyWatchService find_my_watch_service = 12;</code>
      */
     private void clearFindMyWatchService() {  findMyWatchService_ = null;
+      bitField0_ = (bitField0_ & ~0x00000002);
+    }
+
+    public static final int CORE_SERVICE_FIELD_NUMBER = 13;
+    private nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiCore.CoreService coreService_;
+    /**
+     * <code>optional .garmin_vivomovehr.CoreService core_service = 13;</code>
+     */
+    @java.lang.Override
+    public boolean hasCoreService() {
+      return ((bitField0_ & 0x00000004) != 0);
+    }
+    /**
+     * <code>optional .garmin_vivomovehr.CoreService core_service = 13;</code>
+     */
+    @java.lang.Override
+    public nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiCore.CoreService getCoreService() {
+      return coreService_ == null ? nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiCore.CoreService.getDefaultInstance() : coreService_;
+    }
+    /**
+     * <code>optional .garmin_vivomovehr.CoreService core_service = 13;</code>
+     */
+    private void setCoreService(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiCore.CoreService value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      coreService_ = value;
+      bitField0_ |= 0x00000004;
+      }
+    /**
+     * <code>optional .garmin_vivomovehr.CoreService core_service = 13;</code>
+     */
+    private void setCoreService(
+        nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiCore.CoreService.Builder builderForValue) {
+      coreService_ = builderForValue.build();
+      bitField0_ |= 0x00000004;
+    }
+    /**
+     * <code>optional .garmin_vivomovehr.CoreService core_service = 13;</code>
+     */
+    @java.lang.SuppressWarnings({"ReferenceEquality"})
+    private void mergeCoreService(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiCore.CoreService value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      if (coreService_ != null &&
+          coreService_ != nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiCore.CoreService.getDefaultInstance()) {
+        coreService_ =
+          nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiCore.CoreService.newBuilder(coreService_).mergeFrom(value).buildPartial();
+      } else {
+        coreService_ = value;
+      }
+      bitField0_ |= 0x00000004;
+    }
+    /**
+     * <code>optional .garmin_vivomovehr.CoreService core_service = 13;</code>
+     */
+    private void clearCoreService() {  coreService_ = null;
       bitField0_ = (bitField0_ & ~0x00000004);
     }
 
@@ -387,53 +387,6 @@ public final class GdiSmartProto {
 
 
       /**
-       * <code>optional .garmin_vivomovehr.CalendarService calendar_events_service = 1;</code>
-       */
-      @java.lang.Override
-      public boolean hasCalendarEventsService() {
-        return instance.hasCalendarEventsService();
-      }
-      /**
-       * <code>optional .garmin_vivomovehr.CalendarService calendar_events_service = 1;</code>
-       */
-      @java.lang.Override
-      public nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto.CalendarService getCalendarEventsService() {
-        return instance.getCalendarEventsService();
-      }
-      /**
-       * <code>optional .garmin_vivomovehr.CalendarService calendar_events_service = 1;</code>
-       */
-      public Builder setCalendarEventsService(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto.CalendarService value) {
-        copyOnWrite();
-        instance.setCalendarEventsService(value);
-        return this;
-        }
-      /**
-       * <code>optional .garmin_vivomovehr.CalendarService calendar_events_service = 1;</code>
-       */
-      public Builder setCalendarEventsService(
-          nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto.CalendarService.Builder builderForValue) {
-        copyOnWrite();
-        instance.setCalendarEventsService(builderForValue);
-        return this;
-      }
-      /**
-       * <code>optional .garmin_vivomovehr.CalendarService calendar_events_service = 1;</code>
-       */
-      public Builder mergeCalendarEventsService(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto.CalendarService value) {
-        copyOnWrite();
-        instance.mergeCalendarEventsService(value);
-        return this;
-      }
-      /**
-       * <code>optional .garmin_vivomovehr.CalendarService calendar_events_service = 1;</code>
-       */
-      public Builder clearCalendarEventsService() {  copyOnWrite();
-        instance.clearCalendarEventsService();
-        return this;
-      }
-
-      /**
        * <code>optional .garmin_vivomovehr.DeviceStatusService device_status_service = 8;</code>
        */
       @java.lang.Override
@@ -528,6 +481,53 @@ public final class GdiSmartProto {
       }
 
       /**
+       * <code>optional .garmin_vivomovehr.CoreService core_service = 13;</code>
+       */
+      @java.lang.Override
+      public boolean hasCoreService() {
+        return instance.hasCoreService();
+      }
+      /**
+       * <code>optional .garmin_vivomovehr.CoreService core_service = 13;</code>
+       */
+      @java.lang.Override
+      public nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiCore.CoreService getCoreService() {
+        return instance.getCoreService();
+      }
+      /**
+       * <code>optional .garmin_vivomovehr.CoreService core_service = 13;</code>
+       */
+      public Builder setCoreService(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiCore.CoreService value) {
+        copyOnWrite();
+        instance.setCoreService(value);
+        return this;
+        }
+      /**
+       * <code>optional .garmin_vivomovehr.CoreService core_service = 13;</code>
+       */
+      public Builder setCoreService(
+          nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiCore.CoreService.Builder builderForValue) {
+        copyOnWrite();
+        instance.setCoreService(builderForValue);
+        return this;
+      }
+      /**
+       * <code>optional .garmin_vivomovehr.CoreService core_service = 13;</code>
+       */
+      public Builder mergeCoreService(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiCore.CoreService value) {
+        copyOnWrite();
+        instance.mergeCoreService(value);
+        return this;
+      }
+      /**
+       * <code>optional .garmin_vivomovehr.CoreService core_service = 13;</code>
+       */
+      public Builder clearCoreService() {  copyOnWrite();
+        instance.clearCoreService();
+        return this;
+      }
+
+      /**
        * <code>optional .garmin_vivomovehr.SmsNotificationService sms_notification_service = 16;</code>
        */
       @java.lang.Override
@@ -592,14 +592,14 @@ public final class GdiSmartProto {
         case BUILD_MESSAGE_INFO: {
             java.lang.Object[] objects = new java.lang.Object[] {
               "bitField0_",
-              "calendarEventsService_",
               "deviceStatusService_",
               "findMyWatchService_",
+              "coreService_",
               "smsNotificationService_",
             };
             java.lang.String info =
-                "\u0001\u0004\u0000\u0001\u0001\u0010\u0004\u0000\u0000\u0001\u0001\t\u0000\b\t\u0001" +
-                "\f\u0409\u0002\u0010\t\u0003";
+                "\u0001\u0004\u0000\u0001\b\u0010\u0004\u0000\u0000\u0001\b\t\u0000\f\u0409\u0001" +
+                "\r\t\u0002\u0010\t\u0003";
             return newMessageInfo(DEFAULT_INSTANCE, info, objects);
         }
         // fall through
@@ -651,186 +651,6 @@ public final class GdiSmartProto {
     private static volatile com.google.protobuf.Parser<Smart> PARSER;
 
     public static com.google.protobuf.Parser<Smart> parser() {
-      return DEFAULT_INSTANCE.getParserForType();
-    }
-  }
-
-  public interface CalendarServiceOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:garmin_vivomovehr.CalendarService)
-      com.google.protobuf.MessageLiteOrBuilder {
-  }
-  /**
-   * Protobuf type {@code garmin_vivomovehr.CalendarService}
-   */
-  public  static final class CalendarService extends
-      com.google.protobuf.GeneratedMessageLite<
-          CalendarService, CalendarService.Builder> implements
-      // @@protoc_insertion_point(message_implements:garmin_vivomovehr.CalendarService)
-      CalendarServiceOrBuilder {
-    private CalendarService() {
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto.CalendarService parseFrom(
-        java.nio.ByteBuffer data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto.CalendarService parseFrom(
-        java.nio.ByteBuffer data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data, extensionRegistry);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto.CalendarService parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto.CalendarService parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data, extensionRegistry);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto.CalendarService parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto.CalendarService parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data, extensionRegistry);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto.CalendarService parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, input);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto.CalendarService parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, input, extensionRegistry);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto.CalendarService parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return parseDelimitedFrom(DEFAULT_INSTANCE, input);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto.CalendarService parseDelimitedFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto.CalendarService parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, input);
-    }
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto.CalendarService parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, input, extensionRegistry);
-    }
-
-    public static Builder newBuilder() {
-      return (Builder) DEFAULT_INSTANCE.createBuilder();
-    }
-    public static Builder newBuilder(nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto.CalendarService prototype) {
-      return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
-    }
-
-    /**
-     * Protobuf type {@code garmin_vivomovehr.CalendarService}
-     */
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessageLite.Builder<
-          nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto.CalendarService, Builder> implements
-        // @@protoc_insertion_point(builder_implements:garmin_vivomovehr.CalendarService)
-        nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto.CalendarServiceOrBuilder {
-      // Construct using nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto.CalendarService.newBuilder()
-      private Builder() {
-        super(DEFAULT_INSTANCE);
-      }
-
-
-      // @@protoc_insertion_point(builder_scope:garmin_vivomovehr.CalendarService)
-    }
-    @java.lang.Override
-    @java.lang.SuppressWarnings({"unchecked", "fallthrough"})
-    protected final java.lang.Object dynamicMethod(
-        com.google.protobuf.GeneratedMessageLite.MethodToInvoke method,
-        java.lang.Object arg0, java.lang.Object arg1) {
-      switch (method) {
-        case NEW_MUTABLE_INSTANCE: {
-          return new nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto.CalendarService();
-        }
-        case NEW_BUILDER: {
-          return new Builder();
-        }
-        case BUILD_MESSAGE_INFO: {
-            java.lang.Object[] objects = null;java.lang.String info =
-                "\u0001\u0000";
-            return newMessageInfo(DEFAULT_INSTANCE, info, objects);
-        }
-        // fall through
-        case GET_DEFAULT_INSTANCE: {
-          return DEFAULT_INSTANCE;
-        }
-        case GET_PARSER: {
-          com.google.protobuf.Parser<nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto.CalendarService> parser = PARSER;
-          if (parser == null) {
-            synchronized (nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto.CalendarService.class) {
-              parser = PARSER;
-              if (parser == null) {
-                parser =
-                    new DefaultInstanceBasedParser<nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto.CalendarService>(
-                        DEFAULT_INSTANCE);
-                PARSER = parser;
-              }
-            }
-          }
-          return parser;
-      }
-      case GET_MEMOIZED_IS_INITIALIZED: {
-        return (byte) 1;
-      }
-      case SET_MEMOIZED_IS_INITIALIZED: {
-        return null;
-      }
-      }
-      throw new UnsupportedOperationException();
-    }
-
-
-    // @@protoc_insertion_point(class_scope:garmin_vivomovehr.CalendarService)
-    private static final nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto.CalendarService DEFAULT_INSTANCE;
-    static {
-      CalendarService defaultInstance = new CalendarService();
-      // New instances are implicitly immutable so no need to make
-      // immutable.
-      DEFAULT_INSTANCE = defaultInstance;
-      com.google.protobuf.GeneratedMessageLite.registerDefaultInstance(
-        CalendarService.class, defaultInstance);
-    }
-
-    public static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto.CalendarService getDefaultInstance() {
-      return DEFAULT_INSTANCE;
-    }
-
-    private static volatile com.google.protobuf.Parser<CalendarService> PARSER;
-
-    public static com.google.protobuf.Parser<CalendarService> parser() {
       return DEFAULT_INSTANCE.getParserForType();
     }
   }

@@ -2,10 +2,12 @@ package nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit;
 
 public class FitMessageDefinitions {
     public static final int MESSAGE_ID_CONNECTIVITY = 0;
+    public static final int MESSAGE_ID_WEATHER_ALERT = 5;
     public static final int MESSAGE_ID_WEATHER_CONDITIONS = 6;
 
     public static final int FIT_MESSAGE_NUMBER_CONNECTIVITY = 127;
     public static final int FIT_MESSAGE_NUMBER_WEATHER_CONDITIONS = 128;
+    public static final int FIT_MESSAGE_NUMBER_WEATHER_ALERT = 129;
 
     public static final FitMessageDefinition definitionConnectivity = new FitMessageDefinition(FIT_MESSAGE_NUMBER_CONNECTIVITY, MESSAGE_ID_CONNECTIVITY,
             new FitMessageFieldDefinition("bluetooth_enabled", 0, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
@@ -38,5 +40,14 @@ public class FitMessageDefinitions {
             new FitMessageFieldDefinition("day_of_week", 12, 1, FitFieldBaseType.ENUM, null),
             new FitMessageFieldDefinition("high_temperature", 13, 1, FitFieldBaseType.SINT8, null),
             new FitMessageFieldDefinition("low_temperature", 14, 1, FitFieldBaseType.SINT8, null)
+    );
+
+    public static final FitMessageDefinition definitionWeatherAlert = new FitMessageDefinition(FIT_MESSAGE_NUMBER_WEATHER_ALERT, MESSAGE_ID_WEATHER_ALERT,
+            new FitMessageFieldDefinition("timestamp", 253, 4, FitFieldBaseType.UINT32, null),
+            new FitMessageFieldDefinition("report_id", 0, 10, FitFieldBaseType.STRING, null),
+            new FitMessageFieldDefinition("issue_time", 1, 4, FitFieldBaseType.UINT32, null),
+            new FitMessageFieldDefinition("expire_time", 2, 4, FitFieldBaseType.UINT32, null),
+            new FitMessageFieldDefinition("severity", 3, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("type", 4, 1, FitFieldBaseType.ENUM, null)
     );
 }

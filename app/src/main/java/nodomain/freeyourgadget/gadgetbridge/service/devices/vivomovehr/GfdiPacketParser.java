@@ -78,7 +78,7 @@ public class GfdiPacketParser {
             insidePacket = true;
         }
         boolean singleZeroLast = false;
-        while (true) {
+        while (bufferPos < buffer.length) {
             int chunkSize = -1;
             int chunkStart = bufferPos;
             int pos = bufferPos;
@@ -123,14 +123,10 @@ public class GfdiPacketParser {
 
             // completed chunk
             final int packetPos = packetBuffer.length;
-            packetBuffer = Arrays.copyOf(packetBuffer, packetPos + chunkSize);
+            final int realChunkSize = chunkSize < 255 ? chunkSize : chunkSize - 1;
+            packetBuffer = Arrays.copyOf(packetBuffer, packetPos + realChunkSize);
             System.arraycopy(buffer, chunkStart + 1, packetBuffer, packetPos, chunkSize - 1);
-            if (chunkSize < 255) {
-                packetBuffer[packetBuffer.length - 1] = 0;
-                bufferPos = chunkStart + chunkSize;
-            } else {
-                bufferPos = chunkStart + chunkSize - 1;
-            }
+            bufferPos = chunkStart + chunkSize;
 
             singleZeroLast = chunkSize == 1;
             startOfPacket = false;
@@ -143,33 +139,11 @@ public class GfdiPacketParser {
             int chunkStart = 0;
             for (int i = 0; i < message.length; ++i) {
                 if (message[i] == 0) {
-                    int chunkLength = i - chunkStart;
-                    while (true) {
-                        if (chunkLength >= 255) {
-                            // write 255-byte chunk
-                            outputStream.write(255);
-                            outputStream.write(message, chunkStart, 254);
-                            chunkLength -= 254;
-                            chunkStart += 254;
-                            if (chunkLength == 255) {
-                                // write an empty chunk to mark the zero
-                                outputStream.write(1);
-                            }
-                        } else {
-                            // write chunk from chunkStart to here
-                            outputStream.write(chunkLength + 1);
-                            outputStream.write(message, chunkStart, chunkLength);
-                            chunkStart = i + 1;
-                            break;
-                        }
-                    }
+                    chunkStart = appendChunk(message, outputStream, chunkStart, i);
                 }
             }
             if (chunkStart < message.length) {
-                int chunkLength = message.length - chunkStart;
-                // TODO: chunkLength >= 255!
-                outputStream.write(chunkLength + 1);
-                outputStream.write(message, chunkStart, chunkLength);
+                appendChunk(message, outputStream, chunkStart, message.length);
             }
             outputStream.write(0);
             return outputStream.toByteArray();
@@ -177,5 +151,25 @@ public class GfdiPacketParser {
             LOG.error("Error writing to memory buffer", e);
             throw new RuntimeException(e);
         }
+    }
+
+    private static int appendChunk(byte[] message, ByteArrayOutputStream outputStream, int chunkStart, int messagePos) {
+        int chunkLength = messagePos - chunkStart;
+        while (true) {
+            if (chunkLength >= 255) {
+                // write 255-byte chunk
+                outputStream.write(255);
+                outputStream.write(message, chunkStart, 254);
+                chunkLength -= 254;
+                chunkStart += 254;
+            } else {
+                // write chunk from chunkStart to here
+                outputStream.write(chunkLength + 1);
+                outputStream.write(message, chunkStart, chunkLength);
+                chunkStart = messagePos + 1;
+                break;
+            }
+        }
+        return chunkStart;
     }
 }

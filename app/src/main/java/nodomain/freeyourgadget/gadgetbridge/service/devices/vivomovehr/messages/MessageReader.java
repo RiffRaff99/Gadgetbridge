@@ -47,9 +47,18 @@ public class MessageReader {
     }
 
     public byte[] readBytes(int size) {
+        if (position + size > data.length) throw new IllegalStateException();
         final byte[] result = new byte[size];
         System.arraycopy(data, position, result, 0, size);
         position += size;
         return result;
+    }
+
+    public byte[] readBytesTo(int size, byte[] buffer, int offset) {
+        if (offset + size > buffer.length) throw new IllegalArgumentException();
+        if (position + size > data.length) throw new IllegalStateException();
+        System.arraycopy(data, position, buffer, offset, size);
+        position += size;
+        return buffer;
     }
 }

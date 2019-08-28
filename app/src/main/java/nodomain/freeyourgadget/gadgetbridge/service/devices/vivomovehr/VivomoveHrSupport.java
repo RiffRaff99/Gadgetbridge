@@ -27,13 +27,16 @@ import nodomain.freeyourgadget.gadgetbridge.impl.GBDevice;
 import nodomain.freeyourgadget.gadgetbridge.model.*;
 import nodomain.freeyourgadget.gadgetbridge.service.btle.AbstractBTLEDeviceSupport;
 import nodomain.freeyourgadget.gadgetbridge.service.btle.TransactionBuilder;
-import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.*;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.FitBool;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.FitMessage;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.FitMessageDefinitions;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.FitWeatherConditions;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.*;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiCore;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiDeviceStatus;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto;
 import nodomain.freeyourgadget.gadgetbridge.service.serial.GBDeviceProtocol;
-import nodomain.freeyourgadget.gadgetbridge.util.DateTimeUtils;
 import nodomain.freeyourgadget.gadgetbridge.util.GB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -304,6 +307,10 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
                 processResponseMessage(ResponseMessage.parsePacket(packet), packet);
                 break;
 
+            case VivomoveConstants.MESSAGE_FILE_TRANSFER_DATA:
+                processFileTransferDataMessage(FileTransferDataMessage.parsePacket(packet));
+                break;
+
             case VivomoveConstants.MESSAGE_DEVICE_INFORMATION:
                 processDeviceInformationMessage(DeviceInformationMessage.parsePacket(packet));
                 break;
@@ -338,8 +345,18 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
         }
     }
 
+    private void processFileTransferDataMessage(FileTransferDataMessage message) {
+        LOG.info("Received file transfer: {}B@{}, flags={}, crc={}: {}", message.data.length, message.dataOffset, message.flags, message.crc, GB.hexdump(message.data, 0, message.data.length));
+        sendMessage(new FileTransferDataResponseMessage(VivomoveConstants.STATUS_ACK, FileTransferDataResponseMessage.RESPONSE_TRANSFER_SUCCESSFUL, 0).packet);
+    }
+
     private void processSyncRequest(SyncRequestMessage requestMessage) {
-        LOG.info("Processing sync request message: option={}, types: {}", requestMessage.option, GB.hexdump(requestMessage.fileTypes, 0, requestMessage.fileTypes.length));
+        final StringBuilder requestedTypes = new StringBuilder();
+        for (GarminMessageType type : requestMessage.fileTypes) {
+            if (requestedTypes.length() > 0) requestedTypes.append(", ");
+            requestedTypes.append(type);
+        }
+        LOG.info("Processing sync request message: option={}, types: {}", requestMessage.option, requestedTypes);
         sendMessage(new GenericResponseMessage(VivomoveConstants.MESSAGE_SYNC_REQUEST, 0).packet);
     }
 
@@ -354,17 +371,29 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
             return;
         }
         boolean processed = false;
+        if (smart.hasDeviceStatusService()) {
+            processProtobufDeviceStatusResponse(smart.getDeviceStatusService());
+            processed = true;
+        }
         if (smart.hasFindMyWatchService()) {
             processProtobufFindMyWatchResponse(smart.getFindMyWatchService());
             processed = true;
         }
-        if (smart.hasDeviceStatusService()) {
-            processProtobufDeviceStatusResponse(smart.getDeviceStatusService());
+        if (smart.hasCoreService()) {
+            processProtobufCoreResponse(smart.getCoreService());
             processed = true;
         }
         if (!processed) {
             LOG.warn("Unknown protobuf response: {}", smart.toString());
         }
+    }
+
+    private void processProtobufCoreResponse(GdiCore.CoreService coreService) {
+        if (coreService.hasSyncResponse()) {
+            final GdiCore.CoreService.SyncResponse syncResponse = coreService.getSyncResponse();
+            LOG.info("Received sync status: {}", syncResponse.getStatus());
+        }
+        LOG.warn("Unknown CoreService response: {}", coreService);
     }
 
     private void processProtobufDeviceStatusResponse(GdiDeviceStatus.DeviceStatusService deviceStatusService) {
@@ -380,6 +409,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
         if (deviceStatusService.hasActivityStatusResponse()) {
             final GdiDeviceStatus.DeviceStatusService.ActivityStatusResponse activityStatusResponse = deviceStatusService.getActivityStatusResponse();
             LOG.info("Received activity status: {}", activityStatusResponse.getStatus());
+            return;
         }
         LOG.warn("Unknown DeviceStatusService response: {}", deviceStatusService);
     }
@@ -422,6 +452,9 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
 
     private void processResponseMessage(ResponseMessage responseMessage, byte[] packet) {
         switch (responseMessage.requestID) {
+            case VivomoveConstants.MESSAGE_DIRECTORY_FILE_FILTER_REQUEST:
+                processDirectoryFileFilterResponse(DirectoryFileFilterResponseMessage.parsePacket(packet));
+                break;
             case VivomoveConstants.MESSAGE_FIT_DEFINITION:
                 processFitDefinitionResponse(FitDefinitionResponseMessage.parsePacket(packet));
                 break;
@@ -437,10 +470,31 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
             case VivomoveConstants.MESSAGE_SYSTEM_EVENT:
                 processSystemEventResponse(SystemEventResponseMessage.parsePacket(packet));
                 break;
+            case VivomoveConstants.MESSAGE_SUPPORTED_FILE_TYPES_REQUEST:
+                processSupportedFileTypesResponse(SupportedFileTypesResponseMessage.parsePacket(packet));
+                break;
             default:
                 LOG.info("Received response to message {}: {}", responseMessage.requestID, responseMessage.getStatusStr());
                 break;
         }
+    }
+
+    private void processDirectoryFileFilterResponse(DirectoryFileFilterResponseMessage responseMessage) {
+        if (responseMessage.status == VivomoveConstants.STATUS_ACK && responseMessage.response == DirectoryFileFilterResponseMessage.RESPONSE_DIRECTORY_FILTER_APPLIED) {
+            LOG.info("Received response to directory file filter request: {}/{}, requesting download of directory data", responseMessage.status, responseMessage.response);
+            sendMessage(new DownloadRequestMessage(0, 0, 1, 0, 0).packet);
+        } else {
+            LOG.error("Directory file filter request failed: {}/{}", responseMessage.status, responseMessage.response);
+        }
+    }
+
+    private void processSupportedFileTypesResponse(SupportedFileTypesResponseMessage responseMessage) {
+        final StringBuilder supportedTypes = new StringBuilder();
+        for (SupportedFileTypesResponseMessage.FileTypeInfo type : responseMessage.fileTypes) {
+            if (supportedTypes.length() > 0) supportedTypes.append(", ");
+            supportedTypes.append(String.format(Locale.ROOT, "%d/%d: %s", type.fileDataType, type.fileSubType, type.garminDeviceFileType));
+        }
+        LOG.info("Received the list of supported file types (status={}): {}", responseMessage.status, supportedTypes);
     }
 
     private void processDeviceSettingsResponse(SetDeviceSettingsResponseMessage responseMessage) {
@@ -494,8 +548,8 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
         sendMessage(new ConfigurationMessage(ourCapabilityFlags).packet);
 
         // initialize current time and settings
-        sendCurrentTime(null);
-        sendSettings(null);
+        sendCurrentTime();
+        sendSettings();
 
         // and everything is ready now
         sendSyncReady();
@@ -568,11 +622,29 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
                         .toByteArray());
     }
 
+    private void sendRequestSync() {
+        sendProtobufRequest(
+                GdiSmartProto.Smart.newBuilder()
+                        .setCoreService(
+                                GdiCore.CoreService.newBuilder()
+                                        .setSyncRequest(
+                                                GdiCore.CoreService.SyncRequest.newBuilder()
+                                        )
+                        )
+                        .build()
+                        .toByteArray());
+    }
+
+    private void requestSupportedFileTypes() {
+        LOG.info("Requesting list of supported file types");
+        sendMessage(new SupportedFileTypesRequestMessage().packet);
+    }
+
     private void sendSyncReady() {
         sendMessage(new SystemEventMessage(GarminSystemEventType.SYNC_READY, 0).packet);
     }
 
-    private void sendCurrentTime(TransactionBuilder builder) {
+    private void sendCurrentTime() {
         final Map<GarminDeviceSetting, Object> settings = new LinkedHashMap<>(3);
 
         long now = System.currentTimeMillis();
@@ -580,7 +652,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
         final Calendar calendar = Calendar.getInstance(timeZone);
         calendar.setTimeInMillis(now);
         int dstOffset = calendar.get(Calendar.DST_OFFSET) / 1000;
-        int timeZoneOffset = 0; // timeZone.getOffset(now) / 1000;
+        int timeZoneOffset = timeZone.getOffset(now) / 1000;
         int garminTimestamp = GarminTimeUtils.javaMillisToGarminTimestamp(now);
 
         settings.put(GarminDeviceSetting.CURRENT_TIME, garminTimestamp);
@@ -588,24 +660,25 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
         settings.put(GarminDeviceSetting.TIME_ZONE_OFFSET, timeZoneOffset);
         // TODO: NEXT_DAYLIGHT_SAVINGS_START, NEXT_DAYLIGHT_SAVINGS_END
         LOG.info("Setting time to {}, dstOffset={}, tzOffset={} (DST={})", garminTimestamp, dstOffset, timeZoneOffset, timeZone.inDaylightTime(new Date(now)) ? 1 : 0);
-        sendMessage(builder, new SetDeviceSettingsMessage(settings).packet);
+        sendMessage(new SetDeviceSettingsMessage(settings).packet);
     }
 
-    private void sendSettings(TransactionBuilder builder) {
+    private void sendSettings() {
         final Map<GarminDeviceSetting, Object> settings = new LinkedHashMap<>(3);
 
         settings.put(GarminDeviceSetting.WEATHER_CONDITIONS_ENABLED, true);
         settings.put(GarminDeviceSetting.WEATHER_ALERTS_ENABLED, true);
         settings.put(GarminDeviceSetting.AUTO_UPLOAD_ENABLED, true);
         LOG.info("Sending settings");
-        sendMessage(builder, new SetDeviceSettingsMessage(settings).packet);
+        sendMessage(new SetDeviceSettingsMessage(settings).packet);
     }
 
     private void sendFitDefinitions() {
-        sendMessage(new FitDefinitionMessage(Arrays.asList(
+        sendMessage(new FitDefinitionMessage(
                 FitMessageDefinitions.definitionConnectivity,
-                FitMessageDefinitions.definitionWeatherConditions
-        )).packet);
+                FitMessageDefinitions.definitionWeatherConditions,
+                FitMessageDefinitions.definitionWeatherAlert
+        ).packet);
     }
 
     private void sendFitConnectivityMessage() {
@@ -620,7 +693,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
         connectivityMessage.setField(9, FitBool.TRUE);
         connectivityMessage.setField(10, FitBool.TRUE);
         connectivityMessage.setField(13, FitBool.TRUE);
-        sendMessage(new FitDataMessage(Collections.singletonList(connectivityMessage)).packet);
+        sendMessage(new FitDataMessage(connectivityMessage).packet);
     }
 
     private void sendWeatherConditions() {
@@ -629,9 +702,9 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
         weatherConditionsMessage.setField(253, GarminTimeUtils.unixTimeToGarminTimestamp(weather.timestamp));
         weatherConditionsMessage.setField(0, 0); // 0 = current, 2 = hourly_forecast, 3 = daily_forecast
         weatherConditionsMessage.setField(1, weather.currentTemp);
-        weatherConditionsMessage.setField(2, openWeatherCodeToFitWeatherStatus(weather.currentConditionCode));
+        weatherConditionsMessage.setField(2, FitWeatherConditions.openWeatherCodeToFitWeatherStatus(weather.currentConditionCode));
         weatherConditionsMessage.setField(3, weather.windDirection);
-        weatherConditionsMessage.setField(4, Math.round(weather.windSpeed));
+        weatherConditionsMessage.setField(4, Math.round(weather.windSpeed * 1000.0 / 3.6));
         weatherConditionsMessage.setField(7, weather.currentHumidity);
         weatherConditionsMessage.setField(8, weather.location);
         final Calendar timestamp = Calendar.getInstance();
@@ -640,102 +713,43 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
         weatherConditionsMessage.setField(13, weather.todayMaxTemp);
         weatherConditionsMessage.setField(14, weather.todayMinTemp);
 
-        sendMessage(new FitDataMessage(Collections.singletonList(weatherConditionsMessage)).packet);
+        sendMessage(new FitDataMessage(weatherConditionsMessage).packet);
     }
 
-    private int openWeatherCodeToFitWeatherStatus(int openWeatherCode) {
-        switch (openWeatherCode) {
-            case 800:
-                // clear
-                return 0;
-            case 801:
-            case 802:
-                // partly_cloudy
-                return 1;
-            case 803:
-                // mostly cloudy
-                return 2;
-            case 804:
-                // cloudy
-                return 22;
-            case 701:
-            case 721:
-                // hazy
-                return 11;
-            case 741:
-                // fog
-                return 8;
-            case 771:
-            case 781:
-                // windy
-                return 5;
-            case 615:
-                // light_rain_snow
-                return 20;
-            case 616:
-                // heavy_rain_snow
-                return 21;
-            case 611:
-            case 612:
-            case 613:
-                // wintry_mix
-                return 7;
-            case 500:
-            case 520:
-            case 521:
-            case 300:
-            case 310:
-            case 313:
-                // light_rain
-                return 16;
-            case 501:
-            case 531:
-            case 301:
-            case 311:
-                // rain
-                return 3;
-            case 502:
-            case 503:
-            case 504:
-            case 522:
-            case 302:
-            case 312:
-            case 314:
-                // heavy_rain
-                return 17;
-            case 321:
-                // scattered_showers
-                return 13;
-            case 511:
-                // unknown_precipitation
-                return 15;
-            case 200:
-            case 201:
-            case 202:
-            case 210:
-            case 211:
-            case 212:
-            case 230:
-            case 231:
-            case 232:
-                // thunderstorm
-                return 6;
-            case 221:
-                // scattered_thunderstorms
-                return 14;
-            case 600:
-                // light_snow
-                return 18;
-            case 601:
-                // snow
-                return 4;
-            case 602:
-                // heavy_snow
-                return 19;
-            default:
-                throw new IllegalArgumentException("Unknown weather code " + openWeatherCode);
+    private void sendWeatherAlert() {
+        final FitMessage weatherConditionsMessage = new FitMessage(FitMessageDefinitions.definitionWeatherAlert);
+        weatherConditionsMessage.setField(253, GarminTimeUtils.javaMillisToGarminTimestamp(System.currentTimeMillis()));
+        weatherConditionsMessage.setField(0, "TESTRPT");
+        final Calendar issue = Calendar.getInstance();
+        issue.set(2019, 8, 27, 0, 0, 0);
+        final Calendar expiry = Calendar.getInstance();
+        issue.set(2019, 8, 29, 0, 0, 0);
+        weatherConditionsMessage.setField(1, GarminTimeUtils.javaMillisToGarminTimestamp(issue.getTimeInMillis()));
+        weatherConditionsMessage.setField(2, GarminTimeUtils.javaMillisToGarminTimestamp(expiry.getTimeInMillis()));
+        weatherConditionsMessage.setField(3, FitWeatherConditions.ALERT_SEVERITY_ADVISORY);
+        weatherConditionsMessage.setField(4, FitWeatherConditions.ALERT_TYPE_SEVERE_THUNDERSTORM);
 
-        }
+        sendMessage(new FitDataMessage(weatherConditionsMessage).packet);
+    }
+
+    private void listFiles(int filterType) {
+        LOG.info("Requesting file list (filter={})", filterType);
+        sendMessage(new DirectoryFileFilterRequestMessage(filterType).packet);
+    }
+
+    private void downloadFile(int fileIndex) {
+        LOG.info("Requesting download of file {}", fileIndex);
+        sendMessage(new DownloadRequestMessage(fileIndex, 0, 1, 0, 0).packet);
+    }
+
+    private void downloadGarminDeviceXml() {
+        LOG.info("Requesting Garmin device XML download");
+        sendMessage(new DownloadRequestMessage(VivomoveConstants.GARMIN_DEVICE_XML_FILE_INDEX, 0, 1, 0, 0).packet);
+    }
+
+    private void downloadSettingsFit() {
+        LOG.info("Requesting Garmin FIT settings download");
+        sendMessage(new DownloadRequestMessage(VivomoveConstants.GARMIN_SETTINGS_FIT_FILE_INDEX, 0, 1, 0, 0).packet);
     }
 
     private void sendBatteryStatus() {
@@ -761,7 +775,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
     @Override
     public void onSetTime() {
         dbg("onSetTime()");
-        sendCurrentTime(null);
+        sendCurrentTime();
     }
 
     @Override
@@ -834,7 +848,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
 
     @Override
     public void onReset(int flags) {
-        switch(flags) {
+        switch (flags) {
             case GBDeviceProtocol.RESET_FLAGS_FACTORY_RESET:
                 LOG.info("Requesting factory reset");
                 sendMessage(new SystemEventMessage(GarminSystemEventType.FACTORY_RESET, 1).packet);
@@ -925,6 +939,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
     @Override
     public void onTestNewFunction() {
         dbg("onTestNewFunction()");
+        listFiles(DirectoryFileFilterRequestMessage.FILTER_NO_FILTER);
     }
 
     @Override

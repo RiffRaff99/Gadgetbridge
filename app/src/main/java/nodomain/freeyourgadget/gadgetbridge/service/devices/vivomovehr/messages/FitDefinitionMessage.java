@@ -5,12 +5,10 @@ import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.BinaryUti
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.ChecksumCalculator;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.FitMessageDefinition;
 
-import java.util.List;
-
 public class FitDefinitionMessage {
     public final byte[] packet;
 
-    public FitDefinitionMessage(List<FitMessageDefinition> definitions) {
+    public FitDefinitionMessage(FitMessageDefinition... definitions) {
         final MessageWriter writer = new MessageWriter();
         writer.writeShort(0); // packet size will be filled below
         writer.writeShort(VivomoveConstants.MESSAGE_FIT_DEFINITION);

@@ -3,18 +3,25 @@ package nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages
 import nodomain.freeyourgadget.gadgetbridge.devices.vivomovehr.VivomoveConstants;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.BinaryUtils;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.ChecksumCalculator;
-import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.FitMessage;
 
-public class FitDataMessage {
+public class FileTransferDataResponseMessage {
+    public static final byte RESPONSE_TRANSFER_SUCCESSFUL = 0;
+    public static final byte RESPONSE_RESEND_LAST_DATA_PACKET = 1;
+    public static final byte RESPONSE_ABORT_DOWNLOAD_REQUEST = 2;
+    public static final byte RESPONSE_ERROR_CRC_MISMATCH = 3;
+    public static final byte RESPONSE_ERROR_DATA_OFFSET_MISMATCH = 4;
+    public static final byte RESPONSE_SILENT_SYNC_PAUSED = 5;
+
     public final byte[] packet;
 
-    public FitDataMessage(FitMessage... messages) {
+    public FileTransferDataResponseMessage(int status, int response, int nextDataOffset) {
         final MessageWriter writer = new MessageWriter();
         writer.writeShort(0); // packet size will be filled below
-        writer.writeShort(VivomoveConstants.MESSAGE_FIT_DATA);
-        for (FitMessage message : messages) {
-            message.writeToMessage(writer);
-        }
+        writer.writeShort(VivomoveConstants.MESSAGE_RESPONSE);
+        writer.writeShort(VivomoveConstants.MESSAGE_FILE_TRANSFER_DATA);
+        writer.writeByte(status);
+        writer.writeByte(response);
+        writer.writeInt(nextDataOffset);
         writer.writeShort(0); // CRC will be filled below
         final byte[] packet = writer.getBytes();
         BinaryUtils.writeShort(packet, 0, packet.length);
