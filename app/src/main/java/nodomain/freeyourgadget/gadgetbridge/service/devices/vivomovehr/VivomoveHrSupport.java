@@ -27,6 +27,7 @@ import nodomain.freeyourgadget.gadgetbridge.impl.GBDevice;
 import nodomain.freeyourgadget.gadgetbridge.model.*;
 import nodomain.freeyourgadget.gadgetbridge.service.btle.AbstractBTLEDeviceSupport;
 import nodomain.freeyourgadget.gadgetbridge.service.btle.TransactionBuilder;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.downloads.FileDownloadQueue;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.FitBool;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.FitMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.FitMessageDefinitions;
@@ -41,22 +42,12 @@ import nodomain.freeyourgadget.gadgetbridge.util.GB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.*;
 
 import static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.BinaryUtils.*;
 
 public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
     private static final Logger LOG = LoggerFactory.getLogger(VivomoveHrSupport.class);
-
-    private BluetoothGattCharacteristic characteristicMessageSender;
-    private BluetoothGattCharacteristic characteristicMessageReceiver;
-    private BluetoothGattCharacteristic characteristicHeartRate;
-    private BluetoothGattCharacteristic characteristicSteps;
-    private BluetoothGattCharacteristic characteristicCalories;
-    private BluetoothGattCharacteristic characteristicStairs;
-    private BluetoothGattCharacteristic char2_7;
-    private BluetoothGattCharacteristic char2_9;
 
     private Handler handler;
 
@@ -67,6 +58,9 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
 
     private int lastProtobufRequestId;
     private WeatherSpec lastWeatherSpec = defaultWeatherSpec();
+
+    private VivomoveHrCommunicator communicator;
+    private FileDownloadQueue fileDownloadQueue;
 
     private static WeatherSpec defaultWeatherSpec() {
         final WeatherSpec weatherSpec = new WeatherSpec();
@@ -108,23 +102,11 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
         gbDevice.setState(GBDevice.State.INITIALIZING);
         gbDevice.sendDeviceUpdateIntent(getContext());
 
-        characteristicMessageSender = getCharacteristic(VivomoveConstants.UUID_CHARACTERISTIC_GARMIN_GFDI_SEND);
-        characteristicMessageReceiver = getCharacteristic(VivomoveConstants.UUID_CHARACTERISTIC_GARMIN_GFDI_RECEIVE);
-        characteristicHeartRate = getCharacteristic(VivomoveConstants.UUID_CHARACTERISTIC_GARMIN_HEART_RATE);
-        characteristicSteps = getCharacteristic(VivomoveConstants.UUID_CHARACTERISTIC_GARMIN_STEPS);
-        characteristicCalories = getCharacteristic(VivomoveConstants.UUID_CHARACTERISTIC_GARMIN_CALORIES);
-        characteristicStairs = getCharacteristic(VivomoveConstants.UUID_CHARACTERISTIC_GARMIN_STAIRS);
-        char2_7 = getCharacteristic(VivomoveConstants.UUID_CHARACTERISTIC_GARMIN_HEART_RATE_VARIATION);
-        char2_9 = getCharacteristic(VivomoveConstants.UUID_CHARACTERISTIC_GARMIN_2_9);
+        communicator = new VivomoveHrCommunicator(this);
 
         builder.setGattCallback(this);
-        builder.notify(characteristicMessageReceiver, true);
-//        builder.notify(characteristicHeartRate, true);
-//        builder.notify(characteristicSteps, true);
-//        builder.notify(characteristicCalories, true);
-//        builder.notify(characteristicStairs, true);
-        //builder.notify(char2_7, true);
-        // builder.notify(char2_9, true);
+        communicator.start(builder);
+        fileDownloadQueue = new FileDownloadQueue(communicator);
 
         gbDevice.setState(GBDevice.State.INITIALIZED);
         gbDevice.sendDeviceUpdateIntent(getContext());
@@ -174,6 +156,10 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
         }
 
         return true;
+    }
+
+    private void sendMessage(byte[] messageBytes) {
+        communicator.sendMessage(messageBytes);
     }
 
     private void processRealtimeHeartRate(byte[] data) {
@@ -558,38 +544,6 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
         sendFitConnectivityMessage();
     }
 
-    private void sendMessage(byte[] messageBytes) {
-        try {
-            final TransactionBuilder builder = performInitialized("sendMessage()");
-            sendMessage(builder, messageBytes);
-            builder.queue(getQueue());
-        } catch (IOException e) {
-            LOG.error("Unable to send a message", e);
-        }
-    }
-
-    private void sendMessage(TransactionBuilder builder, byte[] messageBytes) {
-        // ugly, refactor??
-        if (builder == null) {
-            sendMessage(messageBytes);
-            return;
-        }
-
-        final byte[] packet = GfdiPacketParser.wrapMessageToPacket(messageBytes);
-        int remainingBytes = packet.length;
-        if (remainingBytes > VivomoveConstants.MAX_WRITE_SIZE) {
-            int position = 0;
-            while (remainingBytes > 0) {
-                final byte[] fragment = Arrays.copyOfRange(packet, position, position + Math.min(remainingBytes, VivomoveConstants.MAX_WRITE_SIZE));
-                builder.write(characteristicMessageSender, fragment);
-                position += fragment.length;
-                remainingBytes -= fragment.length;
-            }
-        } else {
-            builder.write(characteristicMessageSender, packet);
-        }
-    }
-
     private void sendProtobufRequest(byte[] protobufMessage) {
         final int requestId = getNextProtobufRequestId();
         LOG.debug("Sending {}B protobuf request #{}: {}", protobufMessage.length, requestId, GB.hexdump(protobufMessage, 0, protobufMessage.length));
@@ -811,11 +765,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
 
     @Override
     public void onEnableRealtimeSteps(boolean enable) {
-        try {
-            performInitialized((enable ? "Enable" : "Disable") + " realtime steps").notify(characteristicSteps, enable).queue(getQueue());
-        } catch (IOException e) {
-            LOG.error("Unable to change realtime steps notification to: " + enable, e);
-        }
+        communicator.enableRealtimeSteps(enable);
     }
 
     @Override
@@ -844,6 +794,15 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
 
     @Override
     public void onFetchRecordedData(int dataTypes) {
+        /*
+        public static int TYPE_ACTIVITY     = 0x00000001;
+        public static int TYPE_WORKOUTS     = 0x00000002;
+        public static int TYPE_GPS_TRACKS   = 0x00000004;
+        public static int TYPE_TEMPERATURE  = 0x00000008;
+        public static int TYPE_DEBUGLOGS    = 0x00000010;
+        */
+
+        dbg("onFetchRecordedData " + dataTypes);
     }
 
     @Override
@@ -867,11 +826,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport {
 
     @Override
     public void onEnableRealtimeHeartRateMeasurement(boolean enable) {
-        try {
-            performInitialized((enable ? "Enable" : "Disable") + " realtime heartrate").notify(characteristicHeartRate, enable).queue(getQueue());
-        } catch (IOException ex) {
-            LOG.error("Unable to change realtime steps notification to: " + enable, ex);
-        }
+        communicator.enableRealtimeHeartRate(enable);
     }
 
     @Override
