@@ -1,5 +1,7 @@
 package nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit;
 
+import android.util.SparseArray;
+
 public enum FitFieldBaseType {
     ENUM(0, 1, 0xFF),
     SINT8(1, 1, 0x7F),
@@ -24,10 +26,28 @@ public enum FitFieldBaseType {
     public final int typeID;
     public final Object invalidValue;
 
+    private static final SparseArray<FitFieldBaseType> typeForCode = new SparseArray<>(values().length);
+    private static final SparseArray<FitFieldBaseType> typeForID = new SparseArray<>(values().length);
+
+    static {
+        for (FitFieldBaseType value : values()) {
+            typeForCode.append(value.typeNumber, value);
+            typeForID.append(value.typeID, value);
+        }
+    }
+
     FitFieldBaseType(int typeNumber, int size, Object invalidValue) {
         this.typeNumber = typeNumber;
         this.size = size;
         this.invalidValue = invalidValue;
         this.typeID = size > 1 ? (typeNumber | 0x80) : typeNumber;
+    }
+
+    public static FitFieldBaseType decodeTypeID(int typeNumber) {
+        final FitFieldBaseType type = typeForID.get(typeNumber);
+        if (type == null) {
+            throw new IllegalArgumentException("Unknown type " + typeNumber);
+        }
+        return type;
     }
 }

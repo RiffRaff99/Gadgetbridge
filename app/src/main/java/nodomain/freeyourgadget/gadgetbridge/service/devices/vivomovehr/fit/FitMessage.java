@@ -4,10 +4,13 @@ import android.util.SparseArray;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.MessageWriter;
 
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FitMessage {
     private final FitMessageDefinition definition;
     private final SparseArray<Object> fieldValues = new SparseArray<>();
+    private final Map<String, Object> fieldValuesPerName = new HashMap<>();
 
     public FitMessage(FitMessageDefinition definition) {
         this.definition = definition;
@@ -15,6 +18,16 @@ public class FitMessage {
 
     public void setField(int fieldNumber, Object value) {
         fieldValues.append(fieldNumber, value);
+        final FitMessageFieldDefinition fieldDefinition = definition.getField(fieldNumber);
+        fieldValuesPerName.put(fieldDefinition.fieldName, value);
+    }
+
+    public Object getField(int fieldNumber) {
+        return fieldValues.get(fieldNumber);
+    }
+
+    public Object getField(String fieldName) {
+        return fieldValuesPerName.get(fieldName);
     }
 
     public void writeToMessage(MessageWriter writer) {

@@ -635,14 +635,14 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
 
     private void sendFitDefinitions() {
         sendMessage(new FitDefinitionMessage(
-                FitMessageDefinitions.definitionConnectivity,
-                FitMessageDefinitions.definitionWeatherConditions,
-                FitMessageDefinitions.definitionWeatherAlert
+                FitMessageDefinitions.DEFINITION_CONNECTIVITY,
+                FitMessageDefinitions.DEFINITION_WEATHER_CONDITIONS,
+                FitMessageDefinitions.DEFINITION_WEATHER_ALERT
         ).packet);
     }
 
     private void sendFitConnectivityMessage() {
-        final FitMessage connectivityMessage = new FitMessage(FitMessageDefinitions.definitionConnectivity);
+        final FitMessage connectivityMessage = new FitMessage(FitMessageDefinitions.DEFINITION_CONNECTIVITY);
         connectivityMessage.setField(0, FitBool.TRUE);
         connectivityMessage.setField(1, FitBool.TRUE);
         connectivityMessage.setField(2, FitBool.INVALID);
@@ -658,7 +658,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
 
     private void sendWeatherConditions() {
         final WeatherSpec weather = lastWeatherSpec;
-        final FitMessage weatherConditionsMessage = new FitMessage(FitMessageDefinitions.definitionWeatherConditions);
+        final FitMessage weatherConditionsMessage = new FitMessage(FitMessageDefinitions.DEFINITION_WEATHER_CONDITIONS);
         weatherConditionsMessage.setField(253, GarminTimeUtils.unixTimeToGarminTimestamp(weather.timestamp));
         weatherConditionsMessage.setField(0, 0); // 0 = current, 2 = hourly_forecast, 3 = daily_forecast
         weatherConditionsMessage.setField(1, weather.currentTemp);
@@ -677,7 +677,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
     }
 
     private void sendWeatherAlert() {
-        final FitMessage weatherConditionsMessage = new FitMessage(FitMessageDefinitions.definitionWeatherAlert);
+        final FitMessage weatherConditionsMessage = new FitMessage(FitMessageDefinitions.DEFINITION_WEATHER_ALERT);
         weatherConditionsMessage.setField(253, GarminTimeUtils.javaMillisToGarminTimestamp(System.currentTimeMillis()));
         weatherConditionsMessage.setField(0, "TESTRPT");
         final Calendar issue = Calendar.getInstance();

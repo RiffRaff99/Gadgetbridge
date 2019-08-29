@@ -78,4 +78,17 @@ public class ArrayUtils {
     public static boolean startsWith(byte[] array, byte[] values) {
         return equals(array, values, 0);
     }
+
+    /**
+     * Finds a value in a byte array
+     * @param array the array to search
+     * @param value the value to find in the array
+     * @return index of the first occurrence of the value in the array, -1 if the array does not contain the value
+     */
+    public static int indexOf(byte[] array, byte value) {
+        for (int i = 0; i < array.length; ++i) {
+            if (array[i] == value) return i;
+        }
+        return -1;
+    }
 }
