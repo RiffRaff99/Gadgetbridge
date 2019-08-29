@@ -1,5 +1,6 @@
 package nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit;
 
+import android.util.SparseArray;
 import nodomain.freeyourgadget.gadgetbridge.entities.VivomoveHrActivitySample;
 import nodomain.freeyourgadget.gadgetbridge.model.ActivitySample;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.GarminTimeUtils;
@@ -13,7 +14,6 @@ public class FitImporter {
 
         int lastTimestamp = 0;
         for (FitMessage message : messages) {
-            System.out.println("Processing " + message.definition.messageName);
             switch (message.definition.globalMessageID) {
                 case FitMessageDefinitions.FIT_MESSAGE_NUMBER_EVENT:
                     //message.getField();

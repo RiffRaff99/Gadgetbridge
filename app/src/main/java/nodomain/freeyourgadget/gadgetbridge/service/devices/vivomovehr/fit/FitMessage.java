@@ -17,6 +17,7 @@ public class FitMessage {
     }
 
     public void setField(int fieldNumber, Object value) {
+        // TODO: Support arrays
         fieldValues.append(fieldNumber, value);
         final FitMessageFieldDefinition fieldDefinition = definition.getField(fieldNumber);
         fieldValuesPerName.put(fieldDefinition.fieldName, value);

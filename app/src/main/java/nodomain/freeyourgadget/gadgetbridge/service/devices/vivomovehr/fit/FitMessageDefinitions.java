@@ -54,6 +54,120 @@ public class FitMessageDefinitions {
     public static final int FIT_MESSAGE_NUMBER_SLEEP_LEVEL = 275;
     public static final int FIT_MESSAGE_NUMBER_END_OF_FILE = 276;
 
+    /*
+    18:50:49.442 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown global message 79
+18:50:49.443 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 253 in message 79
+18:50:49.443 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 0 in message 79
+18:50:49.443 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 3 in message 79
+18:50:49.444 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 9 in message 79
+18:50:49.444 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 1 in message 79
+18:50:49.444 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 2 in message 79
+18:50:49.444 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 4 in message 79
+18:50:49.444 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 5 in message 79
+18:50:49.445 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 6 in message 79
+18:50:49.445 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 7 in message 79
+18:50:49.445 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 10 in message 79
+18:50:49.445 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 15 in message 79
+18:50:49.448 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown global message 22
+18:50:49.449 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 253 in message 22
+18:50:49.449 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 0 in message 22
+18:50:49.449 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 1 in message 22
+18:50:49.449 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 2 in message 22
+18:50:49.450 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 4 in message 22
+18:50:49.450 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 5 in message 22
+18:50:49.450 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown global message 20
+18:50:49.450 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 253 in message 20
+18:50:49.451 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 5 in message 20
+18:50:49.451 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 6 in message 20
+18:50:49.451 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 52 in message 20
+18:50:49.451 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 88 in message 20
+18:50:49.451 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 3 in message 20
+18:50:49.452 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown global message 104
+18:50:49.453 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 253 in message 104
+18:50:49.453 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 0 in message 104
+18:50:49.453 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 3 in message 104
+18:50:49.476 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown global message 140
+18:50:49.477 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 253 in message 140
+18:50:49.477 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 2 in message 140
+18:50:49.477 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 3 in message 140
+18:50:49.477 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 5 in message 140
+18:50:49.477 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 6 in message 140
+18:50:49.477 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 7 in message 140
+18:50:49.477 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 24 in message 140
+18:50:49.477 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 26 in message 140
+18:50:49.477 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 29 in message 140
+18:50:49.478 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 35 in message 140
+18:50:49.478 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 9 in message 140
+18:50:49.478 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 10 in message 140
+18:50:49.478 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 0 in message 140
+18:50:49.478 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 1 in message 140
+18:50:49.478 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 4 in message 140
+18:50:49.479 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 8 in message 140
+18:50:49.479 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 11 in message 140
+18:50:49.479 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 12 in message 140
+18:50:49.479 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 13 in message 140
+18:50:49.479 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 18 in message 140
+18:50:49.479 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 19 in message 140
+18:50:49.479 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 25 in message 140
+18:50:49.479 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 34 in message 140
+18:50:49.480 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown global message 19
+18:50:49.480 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 253 in message 19
+18:50:49.480 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 2 in message 19
+18:50:49.480 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 3 in message 19
+18:50:49.480 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 4 in message 19
+18:50:49.480 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 5 in message 19
+18:50:49.480 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 6 in message 19
+18:50:49.480 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 7 in message 19
+18:50:49.480 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 8 in message 19
+18:50:49.480 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 9 in message 19
+18:50:49.480 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 10 in message 19
+18:50:49.481 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 254 in message 19
+18:50:49.481 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 11 in message 19
+18:50:49.481 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 13 in message 19
+18:50:49.481 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 0 in message 19
+18:50:49.481 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 1 in message 19
+18:50:49.481 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 15 in message 19
+18:50:49.481 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 16 in message 19
+18:50:49.481 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 17 in message 19
+18:50:49.481 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 18 in message 19
+18:50:49.481 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 24 in message 19
+18:50:49.481 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 25 in message 19
+18:50:49.482 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown global message 18
+18:50:49.482 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 253 in message 18
+18:50:49.482 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 2 in message 18
+18:50:49.482 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 3 in message 18
+18:50:49.482 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 4 in message 18
+18:50:49.482 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 7 in message 18
+18:50:49.482 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 8 in message 18
+18:50:49.482 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 9 in message 18
+18:50:49.482 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 10 in message 18
+18:50:49.482 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 78 in message 18
+18:50:49.483 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 254 in message 18
+18:50:49.483 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 11 in message 18
+18:50:49.483 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 14 in message 18
+18:50:49.483 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 25 in message 18
+18:50:49.483 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 26 in message 18
+18:50:49.483 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 33 in message 18
+18:50:49.483 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 47 in message 18
+18:50:49.483 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 0 in message 18
+18:50:49.483 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 1 in message 18
+18:50:49.483 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 5 in message 18
+18:50:49.483 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 6 in message 18
+18:50:49.483 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 16 in message 18
+18:50:49.484 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 17 in message 18
+18:50:49.484 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 18 in message 18
+18:50:49.484 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 19 in message 18
+18:50:49.484 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 28 in message 18
+18:50:49.484 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown global message 34
+18:50:49.484 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 253 in message 34
+18:50:49.484 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 0 in message 34
+18:50:49.484 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 5 in message 34
+18:50:49.484 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 1 in message 34
+18:50:49.484 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 2 in message 34
+18:50:49.484 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 3 in message 34
+18:50:49.485 [Binder:24647_3] WARN  n.f.g.s.d.v.f.FitParser - Unknown field 4 in message 34
+     */
+
     public static final FitMessageDefinition DEFINITION_FILE_ID = new FitMessageDefinition(FIT_MESSAGE_NAME_FILE_ID, FIT_MESSAGE_NUMBER_FILE_ID, -1,
             new FitMessageFieldDefinition("type", 0, 1, FitFieldBaseType.ENUM, null),
             new FitMessageFieldDefinition("manufacturer", 1, 1, FitFieldBaseType.ENUM, null),
