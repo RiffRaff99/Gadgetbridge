@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FitMessage {
-    private final FitMessageDefinition definition;
+    public final FitMessageDefinition definition;
     private final SparseArray<Object> fieldValues = new SparseArray<>();
     private final Map<String, Object> fieldValuesPerName = new HashMap<>();
 

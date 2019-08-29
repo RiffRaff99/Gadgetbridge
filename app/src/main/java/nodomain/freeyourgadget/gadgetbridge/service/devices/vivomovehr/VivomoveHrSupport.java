@@ -48,7 +48,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
 
@@ -903,6 +902,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
     @Override
     public void onTestNewFunction() {
         dbg("onTestNewFunction()");
+        sendRequestSync();
     }
 
     @Override
@@ -950,6 +950,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
             // do not issue updates too often
             return;
         }
+        lastTransferNotificationTimestamp = now;
         if (remainingBytes == 0) {
             GB.updateTransferNotification(null, null, false, 100, getContext());
         } else if (totalDownloadSize > 0) {

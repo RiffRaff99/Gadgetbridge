@@ -102,7 +102,9 @@ public class FitParser {
     private void parseDataMessage(MessageReader reader, FitLocalMessageDefinition localMessageDefinition, FitMessage dataMessage) {
         for (FitLocalFieldDefinition localFieldDefinition : localMessageDefinition.fieldDefinitions) {
             final Object value = readValue(reader, localFieldDefinition);
-            dataMessage.setField(localFieldDefinition.globalDefinition.fieldNumber, value);
+            if (!localFieldDefinition.baseType.invalidValue.equals(value)) {
+                dataMessage.setField(localFieldDefinition.globalDefinition.fieldNumber, value);
+            }
         }
     }
 
@@ -205,6 +207,7 @@ public class FitParser {
         if (definition != null) return definition;
 
         LOG.warn("Unknown field {} in message {}", field, messageDefinition.globalMessageID);
+        // System.out.println(String.format(Locale.ROOT, "Unknown field %d in message %d", field, messageDefinition.globalMessageID));
         final FitMessageFieldDefinition newDefinition = new FitMessageFieldDefinition("unknown_" + field, field, size, baseType, baseType.invalidValue);
         messageDefinition.addField(newDefinition);
         return newDefinition;
@@ -215,6 +218,7 @@ public class FitParser {
         if (messageDefinition != null) return messageDefinition;
 
         LOG.warn("Unknown global message {}", globalMessageType);
+        // System.out.println(String.format(Locale.ROOT, "Unknown message %d", globalMessageType));
         final FitMessageDefinition newDefinition = new FitMessageDefinition("unknown_" + globalMessageType, globalMessageType, 0);
         globalMessageDefinitions.append(globalMessageType, newDefinition);
         return newDefinition;
