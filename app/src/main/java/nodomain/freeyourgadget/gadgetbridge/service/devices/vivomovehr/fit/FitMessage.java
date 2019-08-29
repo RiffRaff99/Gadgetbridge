@@ -30,6 +30,30 @@ public class FitMessage {
         return fieldValuesPerName.get(fieldName);
     }
 
+    public String getStringField(String fieldName) {
+        return (String) getField(fieldName);
+    }
+
+    public Integer getIntegerField(String fieldName) {
+        return (Integer) getField(fieldName);
+    }
+
+    public Double getNumericField(String fieldName) {
+        return (Double) getField(fieldName);
+    }
+
+    public Boolean getBooleanField(String fieldName) {
+        final Integer value = (Integer) getField(fieldName);
+        if (value == null) return null;
+        int v = value;
+        return v == FitBool.INVALID ? null : (v != 0);
+    }
+
+    public boolean isBooleanFieldTrue(String fieldName) {
+        final Boolean value = getBooleanField(fieldName);
+        return value != null && value;
+    }
+
     public void writeToMessage(MessageWriter writer) {
         writer.writeByte(definition.localMessageID);
         for (FitMessageFieldDefinition fieldDefinition : definition.fieldDefinitions) {

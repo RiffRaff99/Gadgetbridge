@@ -14,4 +14,8 @@ public final class GarminTimeUtils {
     public static long garminTimestampToJavaMillis(int timestamp) {
         return (timestamp + VivomoveConstants.GARMIN_TIME_EPOCH) * 1000L;
     }
+
+    public static int garminTimestampToUnixTime(int timestamp) {
+        return timestamp + VivomoveConstants.GARMIN_TIME_EPOCH;
+    }
 }

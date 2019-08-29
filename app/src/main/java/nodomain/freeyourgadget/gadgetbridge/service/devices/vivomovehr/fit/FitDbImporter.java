@@ -1,0 +1,62 @@
+package nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit;
+
+import nodomain.freeyourgadget.gadgetbridge.GBApplication;
+import nodomain.freeyourgadget.gadgetbridge.database.DBHandler;
+import nodomain.freeyourgadget.gadgetbridge.database.DBHelper;
+import nodomain.freeyourgadget.gadgetbridge.devices.vivomovehr.VivomoveHrSampleProvider;
+import nodomain.freeyourgadget.gadgetbridge.entities.DaoSession;
+import nodomain.freeyourgadget.gadgetbridge.entities.Device;
+import nodomain.freeyourgadget.gadgetbridge.entities.User;
+import nodomain.freeyourgadget.gadgetbridge.entities.VivomoveHrActivitySample;
+import nodomain.freeyourgadget.gadgetbridge.impl.GBDevice;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
+
+public class FitDbImporter {
+    private static final Logger LOG = LoggerFactory.getLogger(FitDbImporter.class);
+
+    private final GBDevice gbDevice;
+    private final FitImporter fitImporter;
+
+    public FitDbImporter(GBDevice gbDevice) {
+        this.gbDevice = gbDevice;
+        fitImporter = new FitImporter();
+    }
+
+    public void processFitData(List<FitMessage> messages) {
+        try (DBHandler dbHandler = GBApplication.acquireDB()) {
+            final DaoSession session = dbHandler.getDaoSession();
+
+            final Device device = DBHelper.getDevice(gbDevice, session);
+            final User user = DBHelper.getUser(session);
+            final VivomoveHrSampleProvider provider = new VivomoveHrSampleProvider(gbDevice, session);
+
+            fitImporter.processFitData(messages, new Processor(provider, device, user));
+        } catch (Exception e) {
+            LOG.error("Error importing FIT data", e);
+        }
+    }
+
+    private static class Processor implements FitImportProcessor {
+        private final VivomoveHrSampleProvider provider;
+        private final Device device;
+        private final User user;
+
+        private Processor(VivomoveHrSampleProvider provider, Device device, User user) {
+            this.provider = provider;
+            this.device = device;
+            this.user = user;
+        }
+
+        @Override
+        public void onSample(VivomoveHrActivitySample sample) {
+            sample.setDevice(device);
+            sample.setUser(user);
+            sample.setProvider(provider);
+
+            provider.addGBActivitySample(sample);
+        }
+    }
+}

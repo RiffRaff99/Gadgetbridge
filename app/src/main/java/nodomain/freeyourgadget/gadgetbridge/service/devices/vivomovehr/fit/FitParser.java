@@ -74,6 +74,7 @@ public class FitParser {
                     localMessageType = (recordHeader & MASK_COMPRESSED_LOCAL_MESSAGE_TYPE) >> 4;
                     currentTimestamp = lastTimestamp + timestampOffset;
                     isDefinitionMessage = false;
+                    throw new IllegalArgumentException("Compressed timestamps not supported yet");
                 }
 
                 if (isDefinitionMessage) {

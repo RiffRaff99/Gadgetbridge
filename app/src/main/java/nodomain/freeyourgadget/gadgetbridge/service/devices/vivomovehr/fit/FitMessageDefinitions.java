@@ -151,7 +151,7 @@ public class FitMessageDefinitions {
             new FitMessageFieldDefinition("timestamp_min_8", 25, 1, FitFieldBaseType.UINT8, 1, 0, "min", null),
             new FitMessageFieldDefinition("timestamp_16", 26, 2, FitFieldBaseType.UINT16, 1, 0, "s", null),
             new FitMessageFieldDefinition("heart_rate", 27, 1, FitFieldBaseType.UINT8, 1, 0, "bpm", null),
-            new FitMessageFieldDefinition("intensity", 28, 1, FitFieldBaseType.UINT8, 10, 0, "bpm", null),
+            new FitMessageFieldDefinition("intensity", 28, 1, FitFieldBaseType.UINT8, null),
             new FitMessageFieldDefinition("duration_min", 29, 2, FitFieldBaseType.UINT16, 1, 0, "min", null),
             new FitMessageFieldDefinition("duration", 30, 4, FitFieldBaseType.UINT32, 1, 0, "s", null),
             new FitMessageFieldDefinition("ascent", 31, 4, FitFieldBaseType.UINT32, 1000, 0, "m", null),

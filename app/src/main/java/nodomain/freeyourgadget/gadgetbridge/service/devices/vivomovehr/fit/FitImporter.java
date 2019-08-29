@@ -1,59 +1,55 @@
 package nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit;
 
-import nodomain.freeyourgadget.gadgetbridge.GBApplication;
-import nodomain.freeyourgadget.gadgetbridge.database.DBHandler;
-import nodomain.freeyourgadget.gadgetbridge.database.DBHelper;
-import nodomain.freeyourgadget.gadgetbridge.devices.vivomovehr.VivomoveHrSampleProvider;
-import nodomain.freeyourgadget.gadgetbridge.entities.DaoSession;
-import nodomain.freeyourgadget.gadgetbridge.entities.Device;
-import nodomain.freeyourgadget.gadgetbridge.entities.User;
-import nodomain.freeyourgadget.gadgetbridge.impl.GBDevice;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import nodomain.freeyourgadget.gadgetbridge.entities.VivomoveHrActivitySample;
+import nodomain.freeyourgadget.gadgetbridge.model.ActivitySample;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.GarminTimeUtils;
 
 import java.util.List;
 
 public class FitImporter {
-    private static final Logger LOG = LoggerFactory.getLogger(FitImporter.class);
+    public void processFitData(List<FitMessage> messages, FitImportProcessor processor) {
+        boolean ohrEnabled = false;
+        int softwareVersion = -1;
 
-    private final GBDevice gbDevice;
+        for (FitMessage message : messages) {
+            switch (message.definition.globalMessageID) {
+                case FitMessageDefinitions.FIT_MESSAGE_NUMBER_EVENT:
+                    //message.getField();
+                    break;
 
-    public FitImporter(GBDevice gbDevice) {
-        this.gbDevice = gbDevice;
-    }
+                case FitMessageDefinitions.FIT_MESSAGE_NUMBER_SOFTWARE:
+                    final Integer versionField = message.getIntegerField("version");
+                    if (versionField != null) softwareVersion = versionField;
+                    break;
 
-    public void processFitData(List<FitMessage> messages) {
-        try (DBHandler dbHandler = GBApplication.acquireDB()) {
-            final DaoSession session = dbHandler.getDaoSession();
+                case FitMessageDefinitions.FIT_MESSAGE_NUMBER_MONITORING:
+                    final Integer activityType = message.getIntegerField("activity_type");
+                    final Double activeCalories = message.getNumericField("active_calories");
+                    final Integer intensity = message.getIntegerField("intensity");
+                    final Integer cycles = message.getIntegerField("cycles");
+                    final Double heartRate = message.getNumericField("heart_rate");
+                    final Integer timestamp = message.getIntegerField("timestamp");
+                    //final Integer timestamp16 = message.getIntegerField("timestamp_16");
+                    final Double activeTime = message.getNumericField("active_time");
 
-            final Device device = DBHelper.getDevice(gbDevice, session);
-            final User user = DBHelper.getUser(session);
-            final VivomoveHrSampleProvider provider = new VivomoveHrSampleProvider(gbDevice, session);
+                    final VivomoveHrActivitySample sample = new VivomoveHrActivitySample();
+                    sample.setTimestamp(GarminTimeUtils.garminTimestampToUnixTime(timestamp));
 
-            for (FitMessage message : messages) {
-                /*
-                switch (message.definition.globalMessageID) {
-                    case FitMessageDefinitions.FIT_MESSAGE_NUMBER_FILE_ID:
-                }
-                final VivomoveHrActivitySample sample = new VivomoveHrActivitySample();
-                sample.setDevice(device);
-                sample.setUser(user);
-                sample.setTimestamp(timestampInSeconds);
-                sample.setProvider(provider);
+                    sample.setCaloriesBurnt(activeCalories == null ? ActivitySample.NOT_MEASURED : (int) Math.round(activeCalories));
+                    //sample.setFloorsClimbed(lastSample.getFloorsClimbed());
+                    sample.setHeartRate(ohrEnabled && heartRate != null && heartRate > 0 ? (int) Math.round(heartRate) : ActivitySample.NOT_MEASURED);
+                    sample.setSteps(cycles == null ? ActivitySample.NOT_MEASURED : cycles);
+                    sample.setRawIntensity(intensity == null ? 0 : intensity);
+                    sample.setRawKind(activityType == null ? 0 : activityType);
 
-                sample.setCaloriesBurnt(lastSample.getCaloriesBurnt());
-                sample.setFloorsClimbed(lastSample.getFloorsClimbed());
-                sample.setHeartRate(lastSample.getHeartRate());
-                sample.setSteps(lastSample.getSteps());
-                sample.setRawIntensity(ActivitySample.NOT_MEASURED);
-                sample.setRawKind(ActivityKind.TYPE_ACTIVITY); // to make it visible in the charts TODO: add a MANUAL kind for that?
+                    processor.onSample(sample);
+                    break;
 
-                LOG.debug("Publishing sample");
-                provider.addGBActivitySample(sample);
-                 */
+                case FitMessageDefinitions.FIT_MESSAGE_NUMBER_OHR_SETTINGS:
+                    final Boolean isOhrEnabled = message.getBooleanField("enabled");
+                    if (isOhrEnabled != null) ohrEnabled = isOhrEnabled;
+                    break;
             }
-        } catch (Exception e) {
-            LOG.error("Error saving real-time activity data", e);
         }
     }
 }
