@@ -11,7 +11,9 @@ public class FitImporter {
         boolean ohrEnabled = false;
         int softwareVersion = -1;
 
+        int lastTimestamp = 0;
         for (FitMessage message : messages) {
+            System.out.println("Processing " + message.definition.messageName);
             switch (message.definition.globalMessageID) {
                 case FitMessageDefinitions.FIT_MESSAGE_NUMBER_EVENT:
                     //message.getField();
@@ -22,18 +24,31 @@ public class FitImporter {
                     if (versionField != null) softwareVersion = versionField;
                     break;
 
+                case FitMessageDefinitions.FIT_MESSAGE_NUMBER_MONITORING_INFO:
+                    lastTimestamp = message.getIntegerField("timestamp");
+                    break;
+
                 case FitMessageDefinitions.FIT_MESSAGE_NUMBER_MONITORING:
                     final Integer activityType = message.getIntegerField("activity_type");
                     final Double activeCalories = message.getNumericField("active_calories");
                     final Integer intensity = message.getIntegerField("intensity");
                     final Integer cycles = message.getIntegerField("cycles");
                     final Double heartRate = message.getNumericField("heart_rate");
-                    final Integer timestamp = message.getIntegerField("timestamp");
-                    //final Integer timestamp16 = message.getIntegerField("timestamp_16");
+                    final Integer timestampFull = message.getIntegerField("timestamp");
+                    final Integer timestamp16 = message.getIntegerField("timestamp_16");
                     final Double activeTime = message.getNumericField("active_time");
 
+                    if (timestampFull != null) {
+                        lastTimestamp = timestampFull;
+                    } else if (timestamp16 != null) {
+                        lastTimestamp += (timestamp16 - (lastTimestamp & 0xFFFF)) & 0xFFFF;
+                    } else {
+                        // TODO: timestamp_min_8
+                        throw new IllegalArgumentException("Unsupported timestamp");
+                    }
+
                     final VivomoveHrActivitySample sample = new VivomoveHrActivitySample();
-                    sample.setTimestamp(GarminTimeUtils.garminTimestampToUnixTime(timestamp));
+                    sample.setTimestamp(GarminTimeUtils.garminTimestampToUnixTime(lastTimestamp));
 
                     sample.setCaloriesBurnt(activeCalories == null ? ActivitySample.NOT_MEASURED : (int) Math.round(activeCalories));
                     //sample.setFloorsClimbed(lastSample.getFloorsClimbed());
