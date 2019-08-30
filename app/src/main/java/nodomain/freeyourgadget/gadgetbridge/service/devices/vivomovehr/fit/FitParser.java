@@ -137,7 +137,7 @@ public class FitParser {
 
     private String readFitString(MessageReader reader, int size) {
         final byte[] bytes = reader.readBytes(size);
-        final int zero = ArrayUtils.indexOf(bytes, (byte) 0);
+        final int zero = ArrayUtils.indexOf((byte)0, bytes);
         if (zero < 0) {
             LOG.warn("Unterminated string");
             return new String(bytes, StandardCharsets.UTF_8);

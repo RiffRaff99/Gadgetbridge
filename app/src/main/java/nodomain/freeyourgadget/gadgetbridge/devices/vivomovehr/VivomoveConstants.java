@@ -57,6 +57,7 @@ public class VivomoveConstants {
     public static final int GARMIN_TIME_EPOCH = 631065600;
 
     public static final int MESSAGE_RESPONSE = 5000;
+    public static final int MESSAGE_REQUEST = 5001;
     public static final int MESSAGE_DOWNLOAD_REQUEST = 5002;
     public static final int MESSAGE_FILE_TRANSFER_DATA = 5004;
     public static final int MESSAGE_DIRECTORY_FILE_FILTER_REQUEST = 5007;
@@ -68,6 +69,8 @@ public class VivomoveConstants {
     public static final int MESSAGE_DEVICE_SETTINGS = 5026;
     public static final int MESSAGE_SYSTEM_EVENT = 5030;
     public static final int MESSAGE_SUPPORTED_FILE_TYPES_REQUEST = 5031;
+    public static final int MESSAGE_NOTIFICATION_SOURCE = 5033;
+    public static final int MESSAGE_GNCS_CONTROL_POINT_REQUEST = 5034;
     public static final int MESSAGE_SYNC_REQUEST = 5037;
     public static final int MESSAGE_MUSIC_CONTROL_CAPABILITIES = 5042;
     public static final int MESSAGE_PROTOBUF_REQUEST = 5043;

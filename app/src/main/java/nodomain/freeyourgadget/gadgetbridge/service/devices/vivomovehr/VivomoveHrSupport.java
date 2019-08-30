@@ -27,6 +27,8 @@ import nodomain.freeyourgadget.gadgetbridge.impl.GBDevice;
 import nodomain.freeyourgadget.gadgetbridge.model.*;
 import nodomain.freeyourgadget.gadgetbridge.service.btle.AbstractBTLEDeviceSupport;
 import nodomain.freeyourgadget.gadgetbridge.service.btle.TransactionBuilder;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.ancs.AncsCategory;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.ancs.AncsEvent;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.downloads.DirectoryData;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.downloads.DirectoryEntry;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.downloads.FileDownloadListener;
@@ -124,19 +126,15 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
 
     @Override
     public boolean onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
+        final UUID characteristicUUID = characteristic.getUuid();
         if (super.onCharacteristicChanged(gatt, characteristic)) {
+            LOG.debug("Change of characteristic {} handled by parent", characteristicUUID);
             return true;
         }
 
-        final UUID characteristicUUID = characteristic.getUuid();
         final byte[] data = characteristic.getValue();
         if (data.length == 0) {
-            return true;
-        }
-
-        //dbg(String.format("Characteristic %s changed: %s", characteristicUUID.toString(), Arrays.toString(data)));
-
-        if (super.onCharacteristicChanged(gatt, characteristic)) {
+            LOG.debug("No data received on change of characteristic {}", characteristicUUID);
             return true;
         }
 
@@ -687,6 +685,42 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
         sendMessage(new FitDataMessage(weatherConditionsMessage).packet);
     }
 
+    private void sendNotification(AncsEvent event, NotificationSpec spec) {
+        final AncsCategory category;
+        switch (spec.type) {
+            case GENERIC_SMS:
+                category = AncsCategory.SMS;
+                break;
+            case GENERIC_PHONE:
+                category = AncsCategory.INCOMING_CALL;
+                break;
+            case GENERIC_EMAIL:
+            case GMAIL:
+            case BBM:
+            case MAILBOX:
+            case OUTLOOK:
+                category = AncsCategory.EMAIL;
+                break;
+            case GENERIC_NAVIGATION:
+            case GOOGLE_MAPS:
+                category = AncsCategory.LOCATION;
+                break;
+            case GENERIC_CALENDAR:
+            case GENERIC_ALARM_CLOCK:
+                category = AncsCategory.SCHEDULE;
+                break;
+            case FACEBOOK:
+            case LINKEDIN:
+                category = AncsCategory.SOCIAL;
+                break;
+            // TODO: The rest
+            default:
+                category = AncsCategory.OTHER;
+                break;
+        }
+        sendMessage(new GncsNotificationSourceMessage(event, null, category, 1, spec.getId()).packet);
+    }
+
     private void listFiles(int filterType) {
         LOG.info("Requesting file list (filter={})", filterType);
         sendMessage(new DirectoryFileFilterRequestMessage(filterType).packet);
@@ -895,10 +929,26 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
     public void onReadConfiguration(String config) {
     }
 
+    private int phase = 0;
+
     @Override
     public void onTestNewFunction() {
         dbg("onTestNewFunction()");
-        sendRequestSync();
+        final byte[] message;
+        switch (phase++) {
+            case 0:
+                sendMessage(new SystemEventMessage(GarminSystemEventType.PAIR_START, 1).packet);
+                break;
+            case 1:
+                sendMessage(message = new SystemEventMessage(GarminSystemEventType.PAIR_COMPLETE, 1).packet);
+                break;
+            case 2:
+                sendRequestSync();
+                break;
+            default:
+                GB.toast("Nothing more to do", Toast.LENGTH_LONG, GB.ERROR);
+                break;
+        }
     }
 
     @Override
