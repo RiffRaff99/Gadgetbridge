@@ -318,6 +318,10 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
                 processSyncRequest(SyncRequestMessage.parsePacket(packet));
                 break;
 
+            case VivomoveConstants.MESSAGE_NOTIFICATION_SERVICE_SUBSCRIPTION:
+                processNotificationServiceSubscription(NotificationServiceSubscriptionMessage.parsePacket(packet));
+                break;
+
             case VivomoveConstants.MESSAGE_CONFIGURATION:
                 processConfigurationMessage(ConfigurationMessage.parsePacket(packet));
                 break;
@@ -330,6 +334,11 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
                 LOG.info("Unknown message type {}: {}", messageType, GB.hexdump(packet, 0, packet.length));
                 break;
         }
+    }
+
+    private void processNotificationServiceSubscription(NotificationServiceSubscriptionMessage requestMessage) {
+        LOG.info("Processing notification service subscription request message: intent={}, flags={}", requestMessage.intentIndicator, requestMessage.featureFlags);
+        sendMessage(new NotificationServiceSubscriptionResponseMessage(0, 0, requestMessage.intentIndicator, requestMessage.featureFlags).packet);
     }
 
     private void processSyncRequest(SyncRequestMessage requestMessage) {
@@ -541,6 +550,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
         requestBatteryStatusUpdate();
         sendFitDefinitions();
         sendFitConnectivityMessage();
+        requestSupportedFileTypes();
     }
 
     private void sendProtobufRequest(byte[] protobufMessage) {
@@ -642,6 +652,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
         connectivityMessage.setField(4, FitBool.TRUE);
         connectivityMessage.setField(5, FitBool.TRUE);
         connectivityMessage.setField(6, FitBool.TRUE);
+        connectivityMessage.setField(7, FitBool.TRUE);
         connectivityMessage.setField(8, FitBool.TRUE);
         connectivityMessage.setField(9, FitBool.TRUE);
         connectivityMessage.setField(10, FitBool.TRUE);

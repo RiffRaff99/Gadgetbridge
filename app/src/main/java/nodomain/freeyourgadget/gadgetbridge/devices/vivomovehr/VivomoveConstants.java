@@ -2,8 +2,6 @@ package nodomain.freeyourgadget.gadgetbridge.devices.vivomovehr;
 
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.GarminCapability;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -46,8 +44,8 @@ public class VivomoveConstants {
     public static final int GARMIN_SETTINGS_FIT_FILE_INDEX = 27;
 
     // TODO: Better capability management/configuration
-    public static final Set<GarminCapability> OUR_CAPABILITIES = new HashSet<>(Arrays.asList(GarminCapability.SYNC, GarminCapability.ADVANCED_MUSIC_CONTROLS, GarminCapability.FIND_MY_PHONE, GarminCapability.WEATHER_CONDITIONS, GarminCapability.WEATHER_ALERTS, GarminCapability.DEVICE_MESSAGES, GarminCapability.SMS_NOTIFICATIONS, GarminCapability.SYNC, GarminCapability.DEVICE_INITIATES_SYNC, GarminCapability.HOST_INITIATED_SYNC_REQUESTS, GarminCapability.CALENDAR, GarminCapability.CURRENT_TIME_REQUEST_SUPPORT));
-    //public static final Set<GarminCapability> OUR_CAPABILITIES = GarminCapability.ALL_CAPABILITIES;
+    // public static final Set<GarminCapability> OUR_CAPABILITIES = new HashSet<>(Arrays.asList(GarminCapability.SYNC, GarminCapability.GNCS, GarminCapability.ADVANCED_MUSIC_CONTROLS, GarminCapability.FIND_MY_PHONE, GarminCapability.WEATHER_CONDITIONS, GarminCapability.WEATHER_ALERTS, GarminCapability.DEVICE_MESSAGES, GarminCapability.SMS_NOTIFICATIONS, GarminCapability.SYNC, GarminCapability.DEVICE_INITIATES_SYNC, GarminCapability.HOST_INITIATED_SYNC_REQUESTS, GarminCapability.CALENDAR, GarminCapability.CURRENT_TIME_REQUEST_SUPPORT));
+    public static final Set<GarminCapability> OUR_CAPABILITIES = GarminCapability.ALL_CAPABILITIES;
 
     public static final int MAX_WRITE_SIZE = 20;
 
@@ -71,6 +69,7 @@ public class VivomoveConstants {
     public static final int MESSAGE_SUPPORTED_FILE_TYPES_REQUEST = 5031;
     public static final int MESSAGE_NOTIFICATION_SOURCE = 5033;
     public static final int MESSAGE_GNCS_CONTROL_POINT_REQUEST = 5034;
+    public static final int MESSAGE_NOTIFICATION_SERVICE_SUBSCRIPTION = 5036;
     public static final int MESSAGE_SYNC_REQUEST = 5037;
     public static final int MESSAGE_MUSIC_CONTROL_CAPABILITIES = 5042;
     public static final int MESSAGE_PROTOBUF_REQUEST = 5043;
