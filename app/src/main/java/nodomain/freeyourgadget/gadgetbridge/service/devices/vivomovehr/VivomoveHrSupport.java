@@ -754,6 +754,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
     @Override
     public void onNotification(NotificationSpec notificationSpec) {
         dbg("onNotification " + notificationSpec);
+        sendNotification(AncsEvent.NOTIFICATION_ADDED, notificationSpec);
     }
 
     @Override
@@ -934,21 +935,9 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
     @Override
     public void onTestNewFunction() {
         dbg("onTestNewFunction()");
-        final byte[] message;
-        switch (phase++) {
-            case 0:
-                sendMessage(new SystemEventMessage(GarminSystemEventType.PAIR_START, 1).packet);
-                break;
-            case 1:
-                sendMessage(message = new SystemEventMessage(GarminSystemEventType.PAIR_COMPLETE, 1).packet);
-                break;
-            case 2:
-                sendRequestSync();
-                break;
-            default:
-                GB.toast("Nothing more to do", Toast.LENGTH_LONG, GB.ERROR);
-                break;
-        }
+        final NotificationSpec spec = new NotificationSpec(0xAA0BF0);
+        spec.type = NotificationType.GENERIC_PHONE;
+        sendNotification(AncsEvent.NOTIFICATION_ADDED, spec);
     }
 
     @Override

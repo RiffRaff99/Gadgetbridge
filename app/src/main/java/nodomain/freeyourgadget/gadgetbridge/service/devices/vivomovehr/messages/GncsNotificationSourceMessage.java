@@ -17,13 +17,15 @@ public class GncsNotificationSourceMessage {
         final MessageWriter writer = new MessageWriter(15);
         writer.writeShort(0); // packet size will be filled below
         writer.writeShort(VivomoveConstants.MESSAGE_NOTIFICATION_SOURCE);
+
         writer.writeByte(event.ordinal());
-        writer.writeByte(eventFlags == null ? 0 : ((int) EnumUtils.generateBitVector(AncsEventFlag.class, eventFlags)));
+        writer.writeByte(eventFlags == null ? 2 : ((int) EnumUtils.generateBitVector(AncsEventFlag.class, eventFlags)));
         writer.writeByte(category.ordinal());
         writer.writeByte(Math.min(categoryCount, 127));
         writer.writeInt(notificationUID);
         // TODO: Extra flags?
-        writer.writeByte(0);
+        writer.writeByte(1);
+
         writer.writeShort(0); // CRC will be filled below
         final byte[] packet = writer.getBytes();
         BinaryUtils.writeShort(packet, 0, packet.length);
