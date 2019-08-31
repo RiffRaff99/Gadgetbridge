@@ -10,6 +10,8 @@ public class GncsControlPointMessage {
     }
 
     public static GncsControlPointMessage parsePacket(byte[] packet) {
-        return new GncsControlPointMessage(AncsControlCommand.parseCommand(packet, 4, packet.length - 6));
+        final AncsControlCommand command = AncsControlCommand.parseCommand(packet, 4, packet.length - 6);
+        if (command == null) return null;
+        return new GncsControlPointMessage(command);
     }
 }

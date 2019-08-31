@@ -92,7 +92,7 @@ public abstract class AncsControlCommand {
     private static AncsGetNotificationAttributeCommand createGetNotificationAttributesCommand(byte[] buffer, int offset, int size) {
         final MessageReader reader = new MessageReader(buffer, offset);
         final int notificationUID = reader.readInt();
-        int pos = 1;
+        int pos = 4;
         final List<AncsAttributeRequest> attributes = new ArrayList<>(size);
         while (pos < size) {
             final int attributeID = reader.readByte();

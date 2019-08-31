@@ -69,6 +69,7 @@ public class VivomoveConstants {
     public static final int MESSAGE_SUPPORTED_FILE_TYPES_REQUEST = 5031;
     public static final int MESSAGE_NOTIFICATION_SOURCE = 5033;
     public static final int MESSAGE_GNCS_CONTROL_POINT_REQUEST = 5034;
+    public static final int MESSAGE_GNCS_DATA_SOURCE = 5035;
     public static final int MESSAGE_NOTIFICATION_SERVICE_SUBSCRIPTION = 5036;
     public static final int MESSAGE_SYNC_REQUEST = 5037;
     public static final int MESSAGE_MUSIC_CONTROL_CAPABILITIES = 5042;

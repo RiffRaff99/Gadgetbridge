@@ -109,6 +109,7 @@ public class DeviceSupportFactory {
         } catch (ClassNotFoundException e) {
             return null; // not a class, or not known at least
         } catch (Exception e) {
+            GB.log("Error creating device support", GB.ERROR, e);
             throw new GBException("Error creating DeviceSupport instance for " + className, e);
         }
     }

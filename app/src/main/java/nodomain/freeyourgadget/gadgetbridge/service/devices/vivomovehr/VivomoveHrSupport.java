@@ -27,8 +27,7 @@ import nodomain.freeyourgadget.gadgetbridge.impl.GBDevice;
 import nodomain.freeyourgadget.gadgetbridge.model.*;
 import nodomain.freeyourgadget.gadgetbridge.service.btle.AbstractBTLEDeviceSupport;
 import nodomain.freeyourgadget.gadgetbridge.service.btle.TransactionBuilder;
-import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.ancs.AncsCategory;
-import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.ancs.AncsEvent;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.ancs.*;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.downloads.DirectoryData;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.downloads.DirectoryEntry;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.downloads.FileDownloadListener;
@@ -44,6 +43,7 @@ import nodomain.freeyourgadget.gadgetbridge.util.GB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.BinaryUtils.*;
@@ -59,10 +59,12 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
     private Set<GarminCapability> capabilities;
 
     private int lastProtobufRequestId;
+    private int maxPacketSize;
     private WeatherSpec lastWeatherSpec = defaultWeatherSpec();
 
     private final FitParser fitParser = new FitParser(FitMessageDefinitions.ALL_DEFINITIONS);
     private VivomoveHrCommunicator communicator;
+    private GncsDataSourceQueue gncsDataSourceQueue;
     private FileDownloadQueue fileDownloadQueue;
     private FitDbImporter fitImporter;
 
@@ -322,6 +324,10 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
                 processNotificationServiceSubscription(NotificationServiceSubscriptionMessage.parsePacket(packet));
                 break;
 
+            case VivomoveConstants.MESSAGE_GNCS_CONTROL_POINT_REQUEST:
+                processGncsControlPointRequest(GncsControlPointMessage.parsePacket(packet));
+                break;
+
             case VivomoveConstants.MESSAGE_CONFIGURATION:
                 processConfigurationMessage(ConfigurationMessage.parsePacket(packet));
                 break;
@@ -332,6 +338,60 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
 
             default:
                 LOG.info("Unknown message type {}: {}", messageType, GB.hexdump(packet, 0, packet.length));
+                break;
+        }
+    }
+
+    private void processGncsControlPointRequest(GncsControlPointMessage requestMessage) {
+        if (requestMessage == null) {
+            // TODO: Proper error handling with specific error code
+            sendMessage(new GncsControlPointResponseMessage(VivomoveConstants.STATUS_ACK, GncsControlPointResponseMessage.RESPONSE_ANCS_ERROR_OCCURRED, GncsControlPointResponseMessage.ANCS_ERROR_UNKNOWN_ANCS_COMMAND).packet);
+            return;
+        }
+        switch (requestMessage.command.command) {
+            case GET_NOTIFICATION_ATTRIBUTES:
+                final AncsGetNotificationAttributeCommand getNotificationAttributeCommand = (AncsGetNotificationAttributeCommand) requestMessage.command;
+                LOG.info("Processing ANCS request to get attributes of notification #{}", getNotificationAttributeCommand.notificationUID);
+                sendMessage(new GncsControlPointResponseMessage(VivomoveConstants.STATUS_ACK, GncsControlPointResponseMessage.RESPONSE_SUCCESSFUL, GncsControlPointResponseMessage.ANCS_ERROR_NO_ERROR).packet);
+                final Map<AncsAttribute, String> attributes = new LinkedHashMap<>();
+                for (AncsAttributeRequest attributeRequest : getNotificationAttributeCommand.attributes) {
+                    final AncsAttribute attribute = attributeRequest.attribute;
+                    final String attributeValue;
+                    LOG.debug("Requested ANCS attribute {}", attribute);
+                    switch (attribute) {
+                        case DATE:
+                            final SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd'T'HHmmSS", Locale.ROOT);
+                            attributeValue = fmt.format(new Date());
+                            break;
+                        case TITLE:
+                            attributeValue = "zkouska";
+                            break;
+                        case SUBTITLE:
+                            attributeValue = "zkouska!";
+                            break;
+                        case APP_IDENTIFIER:
+                            attributeValue = BuildConfig.APPLICATION_ID;
+                            break;
+                        case MESSAGE:
+                            attributeValue = "Zkousime ANCS";
+                            break;
+                        case MESSAGE_SIZE:
+                            attributeValue = "13";
+                            break;
+                        default:
+                            LOG.warn("Unknown attribute {}", attribute);
+                            attributeValue = "";
+                            break;
+                    }
+                    final String valueShortened = attributeValue.length() > attributeRequest.maxLength ? attributeValue.substring(0, attributeRequest.maxLength) : attributeValue;
+                    attributes.put(attribute, valueShortened);
+                }
+                gncsDataSourceQueue.addToQueue(new AncsGetNotificationAttributesResponse(getNotificationAttributeCommand.notificationUID, attributes).packet);
+                break;
+
+            default:
+                LOG.error("Unknown GNCS control point command {}", requestMessage.command.command);
+                sendMessage(new GncsControlPointResponseMessage(VivomoveConstants.STATUS_ACK, GncsControlPointResponseMessage.RESPONSE_ANCS_ERROR_OCCURRED, GncsControlPointResponseMessage.ANCS_ERROR_UNKNOWN_ANCS_COMMAND).packet);
                 break;
         }
     }
@@ -467,6 +527,9 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
             case VivomoveConstants.MESSAGE_SUPPORTED_FILE_TYPES_REQUEST:
                 processSupportedFileTypesResponse(SupportedFileTypesResponseMessage.parsePacket(packet));
                 break;
+            case VivomoveConstants.MESSAGE_GNCS_DATA_SOURCE:
+                gncsDataSourceQueue.responseReceived(GncsDataSourceResponseMessage.parsePacket(packet));
+                break;
             default:
                 LOG.info("Received response to message {}: {}", responseMessage.requestID, responseMessage.getStatusStr());
                 break;
@@ -513,6 +576,9 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
 
     private void processDeviceInformationMessage(DeviceInformationMessage deviceInformationMessage) {
         LOG.info("Received device information: protocol {}, product {}, unit {}, SW {}, max packet {}, BT name {}, device name {}, device model {}", deviceInformationMessage.protocolVersion, deviceInformationMessage.productNumber, deviceInformationMessage.unitNumber, deviceInformationMessage.getSoftwareVersionStr(), deviceInformationMessage.maxPacketSize, deviceInformationMessage.bluetoothFriendlyName, deviceInformationMessage.deviceName, deviceInformationMessage.deviceModel);
+
+        this.maxPacketSize = deviceInformationMessage.maxPacketSize;
+        this.gncsDataSourceQueue = new GncsDataSourceQueue(communicator, maxPacketSize);
 
         final GBDeviceEventVersionInfo deviceEventVersionInfo = new GBDeviceEventVersionInfo();
         deviceEventVersionInfo.fwVersion = deviceInformationMessage.getSoftwareVersionStr();
@@ -764,7 +830,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
 
     @Override
     public void onNotification(NotificationSpec notificationSpec) {
-        dbg("onNotification " + notificationSpec);
+        dbg("onNotification #" + notificationSpec.getId());
         sendNotification(AncsEvent.NOTIFICATION_ADDED, notificationSpec);
     }
 
