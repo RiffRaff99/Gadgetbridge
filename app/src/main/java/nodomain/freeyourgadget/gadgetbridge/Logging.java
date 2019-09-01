@@ -18,10 +18,15 @@ package nodomain.freeyourgadget.gadgetbridge;
 
 import android.util.Log;
 
+import com.internetitem.logback.elasticsearch.ElasticsearchAppender;
+import com.internetitem.logback.elasticsearch.config.BasicAuthentication;
+import com.internetitem.logback.elasticsearch.config.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
@@ -36,22 +41,34 @@ public abstract class Logging {
     public static final String PROP_LOGFILES_DIR = "GB_LOGFILES_DIR";
 
     private FileAppender<ILoggingEvent> fileLogger;
+    private ElasticsearchAppender elasticLogger;
 
     public void setupLogging(boolean enable) {
         try {
             if (fileLogger == null) {
                 init();
             }
+            if (elasticLogger == null) {
+                initElastic();
+            }
             if (enable) {
                 startFileLogger();
+                startLogger(elasticLogger);
             } else {
-                stopFileLogger();
+                stopLogger(elasticLogger);
+                stopLogger(fileLogger);
             }
             getLogger().info("Gadgetbridge version: " + BuildConfig.VERSION_NAME);
         } catch (IOException ex) {
             Log.e("GBApplication", "External files dir not available, cannot log to file", ex);
-            stopFileLogger();
+            stopLogger(fileLogger);
         }
+    }
+
+    private void initElastic() {
+        elasticLogger = new ElasticsearchAppender(ElasticsearchConfiguration.settings);
+        elasticLogger.setHeaders(ElasticsearchConfiguration.headers);
+        elasticLogger.setProperties(ElasticsearchConfiguration.properties);
     }
 
     public String getLogPath() {
@@ -87,16 +104,23 @@ public abstract class Logging {
 
     private void startFileLogger() {
         if (fileLogger != null && !fileLogger.isStarted()) {
-            addFileLogger(fileLogger);
+            addLogger(fileLogger);
             fileLogger.setLazy(false); // hack to make sure that start() actually opens the file
             fileLogger.start();
         }
     }
 
-    private void stopFileLogger() {
-        if (fileLogger != null && fileLogger.isStarted()) {
-            fileLogger.stop();
-            removeFileLogger(fileLogger);
+    private void startLogger(Appender<ILoggingEvent> logger) {
+        if (logger != null && !logger.isStarted()) {
+            addLogger(logger);
+            logger.start();
+        }
+    }
+
+    private void stopLogger(Appender<ILoggingEvent> logger) {
+        if (logger != null && logger.isStarted()) {
+            logger.stop();
+            remoteLogger(logger);
         }
     }
 
@@ -105,25 +129,25 @@ public abstract class Logging {
         fileLogger = (FileAppender<ILoggingEvent>) root.getAppender("FILE");
     }
 
-    private void addFileLogger(Appender<ILoggingEvent> fileLogger) {
+    private void addLogger(Appender<ILoggingEvent> fileLogger) {
         try {
             ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
             if (!root.isAttached(fileLogger)) {
                 root.addAppender(fileLogger);
             }
         } catch (Throwable ex) {
-            Log.e("GBApplication", "Error adding logger FILE appender", ex);
+            Log.e("GBApplication", "Error adding logger appender", ex);
         }
     }
 
-    private void removeFileLogger(Appender<ILoggingEvent> fileLogger) {
+    private void remoteLogger(Appender<ILoggingEvent> fileLogger) {
         try {
             ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
             if (root.isAttached(fileLogger)) {
                 root.detachAppender(fileLogger);
             }
         } catch (Throwable ex) {
-            Log.e("GBApplication", "Error removing logger FILE appender", ex);
+            Log.e("GBApplication", "Error removing logger appender", ex);
         }
     }
 

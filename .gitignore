@@ -34,3 +34,5 @@ fw.dirs
 **/.project
 **/.settings
 **/.classpath
+
+/app/src/main/java/nodomain/freeyourgadget/gadgetbridge/ElasticsearchConfiguration.java
