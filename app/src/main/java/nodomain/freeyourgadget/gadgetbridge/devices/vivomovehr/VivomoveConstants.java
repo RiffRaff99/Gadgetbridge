@@ -72,6 +72,8 @@ public class VivomoveConstants {
     public static final int MESSAGE_GNCS_DATA_SOURCE = 5035;
     public static final int MESSAGE_NOTIFICATION_SERVICE_SUBSCRIPTION = 5036;
     public static final int MESSAGE_SYNC_REQUEST = 5037;
+    public static final int MESSAGE_FIND_MY_PHONE = 5039;
+    public static final int MESSAGE_CANCEL_FIND_MY_PHONE = 5040;
     public static final int MESSAGE_MUSIC_CONTROL_CAPABILITIES = 5042;
     public static final int MESSAGE_PROTOBUF_REQUEST = 5043;
     public static final int MESSAGE_PROTOBUF_RESPONSE = 5044;

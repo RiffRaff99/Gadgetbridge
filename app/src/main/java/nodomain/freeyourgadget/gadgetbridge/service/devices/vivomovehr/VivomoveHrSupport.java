@@ -1,5 +1,7 @@
 package nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.content.Intent;
@@ -8,6 +10,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.widget.Toast;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.google.protobuf.InvalidProtocolBufferException;
 import nodomain.freeyourgadget.gadgetbridge.BuildConfig;
@@ -67,6 +70,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
     private GncsDataSourceQueue gncsDataSourceQueue;
     private FileDownloadQueue fileDownloadQueue;
     private FitDbImporter fitImporter;
+    private Notification findMyPhoneNotification;
 
     private static WeatherSpec defaultWeatherSpec() {
         final WeatherSpec weatherSpec = new WeatherSpec();
@@ -320,6 +324,14 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
                 processSyncRequest(SyncRequestMessage.parsePacket(packet));
                 break;
 
+            case VivomoveConstants.MESSAGE_FIND_MY_PHONE:
+                processFindMyPhoneRequest(FindMyPhoneRequestMessage.parsePacket(packet));
+                break;
+
+            case VivomoveConstants.MESSAGE_CANCEL_FIND_MY_PHONE:
+                processCancelFindMyPhoneRequest();
+                break;
+
             case VivomoveConstants.MESSAGE_NOTIFICATION_SERVICE_SUBSCRIPTION:
                 processNotificationServiceSubscription(NotificationServiceSubscriptionMessage.parsePacket(packet));
                 break;
@@ -340,6 +352,22 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
                 LOG.info("Unknown message type {}: {}", messageType, GB.hexdump(packet, 0, packet.length));
                 break;
         }
+    }
+
+    private void processCancelFindMyPhoneRequest() {
+        LOG.info("Processing request to cancel find-my-phone");
+        sendMessage(new GenericResponseMessage(VivomoveConstants.MESSAGE_FIND_MY_PHONE, 0).packet);
+        if (findMyPhoneNotification != null) {
+            NotificationManagerCompat.from(getContext()).cancel(GB.NOTIFICATION_ID_FIND_MY_DEVICE);
+        }
+    }
+
+    private void processFindMyPhoneRequest(FindMyPhoneRequestMessage requestMessage) {
+        LOG.info("Processing find-my-phone request ({} s)", requestMessage.duration);
+        sendMessage(new GenericResponseMessage(VivomoveConstants.MESSAGE_FIND_MY_PHONE, 0).packet);
+
+        findMyPhoneNotification = GB.createFindMyDeviceNotification(null, null, getContext());
+        NotificationManagerCompat.from(getContext()).notify(GB.NOTIFICATION_ID_FIND_MY_DEVICE, findMyPhoneNotification);
     }
 
     private void processGncsControlPointRequest(GncsControlPointMessage requestMessage) {
