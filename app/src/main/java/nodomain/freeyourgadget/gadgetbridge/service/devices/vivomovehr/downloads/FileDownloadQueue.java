@@ -49,16 +49,17 @@ public class FileDownloadQueue {
         communicator.sendMessage(new FileTransferDataResponseMessage(VivomoveConstants.STATUS_ACK, FileTransferDataResponseMessage.RESPONSE_ABORT_DOWNLOAD_REQUEST, 0).packet);
     }
 
-    private void checkRequestNextDownload() {
+    private boolean checkRequestNextDownload() {
         if (currentlyDownloadingItem != null) {
             LOG.debug("Another download is pending");
-            return;
+            return false;
         }
         if (queue.isEmpty()) {
             LOG.debug("No download in queue");
-            return;
+            return true;
         }
         requestNextDownload();
+        return false;
     }
 
     private void requestNextDownload() {
@@ -123,9 +124,14 @@ public class FileDownloadQueue {
         if (currentlyDownloadingItem.dataOffset >= currentlyDownloadingItem.dataSize) {
             LOG.info("Transfer of file #{} complete, {}/{}B downloaded", currentlyDownloadingItem.fileIndex, currentlyDownloadingItem.dataOffset, currentlyDownloadingItem.dataSize);
             this.currentlyDownloadingItem = null;
-            checkRequestNextDownload();
+            final boolean allDone = checkRequestNextDownload();
             reportCompletedDownload(currentlyDownloadingItem);
+            if (allDone && isIdle()) listener.onAllDownloadsCompleted();
         }
+    }
+
+    private boolean isIdle() {
+        return currentlyDownloadingItem == null;
     }
 
     private void reportCompletedDownload(QueueItem downloadedItem) {

@@ -383,8 +383,8 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
                     switch (attribute) {
                         case DATE:
                             final SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd'T'HHmmSS", Locale.ROOT);
-                            fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
-                            attributeValue = fmt.format(new Date());
+                            //fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+                            attributeValue = fmt.format(new Date(System.currentTimeMillis() - 1500));
                             break;
                         case TITLE:
                             attributeValue = "zkouska";
@@ -797,12 +797,14 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
 
     private void sendNotification(AncsEvent event, NotificationSpec spec) {
         final AncsCategory category;
+        final Set<AncsEventFlag> flags = new HashSet<>();
         switch (spec.type) {
             case GENERIC_SMS:
                 category = AncsCategory.SMS;
                 break;
             case GENERIC_PHONE:
                 category = AncsCategory.INCOMING_CALL;
+                flags.add(AncsEventFlag.IMPORTANT);
                 break;
             case GENERIC_EMAIL:
             case GMAIL:
@@ -821,6 +823,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
                 break;
             case FACEBOOK:
             case LINKEDIN:
+                flags.add(AncsEventFlag.SILENT);
                 category = AncsCategory.SOCIAL;
                 break;
             // TODO: The rest
@@ -828,7 +831,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
                 category = AncsCategory.OTHER;
                 break;
         }
-        sendMessage(new GncsNotificationSourceMessage(event, null, category, 1, spec.getId()).packet);
+        sendMessage(new GncsNotificationSourceMessage(event, flags, category, 1, spec.getId()).packet);
     }
 
     private void listFiles(int filterType) {
@@ -957,7 +960,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
     public void onReset(int flags) {
         switch (flags) {
             case GBDeviceProtocol.RESET_FLAGS_FACTORY_RESET:
-                LOG.info("Requesting factory reset");
+                LOG.warn("Requesting factory reset");
                 sendMessage(new SystemEventMessage(GarminSystemEventType.FACTORY_RESET, 1).packet);
                 break;
 
@@ -1039,14 +1042,14 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
     public void onReadConfiguration(String config) {
     }
 
-    private int phase = 0;
+    private boolean foreground;
 
     @Override
     public void onTestNewFunction() {
         dbg("onTestNewFunction()");
-        final NotificationSpec spec = new NotificationSpec(0xAA0BF0);
-        spec.type = NotificationType.GENERIC_PHONE;
-        sendNotification(AncsEvent.NOTIFICATION_ADDED, spec);
+        sendMessage(new SystemEventMessage(GarminSystemEventType.SYNC_COMPLETE, 0).packet);
+        //sendMessage(new SystemEventMessage(foreground ? GarminSystemEventType.HOST_DID_ENTER_BACKGROUND : GarminSystemEventType.HOST_DID_ENTER_FOREGROUND, 0).packet);
+        //foreground = !foreground;
     }
 
     @Override
@@ -1064,6 +1067,11 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
         long totalSize = 0;
         for (DirectoryEntry entry : directoryData.entries) {
             LOG.info("File #{}: type {}/{}, {}B, flags {}/{}, timestamp {}", entry.fileIndex, entry.fileDataType, entry.fileSubType, entry.fileSize, entry.specificFlags, entry.fileFlags, entry.fileDate);
+            if (entry.fileIndex == 0) {
+                // ?
+                LOG.warn("File #0 reported?");
+                continue;
+            }
             fileDownloadQueue.addToDownloadQueue(entry.fileIndex, entry.fileSize);
             totalSize += entry.fileSize;
         }
@@ -1103,5 +1111,11 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
         } else if (totalDownloadSize > 0) {
             GB.updateTransferNotification(null, "Downloading data", true, Math.round(100.0f * (totalDownloadSize - remainingBytes) / totalDownloadSize), getContext());
         }
+    }
+
+    @Override
+    public void onAllDownloadsCompleted() {
+        LOG.info("All downloads completed");
+        sendMessage(new SystemEventMessage(GarminSystemEventType.SYNC_COMPLETE, 0).packet);
     }
 }

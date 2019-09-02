@@ -10,9 +10,10 @@ public class GncsControlPointResponseMessage {
     public static final int RESPONSE_INVALID_PARAMETERS = 2;
 
     public static final int ANCS_ERROR_NO_ERROR = 0;
-    public static final int ANCS_ERROR_UNKNOWN_ANCS_COMMAND = 160;
-    public static final int ANCS_ERROR_INVALID_ANCS_COMMAND = 161;
-    public static final int ANCS_ERROR_INVALID_ANCS_PARAMETER = 162;
+    public static final int ANCS_ERROR_UNKNOWN_ANCS_COMMAND = 0xA0;
+    public static final int ANCS_ERROR_INVALID_ANCS_COMMAND = 0xA1;
+    public static final int ANCS_ERROR_INVALID_ANCS_PARAMETER = 0xA2;
+    public static final int ANCS_ERROR_ACTION_FAILED = 0xA3;
 
     public final byte[] packet;
 

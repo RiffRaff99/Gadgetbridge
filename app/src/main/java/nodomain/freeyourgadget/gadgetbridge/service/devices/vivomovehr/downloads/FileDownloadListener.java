@@ -5,4 +5,5 @@ public interface FileDownloadListener {
     void onFileDownloadComplete(int fileIndex, byte[] data);
     void onFileDownloadError(int fileIndex);
     void onDownloadProgress(long remainingBytes);
+    void onAllDownloadsCompleted();
 }
