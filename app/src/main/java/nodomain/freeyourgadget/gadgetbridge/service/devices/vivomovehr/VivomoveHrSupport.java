@@ -1,6 +1,5 @@
 package nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr;
 
-import android.app.Notification;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.content.Intent;
@@ -8,7 +7,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Vibrator;
 import android.widget.Toast;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -69,6 +67,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
     private GncsDataSourceQueue gncsDataSourceQueue;
     private FileDownloadQueue fileDownloadQueue;
     private FitDbImporter fitImporter;
+    private boolean notificationSubscription;
 
     private static WeatherSpec defaultWeatherSpec() {
         final WeatherSpec weatherSpec = new WeatherSpec();
@@ -416,7 +415,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
                             attributeValue = "";
                             break;
                     }
-                    final String valueShortened = attributeValue.length() > attributeRequest.maxLength ? attributeValue.substring(0, attributeRequest.maxLength) : attributeValue;
+                    final String valueShortened = attributeRequest.maxLength > 0 && attributeValue.length() > attributeRequest.maxLength ? attributeValue.substring(0, attributeRequest.maxLength) : attributeValue;
                     attributes.put(attribute, valueShortened);
                 }
                 gncsDataSourceQueue.addToQueue(new AncsGetNotificationAttributesResponse(getNotificationAttributeCommand.notificationUID, attributes).packet);
@@ -431,6 +430,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
 
     private void processNotificationServiceSubscription(NotificationServiceSubscriptionMessage requestMessage) {
         LOG.info("Processing notification service subscription request message: intent={}, flags={}", requestMessage.intentIndicator, requestMessage.featureFlags);
+        notificationSubscription = requestMessage.intentIndicator == NotificationServiceSubscriptionMessage.INTENT_SUBSCRIBE;
         sendMessage(new NotificationServiceSubscriptionResponseMessage(0, 0, requestMessage.intentIndicator, requestMessage.featureFlags).packet);
     }
 
@@ -859,7 +859,11 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
     @Override
     public void onNotification(NotificationSpec notificationSpec) {
         dbg("onNotification " + notificationSpec.type + " #" + notificationSpec.getId());
-        sendNotification(AncsEvent.NOTIFICATION_ADDED, notificationSpec);
+        if (notificationSubscription) {
+            sendNotification(AncsEvent.NOTIFICATION_ADDED, notificationSpec);
+        } else {
+            LOG.debug("No notification subscription is active, ignoring notification");
+        }
     }
 
     @Override

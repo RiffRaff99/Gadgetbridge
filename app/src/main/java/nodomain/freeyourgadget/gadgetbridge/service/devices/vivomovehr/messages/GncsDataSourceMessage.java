@@ -12,6 +12,7 @@ public class GncsDataSourceMessage {
         writer.writeShort(0); // packet size will be filled below
         writer.writeShort(VivomoveConstants.MESSAGE_GNCS_DATA_SOURCE);
         writer.writeShort(ancsMessage.length);
+        // TODO: CRC Seed!
         writer.writeShort(ChecksumCalculator.computeCrc(ancsMessage, dataOffset, size));
         writer.writeShort(dataOffset);
         writer.writeBytes(ancsMessage, dataOffset, size);
