@@ -17,17 +17,6 @@
 package nodomain.freeyourgadget.gadgetbridge;
 
 import android.util.Log;
-
-import com.internetitem.logback.elasticsearch.ElasticsearchAppender;
-import com.internetitem.logback.elasticsearch.config.BasicAuthentication;
-import com.internetitem.logback.elasticsearch.config.Settings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
@@ -35,7 +24,12 @@ import ch.qos.logback.core.FileAppender;
 import ch.qos.logback.core.encoder.Encoder;
 import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 import ch.qos.logback.core.util.StatusPrinter;
+import com.internetitem.logback.elasticsearch.ElasticsearchAppender;
 import nodomain.freeyourgadget.gadgetbridge.util.GB;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 public abstract class Logging {
     public static final String PROP_LOGFILES_DIR = "GB_LOGFILES_DIR";
@@ -46,7 +40,7 @@ public abstract class Logging {
     public void setupLogging(boolean enable) {
         try {
             if (fileLogger == null) {
-                init();
+                initFileLogger();
             }
             if (elasticLogger == null) {
                 initElastic();
@@ -66,9 +60,12 @@ public abstract class Logging {
     }
 
     private void initElastic() {
+        final LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+
         elasticLogger = new ElasticsearchAppender(ElasticsearchConfiguration.settings);
         elasticLogger.setHeaders(ElasticsearchConfiguration.headers);
         elasticLogger.setProperties(ElasticsearchConfiguration.properties);
+        elasticLogger.setContext(loggerContext);
     }
 
     public String getLogPath() {
@@ -88,7 +85,7 @@ public abstract class Logging {
 
     protected abstract String createLogDirectory() throws IOException;
 
-    protected void init() throws IOException {
+    protected void initFileLogger() throws IOException {
         String dir = createLogDirectory();
         if (dir == null) {
             throw new IllegalArgumentException("log directory must not be null");

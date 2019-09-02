@@ -1,7 +1,6 @@
 package nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr;
 
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.content.Intent;
@@ -9,8 +8,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Vibrator;
 import android.widget.Toast;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.google.protobuf.InvalidProtocolBufferException;
 import nodomain.freeyourgadget.gadgetbridge.BuildConfig;
@@ -70,7 +69,6 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
     private GncsDataSourceQueue gncsDataSourceQueue;
     private FileDownloadQueue fileDownloadQueue;
     private FitDbImporter fitImporter;
-    private Notification findMyPhoneNotification;
 
     private static WeatherSpec defaultWeatherSpec() {
         final WeatherSpec weatherSpec = new WeatherSpec();
@@ -357,17 +355,14 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
     private void processCancelFindMyPhoneRequest() {
         LOG.info("Processing request to cancel find-my-phone");
         sendMessage(new GenericResponseMessage(VivomoveConstants.MESSAGE_FIND_MY_PHONE, 0).packet);
-        if (findMyPhoneNotification != null) {
-            NotificationManagerCompat.from(getContext()).cancel(GB.NOTIFICATION_ID_FIND_MY_DEVICE);
-        }
+        GB.closeFindMyPhoneNotification(getContext());
     }
 
     private void processFindMyPhoneRequest(FindMyPhoneRequestMessage requestMessage) {
         LOG.info("Processing find-my-phone request ({} s)", requestMessage.duration);
         sendMessage(new GenericResponseMessage(VivomoveConstants.MESSAGE_FIND_MY_PHONE, 0).packet);
 
-        findMyPhoneNotification = GB.createFindMyDeviceNotification(null, null, getContext());
-        NotificationManagerCompat.from(getContext()).notify(GB.NOTIFICATION_ID_FIND_MY_DEVICE, findMyPhoneNotification);
+        GB.startFindMyPhoneNotification(null, null, getContext());
     }
 
     private void processGncsControlPointRequest(GncsControlPointMessage requestMessage) {
@@ -389,6 +384,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
                     switch (attribute) {
                         case DATE:
                             final SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd'T'HHmmSS", Locale.ROOT);
+                            fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
                             attributeValue = fmt.format(new Date());
                             break;
                         case TITLE:
@@ -405,6 +401,15 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
                             break;
                         case MESSAGE_SIZE:
                             attributeValue = "13";
+                            break;
+                        case POSITIVE_ACTION_LABEL:
+                            attributeValue = "Ano";
+                            break;
+                        case NEGATIVE_ACTION_LABEL:
+                            attributeValue = "Ne";
+                            break;
+                        case PHONE_NUMBER:
+                            attributeValue = "+420555123456";
                             break;
                         default:
                             LOG.warn("Unknown attribute {}", attribute);
@@ -841,11 +846,6 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
         sendMessage(new DownloadRequestMessage(VivomoveConstants.GARMIN_DEVICE_XML_FILE_INDEX, 0, 1, 0, 0).packet);
     }
 
-    private void downloadSettingsFit() {
-        LOG.info("Requesting Garmin FIT settings download");
-        sendMessage(new DownloadRequestMessage(VivomoveConstants.GARMIN_SETTINGS_FIT_FILE_INDEX, 0, 1, 0, 0).packet);
-    }
-
     private void sendBatteryStatus() {
         LOG.info("Sending battery status");
         sendMessage(new BatteryStatusMessage(12).packet);
@@ -858,7 +858,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
 
     @Override
     public void onNotification(NotificationSpec notificationSpec) {
-        dbg("onNotification #" + notificationSpec.getId());
+        dbg("onNotification " + notificationSpec.type + " #" + notificationSpec.getId());
         sendNotification(AncsEvent.NOTIFICATION_ADDED, notificationSpec);
     }
 

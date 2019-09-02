@@ -41,7 +41,6 @@ public class VivomoveConstants {
     public static final int GADGETBRIDGE_UNIT_NUMBER = 22222;
 
     public static final int GARMIN_DEVICE_XML_FILE_INDEX = 65533;
-    public static final int GARMIN_SETTINGS_FIT_FILE_INDEX = 27;
 
     // TODO: Better capability management/configuration
     // public static final Set<GarminCapability> OUR_CAPABILITIES = new HashSet<>(Arrays.asList(GarminCapability.SYNC, GarminCapability.GNCS, GarminCapability.ADVANCED_MUSIC_CONTROLS, GarminCapability.FIND_MY_PHONE, GarminCapability.WEATHER_CONDITIONS, GarminCapability.WEATHER_ALERTS, GarminCapability.DEVICE_MESSAGES, GarminCapability.SMS_NOTIFICATIONS, GarminCapability.SYNC, GarminCapability.DEVICE_INITIATES_SYNC, GarminCapability.HOST_INITIATED_SYNC_REQUESTS, GarminCapability.CALENDAR, GarminCapability.CURRENT_TIME_REQUEST_SUPPORT));

@@ -19,12 +19,12 @@ public class GncsNotificationSourceMessage {
         writer.writeShort(VivomoveConstants.MESSAGE_NOTIFICATION_SOURCE);
 
         writer.writeByte(event.ordinal());
-        writer.writeByte(eventFlags == null ? 2 : ((int) EnumUtils.generateBitVector(AncsEventFlag.class, eventFlags)));
+        writer.writeByte(eventFlags == null ? 26 : ((int) EnumUtils.generateBitVector(AncsEventFlag.class, eventFlags)));
         writer.writeByte(category.ordinal());
         writer.writeByte(Math.min(categoryCount, 127));
         writer.writeInt(notificationUID);
         // TODO: Extra flags?
-        writer.writeByte(1);
+        writer.writeByte(3);
 
         writer.writeShort(0); // CRC will be filled below
         final byte[] packet = writer.getBytes();

@@ -17,11 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 package nodomain.freeyourgadget.gadgetbridge.util;
 
-import android.app.Activity;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
+import android.app.*;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
@@ -29,17 +25,9 @@ import android.content.pm.PackageManager;
 import android.media.RingtoneManager;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.widget.Toast;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -54,6 +42,14 @@ import nodomain.freeyourgadget.gadgetbridge.deviceevents.GBDeviceEventScreenshot
 import nodomain.freeyourgadget.gadgetbridge.impl.GBDevice;
 import nodomain.freeyourgadget.gadgetbridge.model.DeviceService;
 import nodomain.freeyourgadget.gadgetbridge.service.DeviceCommunicationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 import static nodomain.freeyourgadget.gadgetbridge.GBApplication.isRunningOreoOrLater;
 
@@ -204,7 +200,7 @@ public class GB {
         byte[] data = new byte[len / 2];
         for (int i = 0; i < len; i += 2) {
             data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
-                    + Character.digit(s.charAt(i+1), 16));
+                    + Character.digit(s.charAt(i + 1), 16));
         }
         return data;
     }
@@ -347,9 +343,9 @@ public class GB {
                                                            int percentage, Context context) {
         Intent notificationIntent = new Intent(context, ControlCenterv2.class);
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        if(isRunningOreoOrLater()) {
+        if (isRunningOreoOrLater()) {
             NotificationChannel channel = notificationManager.getNotificationChannel(NOTIFICATION_CHANNEL_ID_TRANSFER);
-            if(channel == null) {
+            if (channel == null) {
                 channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID_TRANSFER,
                         context.getString(R.string.notification_channel_name),
                         NotificationManager.IMPORTANCE_LOW);
@@ -381,36 +377,44 @@ public class GB {
         return nb.build();
     }
 
-    public static Notification createFindMyDeviceNotification(String title, String text, Context context) {
-        Intent notificationIntent = new Intent(context, ControlCenterv2.class);
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        if(isRunningOreoOrLater()) {
+    public static void startFindMyPhoneNotification(String title, String text, Context context) {
+        final Intent notificationIntent = new Intent(DeviceService.ACTION_FOUND_MY_PHONE);
+        final NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (isRunningOreoOrLater()) {
             NotificationChannel channel = notificationManager.getNotificationChannel(NOTIFICATION_CHANNEL_ID_FIND_MY_DEVICE);
-            if(channel == null) {
+            if (channel == null) {
                 channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID_FIND_MY_DEVICE,
                         context.getString(R.string.control_center_find_lost_device),
                         NotificationManager.IMPORTANCE_HIGH);
                 notificationManager.createNotificationChannel(channel);
             }
         }
-        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
-                notificationIntent, 0);
 
         NotificationCompat.Builder nb = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID_FIND_MY_DEVICE)
                 .setTicker((title == null) ? context.getString(R.string.control_center_find_lost_device) : title)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setContentTitle((title == null) ? context.getString(R.string.find_device_you_found_it) : title)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
-                .setSmallIcon(android.R.drawable.stat_notify_call_mute)
+                .setSmallIcon(android.R.drawable.stat_notify_missed_call)
                 .setContentText(text)
-                .setContentIntent(pendingIntent)
+                .setContentIntent(PendingIntent.getService(context, 0, notificationIntent, 0))
                 .setOngoing(true)
-                .setVibrate(new long[] { 500, 500 })
+                .setVibrate(new long[]{500, 500})
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM));
 
-        return nb.build();
+        NotificationManagerCompat.from(context).notify(GB.NOTIFICATION_ID_FIND_MY_DEVICE, nb.build());
+        final Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        if (GBApplication.isRunningOreoOrLater()) {
+            vibrator.vibrate(VibrationEffect.createWaveform(new long[]{0, 1000, 500}, 1));
+        } else {
+            vibrator.vibrate(new long[]{0, 1000, 500}, 1);
+        }
+    }
+
+    public static void closeFindMyPhoneNotification(Context context) {
+        NotificationManagerCompat.from(context).cancel(GB.NOTIFICATION_ID_FIND_MY_DEVICE);
+        final Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        vibrator.cancel();
     }
 
     public static void removeAllNotifications(Context context) {
