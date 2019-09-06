@@ -59,6 +59,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
     private Set<GarminCapability> capabilities;
 
     private int lastProtobufRequestId;
+    private int lastNotificationId;
     private int maxPacketSize;
     private WeatherSpec lastWeatherSpec = defaultWeatherSpec();
 
@@ -95,6 +96,10 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
     private void dbg(String msg) {
         GB.toast(getContext(), msg, Toast.LENGTH_LONG, GB.INFO);
         LOG.debug(msg);
+    }
+
+    private int assignNotificationId() {
+        return lastNotificationId++;
     }
 
     private int getNextProtobufRequestId() {
@@ -442,6 +447,9 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
         }
         LOG.info("Processing sync request message: option={}, types: {}", requestMessage.option, requestedTypes);
         sendMessage(new GenericResponseMessage(VivomoveConstants.MESSAGE_SYNC_REQUEST, 0).packet);
+        if (requestMessage.option != SyncRequestMessage.OPTION_INVISIBLE) {
+            doSync();
+        }
     }
 
     private void processProtobufResponse(ProtobufRequestMessage requestMessage) {
@@ -831,7 +839,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
                 category = AncsCategory.OTHER;
                 break;
         }
-        sendMessage(new GncsNotificationSourceMessage(event, flags, category, 1, spec.getId()).packet);
+        sendMessage(new GncsNotificationSourceMessage(event, flags, category, 1, assignNotificationId()).packet);
     }
 
     private void listFiles(int filterType) {
@@ -852,6 +860,14 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
     private void sendBatteryStatus() {
         LOG.info("Sending battery status");
         sendMessage(new BatteryStatusMessage(12).packet);
+    }
+
+    private void doSync() {
+        LOG.info("Starting sync");
+        sendMessage(new SystemEventMessage(GarminSystemEventType.PAIR_START, 0).packet);
+        listFiles(0);
+        // TODO: Localization
+        GB.updateTransferNotification(null, "Downloading list of files", true, 0, getContext());
     }
 
     @Override
@@ -951,9 +967,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
         */
 
         dbg("onFetchRecordedData " + dataTypes);
-        listFiles(0);
-        // TODO: Localization
-        GB.updateTransferNotification(null, "Downloading list of files", true, 0, getContext());
+        doSync();
     }
 
     @Override
@@ -1047,7 +1061,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
     @Override
     public void onTestNewFunction() {
         dbg("onTestNewFunction()");
-        sendMessage(new SystemEventMessage(GarminSystemEventType.SYNC_COMPLETE, 0).packet);
+        sendMessage(new SystemEventMessage(GarminSystemEventType.NEW_DOWNLOAD_AVAILABLE, 0).packet);
         //sendMessage(new SystemEventMessage(foreground ? GarminSystemEventType.HOST_DID_ENTER_BACKGROUND : GarminSystemEventType.HOST_DID_ENTER_FOREGROUND, 0).packet);
         //foreground = !foreground;
     }
@@ -1066,7 +1080,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
     public void onDirectoryDownloaded(DirectoryData directoryData) {
         long totalSize = 0;
         for (DirectoryEntry entry : directoryData.entries) {
-            LOG.info("File #{}: type {}/{}, {}B, flags {}/{}, timestamp {}", entry.fileIndex, entry.fileDataType, entry.fileSubType, entry.fileSize, entry.specificFlags, entry.fileFlags, entry.fileDate);
+            LOG.info("File #{}: type {}/{} #{}, {}B, flags {}/{}, timestamp {}", entry.fileIndex, entry.fileDataType, entry.fileSubType, entry.fileNumber, entry.fileSize, entry.specificFlags, entry.fileFlags, entry.fileDate);
             if (entry.fileIndex == 0) {
                 // ?
                 LOG.warn("File #0 reported?");
@@ -1082,14 +1096,14 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
     public void onFileDownloadComplete(int fileIndex, byte[] data) {
         LOG.info("Downloaded file {}: {} bytes", fileIndex, data.length);
         fitImporter.processFitData(fitParser.parseFitFile(data));
-/*
+        /*
         try {
             final File outputFile = new File(FileUtils.getExternalFilesDir(), "vivomovehr-" + fileIndex + ".fit");
             FileUtils.copyStreamToFile(new ByteArrayInputStream(data), outputFile);
         } catch (IOException e) {
             LOG.error("Unable to save file {}", fileIndex, e);
         }
- */
+        */
     }
 
     @Override

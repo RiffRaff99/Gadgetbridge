@@ -10,7 +10,7 @@ public class AncsGetNotificationAttributesResponse {
 
     public AncsGetNotificationAttributesResponse(int notificationUID, Map<AncsAttribute, String> attributes) {
         final MessageWriter messageWriter = new MessageWriter();
-        messageWriter.writeByte(AncsCommand.GET_NOTIFICATION_ATTRIBUTES.ordinal());
+        messageWriter.writeByte(AncsCommand.GET_NOTIFICATION_ATTRIBUTES.code);
         messageWriter.writeInt(notificationUID);
         for(Map.Entry<AncsAttribute, String> attribute : attributes.entrySet()) {
             messageWriter.writeByte(attribute.getKey().code);

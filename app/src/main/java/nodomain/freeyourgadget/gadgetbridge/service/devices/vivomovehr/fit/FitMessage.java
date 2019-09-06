@@ -119,4 +119,18 @@ public class FitMessage {
                 throw new IllegalArgumentException("Unable to write number of size " + size);
         }
     }
+
+    public String toString() {
+        final StringBuilder result = new StringBuilder();
+        result.append(this.definition.messageName);
+        result.append(System.lineSeparator());
+        for (Map.Entry<String, Object> field : fieldValuesPerName.entrySet()) {
+            result.append('\t');
+            result.append(field.getKey());
+            result.append(": ");
+            result.append(String.valueOf(field.getValue()));
+            result.append(System.lineSeparator());
+        }
+        return result.toString();
+    }
 }

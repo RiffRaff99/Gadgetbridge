@@ -8,6 +8,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class SyncRequestMessage {
+    public static final int OPTION_MANUAL = 0;
+    public static final int OPTION_INVISIBLE = 1;
+    public static final int OPTION_VISIBLE_AS_NEEDED = 2;
+
     public final int option;
     public final Set<GarminMessageType> fileTypes;
 

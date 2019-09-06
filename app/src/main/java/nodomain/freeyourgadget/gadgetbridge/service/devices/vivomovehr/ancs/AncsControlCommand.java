@@ -13,7 +13,6 @@ import java.util.List;
 public abstract class AncsControlCommand {
     private static final Logger LOG = LoggerFactory.getLogger(AncsControlCommand.class);
 
-    private static final AncsCommand[] COMMAND_VALUES = AncsCommand.values();
     private static final AncsAppAttribute[] APP_ATTRIBUTE_VALUES = AncsAppAttribute.values();
     private static final AncsAction[] ACTION_VALUES = AncsAction.values();
 
@@ -25,11 +24,11 @@ public abstract class AncsControlCommand {
 
     public static AncsControlCommand parseCommand(byte[] buffer, int offset, int size) {
         final int commandID = BinaryUtils.readByte(buffer, offset);
-        if (commandID < 0 || commandID >= COMMAND_VALUES.length) {
+        final AncsCommand command = AncsCommand.getByCode(commandID);
+        if (command == null) {
             LOG.error("Unknown ANCS command {}", commandID);
             return null;
         }
-        final AncsCommand command = AncsCommand.values()[commandID];
         switch (command) {
             case GET_NOTIFICATION_ATTRIBUTES:
                 return createGetNotificationAttributesCommand(buffer, offset + 1, size - 1);
@@ -106,6 +105,12 @@ public abstract class AncsControlCommand {
             if (attribute.hasLengthParam) {
                 maxLength = reader.readShort();
                 pos += 2;
+            } else if (attribute.hasAdditionalParams) {
+                maxLength = reader.readByte();
+                // TODO: What is this??
+                reader.readByte();
+                reader.readByte();
+                pos += 3;
             } else {
                 maxLength = 0;
             }

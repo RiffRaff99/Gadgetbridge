@@ -12,18 +12,28 @@ import nodomain.freeyourgadget.gadgetbridge.impl.GBDevice;
 import nodomain.freeyourgadget.gadgetbridge.model.ActivityKind;
 
 public class VivomoveHrSampleProvider extends AbstractSampleProvider<VivomoveHrActivitySample> {
-    private GBDevice mDevice;
-    private DaoSession mSession;
+    public static final int RAW_TYPE_KIND_MASK = 0x0F000000;
+    public static final int RAW_TYPE_KIND_ACTIVITY = 0x00000000;
+    public static final int RAW_TYPE_KIND_SLEEP = 0x01000000;
 
     public VivomoveHrSampleProvider(GBDevice device, DaoSession session) {
         super(device, session);
-
-        mSession = session;
-        mDevice = device;
     }
 
     @Override
     public int normalizeType(int rawType) {
+        switch (rawType & RAW_TYPE_KIND_MASK) {
+            case RAW_TYPE_KIND_ACTIVITY:
+                return normalizeActivityType(rawType & ~RAW_TYPE_KIND_MASK);
+            case RAW_TYPE_KIND_SLEEP:
+                return normalizeSleepType(rawType & ~RAW_TYPE_KIND_MASK);
+            default:
+                // ???
+                return ActivityKind.TYPE_UNKNOWN;
+        }
+    }
+
+    private static int normalizeActivityType(int rawType) {
         switch (rawType) {
             case 0:
                 // generic
@@ -50,7 +60,27 @@ public class VivomoveHrSampleProvider extends AbstractSampleProvider<VivomoveHrA
                 // sedentary
                 // TODO?
                 return ActivityKind.TYPE_ACTIVITY;
+
             default:
+                return ActivityKind.TYPE_UNKNOWN;
+        }
+    }
+
+    private static int normalizeSleepType(int rawType) {
+        switch (rawType) {
+            case 0:
+                // deep_sleep
+                return ActivityKind.TYPE_DEEP_SLEEP;
+            case 1:
+                // light_sleep
+                return ActivityKind.TYPE_LIGHT_SLEEP;
+            case 2:
+                // awake
+            case 3:
+                // more_awake
+                return ActivityKind.TYPE_ACTIVITY;
+            default:
+                // ?
                 return ActivityKind.TYPE_UNKNOWN;
         }
     }
@@ -60,32 +90,41 @@ public class VivomoveHrSampleProvider extends AbstractSampleProvider<VivomoveHrA
         switch (activityKind) {
             case ActivityKind.TYPE_ACTIVITY:
                 // generic
-                return 0;
+                //noinspection PointlessBitwiseExpression
+                return RAW_TYPE_KIND_ACTIVITY | 0;
             case ActivityKind.TYPE_RUNNING:
                 // running
-                return 1;
+                return RAW_TYPE_KIND_ACTIVITY | 1;
             case ActivityKind.TYPE_CYCLING:
                 // cycling
-                return 2;
+                return RAW_TYPE_KIND_ACTIVITY | 2;
             case ActivityKind.TYPE_ACTIVITY | ActivityKind.TYPE_RUNNING | ActivityKind.TYPE_WALKING | ActivityKind.TYPE_EXERCISE | ActivityKind.TYPE_SWIMMING:
-                return 3;
+                return RAW_TYPE_KIND_ACTIVITY | 3;
             case ActivityKind.TYPE_EXERCISE:
                 // fitness_equipment
-                return 4;
+                return RAW_TYPE_KIND_ACTIVITY | 4;
             case ActivityKind.TYPE_SWIMMING:
                 // swimming
-                return 5;
+                return RAW_TYPE_KIND_ACTIVITY | 5;
             case ActivityKind.TYPE_WALKING:
                 // walking
-                return 6;
+                return RAW_TYPE_KIND_ACTIVITY | 6;
+            case ActivityKind.TYPE_LIGHT_SLEEP:
+                return RAW_TYPE_KIND_SLEEP | 1;
+            case ActivityKind.TYPE_DEEP_SLEEP:
+                //noinspection PointlessBitwiseExpression
+                return RAW_TYPE_KIND_SLEEP | 0;
             default:
-                if ((activityKind & ActivityKind.TYPE_SWIMMING) != 0) return 5;
-                if ((activityKind & ActivityKind.TYPE_CYCLING) != 0) return 2;
-                if ((activityKind & ActivityKind.TYPE_RUNNING) != 0) return 1;
-                if ((activityKind & ActivityKind.TYPE_EXERCISE) != 0) return 4;
-                if ((activityKind & ActivityKind.TYPE_WALKING) != 0) return 6;
-                if ((activityKind & ActivityKind.TYPE_ACTIVITY) != 0) return 0;
-                if ((activityKind & ActivityKind.TYPE_SLEEP) != 0) return 8;
+                if ((activityKind & ActivityKind.TYPE_SWIMMING) != 0) return RAW_TYPE_KIND_ACTIVITY | 5;
+                if ((activityKind & ActivityKind.TYPE_CYCLING) != 0) return RAW_TYPE_KIND_ACTIVITY | 2;
+                if ((activityKind & ActivityKind.TYPE_RUNNING) != 0) return RAW_TYPE_KIND_ACTIVITY | 1;
+                if ((activityKind & ActivityKind.TYPE_EXERCISE) != 0) return RAW_TYPE_KIND_ACTIVITY | 4;
+                if ((activityKind & ActivityKind.TYPE_WALKING) != 0) return RAW_TYPE_KIND_ACTIVITY | 6;
+                if ((activityKind & ActivityKind.TYPE_SLEEP) != 0) return RAW_TYPE_KIND_SLEEP | 1;
+                if ((activityKind & ActivityKind.TYPE_ACTIVITY) != 0) {
+                    //noinspection PointlessBitwiseExpression
+                    return RAW_TYPE_KIND_ACTIVITY | 0;
+                }
                 return 0;
         }
     }

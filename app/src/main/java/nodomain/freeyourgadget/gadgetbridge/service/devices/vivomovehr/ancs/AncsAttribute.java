@@ -12,21 +12,27 @@ public enum AncsAttribute {
     POSITIVE_ACTION_LABEL(6),
     NEGATIVE_ACTION_LABEL(7),
     // Garmin extensions
-    PHONE_NUMBER(126),
-    ACTIONS(127);
+    PHONE_NUMBER(126, true),
+    ACTIONS(127, false, true);
 
     private static final SparseArray<AncsAttribute> valueByCode;
 
     public final int code;
     public final boolean hasLengthParam;
+    public final boolean hasAdditionalParams;
 
     AncsAttribute(int code) {
-        this(code, false);
+        this(code, false, false);
     }
 
     AncsAttribute(int code, boolean hasLengthParam) {
+        this(code, hasLengthParam, false);
+    }
+
+    AncsAttribute(int code, boolean hasLengthParam, boolean hasAdditionalParams) {
         this.code = code;
         this.hasLengthParam = hasLengthParam;
+        this.hasAdditionalParams = hasAdditionalParams;
     }
 
     static {
