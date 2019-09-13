@@ -142,7 +142,7 @@ public class GfdiPacketParser {
                     chunkStart = appendChunk(message, outputStream, chunkStart, i);
                 }
             }
-            if (chunkStart < message.length) {
+            if (chunkStart <= message.length) {
                 appendChunk(message, outputStream, chunkStart, message.length);
             }
             outputStream.write(0);

@@ -864,7 +864,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
 
     private void doSync() {
         LOG.info("Starting sync");
-        sendMessage(new SystemEventMessage(GarminSystemEventType.PAIR_START, 0).packet);
+        // sendMessage(new SystemEventMessage(GarminSystemEventType.PAIR_START, 0).packet);
         listFiles(0);
         // TODO: Localization
         GB.updateTransferNotification(null, "Downloading list of files", true, 0, getContext());

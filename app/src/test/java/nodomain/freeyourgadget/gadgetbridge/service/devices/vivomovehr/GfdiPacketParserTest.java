@@ -118,6 +118,10 @@ public class GfdiPacketParserTest {
         final byte[] exactlyLongPacket = new byte[254];
         Arrays.fill(exactlyLongPacket, (byte) 0xAB);
         testRoundtrip(exactlyLongPacket);
+
+        testRoundtrip(new byte[2]);
+
+        testRoundtrip(new byte[]{(byte) 0x0e, (byte) 0x00, (byte) 0x88, (byte) 0x13, (byte) 0x8c, (byte) 0x13, (byte) 0x00, (byte) 0x00, (byte) 0x1a, (byte) 0x2d, (byte) 0x00, (byte) 0x00, (byte) 0x0b, (byte) 0x00});
     }
 
     private static void testRoundtrip(byte[] packet) {
