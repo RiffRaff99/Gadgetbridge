@@ -7,10 +7,11 @@ import org.junit.Test;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 public class FitImporterTest {
     @Test
@@ -32,7 +33,7 @@ public class FitImporterTest {
     private static class TestProcessor implements FitImportProcessor {
         @Override
         public void onSample(VivomoveHrActivitySample sample) {
-            System.out.println(String.format(Locale.ROOT, "%d: %d (%d steps, HR %d, %d kcal)", sample.getTimestamp(), sample.getRawKind(), sample.getSteps(), sample.getHeartRate(), sample.getCaloriesBurnt()));
+            System.out.println(String.format(Locale.ROOT, "%s: %d (%d steps, HR %d, %d kcal)", new Date(sample.getTimestamp() * 1000L), sample.getRawKind(), sample.getSteps(), sample.getHeartRate(), sample.getCaloriesBurnt()));
         }
     }
 }

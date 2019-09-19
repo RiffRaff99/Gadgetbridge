@@ -15,6 +15,8 @@ public class VivomoveHrSampleProvider extends AbstractSampleProvider<VivomoveHrA
     public static final int RAW_TYPE_KIND_MASK = 0x0F000000;
     public static final int RAW_TYPE_KIND_ACTIVITY = 0x00000000;
     public static final int RAW_TYPE_KIND_SLEEP = 0x01000000;
+    // public static final int RAW_TYPE_KIND_NOT_WORN = 0x0F000000;
+    public static final int RAW_NOT_WORN = 0x0F000000;
 
     public VivomoveHrSampleProvider(GBDevice device, DaoSession session) {
         super(device, session);
@@ -22,6 +24,10 @@ public class VivomoveHrSampleProvider extends AbstractSampleProvider<VivomoveHrA
 
     @Override
     public int normalizeType(int rawType) {
+        if (rawType == RAW_NOT_WORN) {
+            return ActivityKind.TYPE_NOT_WORN;
+        }
+
         switch (rawType & RAW_TYPE_KIND_MASK) {
             case RAW_TYPE_KIND_ACTIVITY:
                 return normalizeActivityType(rawType & ~RAW_TYPE_KIND_MASK);
@@ -88,6 +94,9 @@ public class VivomoveHrSampleProvider extends AbstractSampleProvider<VivomoveHrA
     @Override
     public int toRawActivityKind(int activityKind) {
         switch (activityKind) {
+            case ActivityKind.TYPE_NOT_WORN:
+                return RAW_NOT_WORN;
+
             case ActivityKind.TYPE_ACTIVITY:
                 // generic
                 //noinspection PointlessBitwiseExpression
@@ -131,7 +140,7 @@ public class VivomoveHrSampleProvider extends AbstractSampleProvider<VivomoveHrA
 
     @Override
     public float normalizeIntensity(int rawIntensity) {
-        return rawIntensity;
+        return rawIntensity / 255.0f;
     }
 
     @Override
