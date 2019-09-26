@@ -27,22 +27,38 @@ import nodomain.freeyourgadget.gadgetbridge.impl.GBDevice;
 import nodomain.freeyourgadget.gadgetbridge.model.*;
 import nodomain.freeyourgadget.gadgetbridge.service.btle.AbstractBTLEDeviceSupport;
 import nodomain.freeyourgadget.gadgetbridge.service.btle.TransactionBuilder;
-import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.ancs.*;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.ancs.AncsAttribute;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.ancs.AncsAttributeRequest;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.ancs.AncsCategory;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.ancs.AncsEvent;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.ancs.AncsEventFlag;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.ancs.AncsGetNotificationAttributeCommand;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.ancs.AncsGetNotificationAttributesResponse;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.ancs.GncsDataSourceQueue;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.downloads.DirectoryData;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.downloads.DirectoryEntry;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.downloads.FileDownloadListener;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.downloads.FileDownloadQueue;
-import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.*;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.FitBool;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.FitDbImporter;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.FitMessage;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.FitMessageDefinitions;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.FitParser;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.FitWeatherConditions;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.*;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiCore;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiDeviceStatus;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto;
 import nodomain.freeyourgadget.gadgetbridge.service.serial.GBDeviceProtocol;
+import nodomain.freeyourgadget.gadgetbridge.util.FileUtils;
 import nodomain.freeyourgadget.gadgetbridge.util.GB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -119,7 +135,6 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
         builder.setGattCallback(this);
         communicator.start(builder);
         fileDownloadQueue = new FileDownloadQueue(communicator, this);
-        fitImporter = new FitDbImporter(getDevice());
 
         gbDevice.setState(GBDevice.State.INITIALIZED);
         gbDevice.sendDeviceUpdateIntent(getContext());
@@ -864,6 +879,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
 
     private void doSync() {
         LOG.info("Starting sync");
+        fitImporter = new FitDbImporter(getDevice());
         // sendMessage(new SystemEventMessage(GarminSystemEventType.PAIR_START, 0).packet);
         listFiles(0);
         // TODO: Localization
@@ -1095,15 +1111,13 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
     @Override
     public void onFileDownloadComplete(int fileIndex, byte[] data) {
         LOG.info("Downloaded file {}: {} bytes", fileIndex, data.length);
-        fitImporter.processFitData(fitParser.parseFitFile(data));
-        /*
+        fitImporter.processFitFile(fitParser.parseFitFile(data));
         try {
             final File outputFile = new File(FileUtils.getExternalFilesDir(), "vivomovehr-" + fileIndex + ".fit");
             FileUtils.copyStreamToFile(new ByteArrayInputStream(data), outputFile);
         } catch (IOException e) {
             LOG.error("Unable to save file {}", fileIndex, e);
         }
-        */
     }
 
     @Override
@@ -1131,5 +1145,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
     public void onAllDownloadsCompleted() {
         LOG.info("All downloads completed");
         sendMessage(new SystemEventMessage(GarminSystemEventType.SYNC_COMPLETE, 0).packet);
+        fitImporter.processData();
+        fitImporter = null;
     }
 }

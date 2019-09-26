@@ -25,7 +25,15 @@ public class FitDbImporter {
         fitImporter = new FitImporter();
     }
 
-    public void processFitData(List<FitMessage> messages) {
+    public void processFitFile(List<FitMessage> messages) {
+        try {
+            fitImporter.importFitData(messages);
+        } catch (Exception e) {
+            LOG.error("Error importing FIT data", e);
+        }
+    }
+
+    public void processData() {
         try (DBHandler dbHandler = GBApplication.acquireDB()) {
             final DaoSession session = dbHandler.getDaoSession();
 
@@ -33,7 +41,7 @@ public class FitDbImporter {
             final User user = DBHelper.getUser(session);
             final VivomoveHrSampleProvider provider = new VivomoveHrSampleProvider(gbDevice, session);
 
-            fitImporter.processFitData(messages, new Processor(provider, device, user));
+            fitImporter.processImportedData(new Processor(provider, device, user));
         } catch (Exception e) {
             LOG.error("Error importing FIT data", e);
         }

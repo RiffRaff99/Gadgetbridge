@@ -170,4 +170,60 @@ public class VivomoveHrSampleProvider extends AbstractSampleProvider<VivomoveHrA
     protected Property getDeviceIdentifierSampleProperty() {
         return VivomoveHrActivitySampleDao.Properties.DeviceId;
     }
+
+    public static String rawKindToString(int rawType) {
+        if (rawType == RAW_NOT_WORN) {
+            return "not worn";
+        }
+
+        switch (rawType & RAW_TYPE_KIND_MASK) {
+            case RAW_TYPE_KIND_ACTIVITY:
+                return activityTypeToString(rawType & ~RAW_TYPE_KIND_MASK);
+            case RAW_TYPE_KIND_SLEEP:
+                return sleepTypeToString(rawType & ~RAW_TYPE_KIND_MASK);
+            default:
+                // ???
+                return "unknown " + rawType;
+        }
+    }
+
+    private static String activityTypeToString(int rawType) {
+        switch (rawType) {
+            case 0:
+                return "generic";
+            case 1:
+                return "running";
+            case 2:
+                return "cycling";
+            case 3:
+                return "transition";
+            case 4:
+                return "fitness equipment";
+            case 5:
+                return "swimming";
+            case 6:
+                return "walking";
+            case 8:
+                return "sedentary";
+            default:
+                return "unknown activity " + rawType;
+        }
+    }
+
+    private static String sleepTypeToString(int rawType) {
+        switch (rawType) {
+            case 0:
+                return "deep sleep";
+            case 1:
+                return "light sleep";
+            case 2:
+                // awake
+                return "awake";
+            case 3:
+                // more_awake
+                return "more awake";
+            default:
+                return "unknown sleep " + rawType;
+        }
+    }
 }
