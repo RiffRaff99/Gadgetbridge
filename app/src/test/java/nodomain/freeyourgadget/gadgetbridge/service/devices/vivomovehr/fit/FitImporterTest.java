@@ -21,6 +21,7 @@ public class FitImporterTest {
 
         final FitParser fitParser = new FitParser(FitMessageDefinitions.ALL_DEFINITIONS);
         for (File file : new File("c:\\Temp\\fit\\").listFiles()) {
+            if (!file.getName().endsWith(".fit")) continue;
             final byte[] fitBytes = FileUtils.readAll(new FileInputStream(file), Long.MAX_VALUE);
             final List<FitMessage> fitData = fitParser.parseFitFile(fitBytes);
             assertNotNull(fitData);

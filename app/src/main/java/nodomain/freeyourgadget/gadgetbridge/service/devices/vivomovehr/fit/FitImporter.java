@@ -13,6 +13,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class FitImporter {
+    private static final int ACTIVITY_TYPE_ALL = -1;
     private final SortedMap<Integer, List<FitEvent>> eventsPerTimestamp = new TreeMap<>();
 
     public void importFitData(List<FitMessage> messages) {
@@ -80,16 +81,22 @@ public class FitImporter {
             FitEvent.EventKind bestKind = FitEvent.EventKind.UNKNOWN;
             float bestScore = Float.NEGATIVE_INFINITY;
             for (final FitEvent event : eventsForTimestamp.getValue()) {
-                if (event.getHeartRate() > sample.getHeartRate()) sample.setHeartRate(event.getHeartRate());
-                if (event.getFloorsClimbed() > sample.getFloorsClimbed())
+                if (event.getHeartRate() > sample.getHeartRate()) {
+                    sample.setHeartRate(event.getHeartRate());
+                }
+                if (event.getFloorsClimbed() > sample.getFloorsClimbed()) {
                     sample.setFloorsClimbed(event.getFloorsClimbed());
+                }
 
                 float score = 0;
                 if (event.getRawKind() > 0) score += 1;
                 if (event.getCaloriesBurnt() > 0) score += event.getCaloriesBurnt() * 10.0f;
                 if (event.getSteps() > 0) score += event.getSteps();
-                if (event.getRawIntensity() > 0) score += 10.0f * event.getRawIntensity();
+                //if (event.getRawIntensity() > 0) score += 10.0f * event.getRawIntensity();
                 if (event.getKind().isBetterThan(bestKind) || (event.getKind() == bestKind && score > bestScore)) {
+//                    if (bestScore > Float.NEGATIVE_INFINITY && event.getKind() != FitEvent.EventKind.NOT_WORN) {
+//                        System.out.println(String.format(Locale.ROOT, "Replacing %s %d (%d cal, %d steps) with %s %d (%d cal, %d steps)", sample.getRawKind(), sample.getRawIntensity(), sample.getCaloriesBurnt(), sample.getSteps(), event.getRawKind(), event.getRawIntensity(), event.getCaloriesBurnt(), event.getSteps()));
+//                    }
                     bestScore = score;
                     bestKind = event.getKind();
                     sample.setRawKind(event.getRawKind());
@@ -122,19 +129,26 @@ public class FitImporter {
     private int processMonitoringMessage(FitMessage message, boolean ohrEnabled, int lastTimestamp, SparseIntArray lastCycles) {
         final Integer activityType = message.getIntegerField("activity_type");
         final Double activeCalories = message.getNumericField("active_calories");
-        final Integer intensity = message.getIntegerField("intensity");
+        final Integer intensity = message.getIntegerField("current_activity_type_intensity");
         final Integer cycles = message.getIntegerField("cycles");
         final Double heartRateMeasured = message.getNumericField("heart_rate");
         final Integer timestampFull = message.getIntegerField("timestamp");
         final Integer timestamp16 = message.getIntegerField("timestamp_16");
         final Double activeTime = message.getNumericField("active_time");
 
+        final int activityTypeOrAll = activityType == null ? ACTIVITY_TYPE_ALL : activityType;
         final int activityTypeOrDefault = activityType == null ? 0 : activityType;
 
-        final int lastCycleCount = lastCycles.get(activityTypeOrDefault);
+        final int lastDefaultCycleCount = lastCycles.get(ACTIVITY_TYPE_ALL);
+        final int lastCycleCount = Math.max(lastCycles.get(activityTypeOrAll), lastDefaultCycleCount);
         final Integer currentCycles = cycles == null ? null : cycles < lastCycleCount ? cycles : cycles - lastCycleCount;
         if (currentCycles != null) {
             lastCycles.put(activityTypeOrDefault, cycles);
+            final int newAllCycles = Math.max(lastDefaultCycleCount, cycles);
+            if (newAllCycles != lastDefaultCycleCount) {
+                assert newAllCycles > lastDefaultCycleCount;
+                lastCycles.put(ACTIVITY_TYPE_ALL, newAllCycles);
+            }
         }
 
         if (timestampFull != null) {
@@ -146,28 +160,17 @@ public class FitImporter {
             throw new IllegalArgumentException("Unsupported timestamp");
         }
 
-        int timestamp = GarminTimeUtils.garminTimestampToUnixTime(lastTimestamp);
-        int rawKind, caloriesBurnt, floorsClimbed, heartRate, steps, rawIntensity;
-        FitEvent.EventKind eventKind;
+        final int timestamp = GarminTimeUtils.garminTimestampToUnixTime(lastTimestamp);
+        final int rawKind, caloriesBurnt, floorsClimbed, heartRate, steps, rawIntensity;
+        final FitEvent.EventKind eventKind;
 
-        if (ohrEnabled && (heartRateMeasured == null || heartRateMeasured <= 0)) {
-            rawKind = VivomoveHrSampleProvider.RAW_NOT_WORN;
-
-            eventKind = FitEvent.EventKind.NOT_WORN;
-            caloriesBurnt = ActivitySample.NOT_MEASURED;
-            floorsClimbed = ActivitySample.NOT_MEASURED;
-            heartRate = ActivitySample.NOT_MEASURED;
-            steps = ActivitySample.NOT_MEASURED;
-            rawIntensity = ActivitySample.NOT_MEASURED;
-        } else {
-            eventKind = FitEvent.EventKind.ACTIVITY;
-            caloriesBurnt = activeCalories == null ? ActivitySample.NOT_MEASURED : (int) Math.round(activeCalories);
-            floorsClimbed = ActivitySample.NOT_MEASURED;
-            heartRate = ohrEnabled ? (int) Math.round(heartRateMeasured) : ActivitySample.NOT_MEASURED;
-            steps = currentCycles == null ? ActivitySample.NOT_MEASURED : currentCycles;
-            rawIntensity = intensity == null ? 0 : intensity;
-            rawKind = VivomoveHrSampleProvider.RAW_TYPE_KIND_ACTIVITY | activityTypeOrDefault;
-        }
+        caloriesBurnt = activeCalories == null ? ActivitySample.NOT_MEASURED : (int) Math.round(activeCalories);
+        floorsClimbed = ActivitySample.NOT_MEASURED;
+        heartRate = ohrEnabled && heartRateMeasured != null && heartRateMeasured > 0 ? (int) Math.round(heartRateMeasured) : ActivitySample.NOT_MEASURED;
+        steps = currentCycles == null ? ActivitySample.NOT_MEASURED : currentCycles;
+        rawIntensity = intensity == null ? 0 : intensity;
+        rawKind = VivomoveHrSampleProvider.RAW_TYPE_KIND_ACTIVITY | activityTypeOrDefault;
+        eventKind = steps != ActivitySample.NOT_MEASURED || rawIntensity > 0 || activityTypeOrDefault > 0 ? FitEvent.EventKind.ACTIVITY : FitEvent.EventKind.WORN;
 
         if (rawKind != ActivitySample.NOT_MEASURED
                 || caloriesBurnt != ActivitySample.NOT_MEASURED
@@ -177,6 +180,8 @@ public class FitImporter {
                 || rawIntensity != ActivitySample.NOT_MEASURED) {
 
             addEvent(new FitEvent(timestamp, eventKind, rawKind, caloriesBurnt, floorsClimbed, heartRate, steps, rawIntensity));
+        } else {
+            addEvent(new FitEvent(timestamp, FitEvent.EventKind.NOT_WORN, VivomoveHrSampleProvider.RAW_NOT_WORN, ActivitySample.NOT_MEASURED, ActivitySample.NOT_MEASURED, ActivitySample.NOT_MEASURED, ActivitySample.NOT_MEASURED, ActivitySample.NOT_MEASURED));
         }
         return lastTimestamp;
     }
@@ -255,8 +260,9 @@ public class FitImporter {
         public enum EventKind {
             UNKNOWN,
             NOT_WORN,
-            ACTIVITY,
-            SLEEP;
+            WORN,
+            SLEEP,
+            ACTIVITY;
 
             public boolean isBetterThan(EventKind other) {
                 return ordinal() > other.ordinal();
