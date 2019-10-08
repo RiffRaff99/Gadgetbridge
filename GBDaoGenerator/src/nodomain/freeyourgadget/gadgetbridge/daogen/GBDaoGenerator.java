@@ -74,6 +74,7 @@ public class GBDaoGenerator {
         addID115ActivitySample(schema, user, device);
         addJYouActivitySample(schema, user, device);
         addVivomoveHrActivitySample(schema, user, device);
+        addDownloadedFitFile(schema, user, device);
 
         addCalendarSyncState(schema, device);
         addAlarms(schema, user, device);
@@ -333,7 +334,7 @@ public class GBDaoGenerator {
     }
 
     private static Entity addVivomoveHrActivitySample(Schema schema, Entity user, Entity device) {
-        Entity activitySample = addEntity(schema, "VivomoveHrActivitySample");
+        final Entity activitySample = addEntity(schema, "VivomoveHrActivitySample");
         activitySample.implementsSerializable();
         addCommonActivitySampleProperties("AbstractActivitySample", activitySample, user, device);
         activitySample.addIntProperty(SAMPLE_STEPS).notNull().codeBeforeGetterAndSetter(OVERRIDE);
@@ -343,6 +344,24 @@ public class GBDaoGenerator {
         activitySample.addIntProperty("caloriesBurnt");
         activitySample.addIntProperty("floorsClimbed");
         return activitySample;
+    }
+
+    private static Entity addDownloadedFitFile(Schema schema, Entity user, Entity device) {
+        final Entity downloadedFitFile = addEntity(schema, "DownloadedFitFile");
+        downloadedFitFile.implementsSerializable();
+        downloadedFitFile.setJavaDoc("This class represents a single FIT file downloaded from a FIT-compatible device.");
+        downloadedFitFile.addIntProperty("downloadTimestamp").primaryKey().notNull();
+        final Property deviceId = downloadedFitFile.addLongProperty("deviceId").notNull().getProperty();
+        downloadedFitFile.addToOne(device, deviceId);
+        final Property userId = downloadedFitFile.addLongProperty("userId").notNull().getProperty();
+        downloadedFitFile.addToOne(user, userId);
+        downloadedFitFile.addIntProperty("fileDataType").notNull();
+        downloadedFitFile.addIntProperty("fileSubType").notNull();
+        downloadedFitFile.addIntProperty("fileTimestamp").notNull();
+        downloadedFitFile.addIntProperty("specificFlags").notNull();
+        downloadedFitFile.addIntProperty("fileSize").notNull();
+        downloadedFitFile.addByteArrayProperty("fileData");
+        return downloadedFitFile;
     }
 
     private static Entity addJYouActivitySample(Schema schema, Entity user, Entity device) {
