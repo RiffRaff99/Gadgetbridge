@@ -438,6 +438,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
     }
 
     private void processFindMyPhoneRequest(FindMyPhoneRequestMessage requestMessage) {
+        // TODO: use the new GBDeviceEventFindPhone
         LOG.info("Processing find-my-phone request ({} s)", requestMessage.duration);
         sendMessage(new GenericResponseMessage(VivomoveConstants.MESSAGE_FIND_MY_PHONE, 0).packet);
 
