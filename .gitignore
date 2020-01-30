@@ -36,3 +36,4 @@ fw.dirs
 **/.classpath
 
 /app/src/main/java/nodomain/freeyourgadget/gadgetbridge/ElasticsearchConfiguration.java
+/app/src/main/java/nodomain/freeyourgadget/gadgetbridge/SyslogConfiguration.java

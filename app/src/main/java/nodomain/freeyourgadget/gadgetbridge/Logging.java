@@ -17,7 +17,9 @@
 package nodomain.freeyourgadget.gadgetbridge;
 
 import android.util.Log;
+import ch.qos.logback.classic.AsyncAppender;
 import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.net.SyslogAppender;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.FileAppender;
@@ -34,22 +36,46 @@ import java.io.IOException;
 public abstract class Logging {
     public static final String PROP_LOGFILES_DIR = "GB_LOGFILES_DIR";
 
+    private static final boolean ENABLE_ELASTICSEARCH = false;
+    private static final boolean ENABLE_SYSLOG = false;
+
     private FileAppender<ILoggingEvent> fileLogger;
     private ElasticsearchAppender elasticLogger;
+    private AsyncAppender syslogLogger;
+    private SyslogAppender syslogLoggerImpl;
 
     public void setupLogging(boolean enable) {
         try {
             if (fileLogger == null) {
                 initFileLogger();
             }
-            if (elasticLogger == null) {
-                initElastic();
+            if (ENABLE_ELASTICSEARCH) {
+                if (elasticLogger == null) {
+                    initElastic();
+                }
+            }
+            if (ENABLE_SYSLOG) {
+                if (syslogLogger == null) {
+                    initSyslog();
+                }
             }
             if (enable) {
                 startFileLogger();
-                startLogger(elasticLogger);
+                if (ENABLE_ELASTICSEARCH) {
+                    startLogger(elasticLogger);
+                }
+                if (ENABLE_SYSLOG) {
+                    startLogger(syslogLoggerImpl);
+                    startLogger(syslogLogger);
+                }
             } else {
-                stopLogger(elasticLogger);
+                if (ENABLE_ELASTICSEARCH) {
+                    stopLogger(elasticLogger);
+                }
+                if (ENABLE_SYSLOG) {
+                    stopLogger(syslogLogger);
+                    stopLogger(syslogLoggerImpl);
+                }
                 stopLogger(fileLogger);
             }
             getLogger().info("Gadgetbridge version: " + BuildConfig.VERSION_NAME);
@@ -66,6 +92,23 @@ public abstract class Logging {
         elasticLogger.setHeaders(ElasticsearchConfiguration.headers);
         elasticLogger.setProperties(ElasticsearchConfiguration.properties);
         elasticLogger.setContext(loggerContext);
+    }
+
+    private void initSyslog() {
+        final LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+
+        syslogLoggerImpl = new SyslogAppender();
+        syslogLoggerImpl.setSyslogHost(SyslogConfiguration.host);
+        syslogLoggerImpl.setPort(SyslogConfiguration.port);
+        syslogLoggerImpl.setFacility(SyslogConfiguration.facility);
+        syslogLoggerImpl.setThrowableExcluded(SyslogConfiguration.throwableExcluded);
+        syslogLoggerImpl.setSuffixPattern(SyslogConfiguration.suffixPattern);
+        syslogLoggerImpl.setLazy(SyslogConfiguration.lazy);
+        syslogLoggerImpl.setContext(loggerContext);
+
+        syslogLogger = new AsyncAppender();
+        syslogLogger.detachAndStopAllAppenders();
+        syslogLogger.addAppender(syslogLoggerImpl);
     }
 
     public String getLogPath() {
@@ -117,7 +160,7 @@ public abstract class Logging {
     private void stopLogger(Appender<ILoggingEvent> logger) {
         if (logger != null && logger.isStarted()) {
             logger.stop();
-            remoteLogger(logger);
+            removeLogger(logger);
         }
     }
 
@@ -137,7 +180,7 @@ public abstract class Logging {
         }
     }
 
-    private void remoteLogger(Appender<ILoggingEvent> fileLogger) {
+    private void removeLogger(Appender<ILoggingEvent> fileLogger) {
         try {
             ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
             if (root.isAttached(fileLogger)) {
