@@ -156,6 +156,12 @@ public class FitParser {
                     return reader.readInt();
                 case 8:
                     return reader.readLong();
+                case 16:
+                    return reader.readLong() + reader.readLong() * (double)(Long.MAX_VALUE);
+                case 32:
+                    // TODO: FIXME: 32-bit integer?!?
+                    reader.skip(16);
+                    return reader.readLong() + reader.readLong() * (double)(Long.MAX_VALUE);
                 default:
                     throw new IllegalArgumentException("Unable to read number of size " + size);
             }

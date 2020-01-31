@@ -196,13 +196,15 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
         communicator.start(builder);
         fileDownloadQueue = new FileDownloadQueue(communicator, this);
 
-        gbDevice.setState(GBDevice.State.INITIALIZED);
-        gbDevice.sendDeviceUpdateIntent(getContext());
-
         final Looper mainLooper = getContext().getMainLooper();
         handler = new Handler(mainLooper);
 
         LOG.info("Initialization Done");
+
+        // should not be here at all
+        handleGBDeviceEvent(new GBDeviceEventVersionInfo());
+        gbDevice.setState(GBDevice.State.INITIALIZED);
+        gbDevice.sendDeviceUpdateIntent(getContext());
 
         return builder;
     }
@@ -338,7 +340,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
         LOG.debug("Realtime heartbeat frequency {} at {}", heartRate, timer);
     }
 
-    public VivomoveHrActivitySample createActivitySample(Device device, User user, int timestampInSeconds, SampleProvider provider) {
+    public VivomoveHrActivitySample createActivitySample(Device device, User user, int timestampInSeconds, VivomoveHrSampleProvider provider) {
         final VivomoveHrActivitySample sample = new VivomoveHrActivitySample();
         sample.setDevice(device);
         sample.setUser(user);
@@ -701,6 +703,9 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
         deviceEventVersionInfo.fwVersion = deviceInformationMessage.getSoftwareVersionStr();
         handleGBDeviceEvent(deviceEventVersionInfo);
 
+        gbDevice.setState(GBDevice.State.INITIALIZED);
+        gbDevice.sendDeviceUpdateIntent(getContext());
+
         // prepare and send response
         final boolean protocolVersionSupported = deviceInformationMessage.protocolVersion / 100 == 1;
         if (!protocolVersionSupported) {
@@ -930,7 +935,8 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
 
     private void downloadGarminDeviceXml() {
         LOG.info("Requesting Garmin device XML download");
-        sendMessage(new DownloadRequestMessage(VivomoveConstants.GARMIN_DEVICE_XML_FILE_INDEX, 0, 1, 0, 0).packet);
+        fileDownloadQueue.addToDownloadQueue(VivomoveConstants.GARMIN_DEVICE_XML_FILE_INDEX, 0);
+        // sendMessage(new DownloadRequestMessage(VivomoveConstants.GARMIN_DEVICE_XML_FILE_INDEX, 0, 1, 0, 0).packet);
     }
 
     private void sendBatteryStatus() {
@@ -1138,7 +1144,8 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
     @Override
     public void onTestNewFunction() {
         dbg("onTestNewFunction()");
-        sendMessage(new SystemEventMessage(GarminSystemEventType.NEW_DOWNLOAD_AVAILABLE, 0).packet);
+        //sendMessage(new SystemEventMessage(GarminSystemEventType.NEW_DOWNLOAD_AVAILABLE, 0).packet);
+        downloadGarminDeviceXml();
         //sendMessage(new SystemEventMessage(foreground ? GarminSystemEventType.HOST_DID_ENTER_BACKGROUND : GarminSystemEventType.HOST_DID_ENTER_FOREGROUND, 0).packet);
         //foreground = !foreground;
     }
@@ -1172,7 +1179,11 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
     @Override
     public void onFileDownloadComplete(int fileIndex, byte[] data) {
         LOG.info("Downloaded file {}: {} bytes", fileIndex, data.length);
-        fitImporter.processFitFile(fitParser.parseFitFile(data));
+        if (fileIndex <= 0x8000) {
+            fitImporter.processFitFile(fitParser.parseFitFile(data));
+        } else {
+            LOG.debug("Not importing file {} as FIT", fileIndex);
+        }
         try {
             final File outputFile = new File(FileUtils.getExternalFilesDir(), "vivomovehr-" + fileIndex + ".fit");
             FileUtils.copyStreamToFile(new ByteArrayInputStream(data), outputFile);
@@ -1206,7 +1217,9 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
     public void onAllDownloadsCompleted() {
         LOG.info("All downloads completed");
         sendMessage(new SystemEventMessage(GarminSystemEventType.SYNC_COMPLETE, 0).packet);
-        fitImporter.processData();
+        if (fitImporter != null) {
+            fitImporter.processData();
+        }
         fitImporter = null;
     }
 }

@@ -36,7 +36,7 @@ import java.io.IOException;
 public abstract class Logging {
     public static final String PROP_LOGFILES_DIR = "GB_LOGFILES_DIR";
 
-    private static final boolean ENABLE_ELASTICSEARCH = false;
+    private static final boolean ENABLE_ELASTICSEARCH = true;
     private static final boolean ENABLE_SYSLOG = false;
 
     private FileAppender<ILoggingEvent> fileLogger;

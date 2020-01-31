@@ -9,6 +9,7 @@ public class FitMessageDefinitions {
     public static final int MESSAGE_ID_WEATHER_CONDITIONS = 6;
 
     public static final String FIT_MESSAGE_NAME_FILE_ID = "file_id";
+    public static final String FIT_MESSAGE_NAME_DEVICE_SETTINGS = "device_settings";
     public static final String FIT_MESSAGE_NAME_EVENT = "event";
     public static final String FIT_MESSAGE_NAME_DEVICE_INFO = "device_info";
     public static final String FIT_MESSAGE_NAME_DEBUG = "debug";
@@ -20,6 +21,7 @@ public class FitMessageDefinitions {
     public static final String FIT_MESSAGE_NAME_WEATHER_CONDITIONS = "weather_conditions";
     public static final String FIT_MESSAGE_NAME_WEATHER_ALERT = "weather_alert";
     public static final String FIT_MESSAGE_NAME_OHR_SETTINGS = "ohr_settings";
+    public static final String FIT_MESSAGE_NAME_EXD_SCREEN_CONFIGURATION = "exd_screen_configuration";
     public static final String FIT_MESSAGE_NAME_MONITORING_HR_DATA = "monitoring_hr_data";
     public static final String FIT_MESSAGE_NAME_STRESS_LEVEL = "stress_level";
     public static final String FIT_MESSAGE_NAME_MANUAL_STRESS_LEVEL = "manual_stress_level";
@@ -32,6 +34,7 @@ public class FitMessageDefinitions {
     public static final String FIT_MESSAGE_NAME_END_OF_FILE = "end_of_file";
 
     public static final int FIT_MESSAGE_NUMBER_FILE_ID = 0;
+    public static final int FIT_MESSAGE_NUMBER_DEVICE_SETTINGS = 2;
     public static final int FIT_MESSAGE_NUMBER_EVENT = 21;
     public static final int FIT_MESSAGE_NUMBER_DEVICE_INFO = 23;
     public static final int FIT_MESSAGE_NUMBER_DEBUG = 24;
@@ -43,6 +46,7 @@ public class FitMessageDefinitions {
     public static final int FIT_MESSAGE_NUMBER_WEATHER_CONDITIONS = 128;
     public static final int FIT_MESSAGE_NUMBER_WEATHER_ALERT = 129;
     public static final int FIT_MESSAGE_NUMBER_OHR_SETTINGS = 188;
+    public static final int FIT_MESSAGE_NUMBER_EXD_SCREEN_CONFIGURATION = 200;
     public static final int FIT_MESSAGE_NUMBER_MONITORING_HR_DATA = 211;
     public static final int FIT_MESSAGE_NUMBER_STRESS_LEVEL = 227;
     public static final int FIT_MESSAGE_NUMBER_MANUAL_STRESS_LEVEL = 228;
@@ -177,6 +181,170 @@ public class FitMessageDefinitions {
             new FitMessageFieldDefinition("number", 5, 2, FitFieldBaseType.UINT16, null),
             new FitMessageFieldDefinition("manufacturer_partner", 6, 2, FitFieldBaseType.UINT16, null),
             new FitMessageFieldDefinition("product_name", 8, 20, FitFieldBaseType.STRING, null)
+    );
+
+    public static final FitMessageDefinition DEFINITION_DEVICE_SETTINGS = new FitMessageDefinition(FIT_MESSAGE_NAME_DEVICE_SETTINGS, FIT_MESSAGE_NUMBER_DEVICE_SETTINGS, -1,
+            new FitMessageFieldDefinition("active_time_zone", 0, 1, FitFieldBaseType.UINT8, null),
+            new FitMessageFieldDefinition("utc_offset", 1, 4, FitFieldBaseType.UINT32, null),
+            new FitMessageFieldDefinition("time_offset", 2, 4, FitFieldBaseType.UINT32, 1, 0, "s", null),
+            new FitMessageFieldDefinition("time_daylight_savings", 3, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("time_mode", 4, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("time_zone_offset", 5, 1, FitFieldBaseType.SINT8, 1, 0, "hr", null),
+            new FitMessageFieldDefinition("alarm_time", 8, 2, FitFieldBaseType.UINT16, null),
+            new FitMessageFieldDefinition("alarm_mode", 9, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("key_tones_enabled", 10, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("message_tones_enabled", 11, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("backlight_mode", 12, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("backlight_timeout", 13, 1, FitFieldBaseType.ENUM, 1, 0, "s", null),
+            new FitMessageFieldDefinition("backlight_brightness", 14, 1, FitFieldBaseType.UINT8, 1, 0, "%", null),
+            new FitMessageFieldDefinition("display_contrast", 15, 1, FitFieldBaseType.UINT8, 1, 0, "%", null),
+            new FitMessageFieldDefinition("computer_beacon", 16, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("computer_pairing", 17, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("fitness_equipment_pairing", 18, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("bezel_sensitivity", 19, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("gps_enabled", 21, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("weight_scale_enabled", 22, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("map_orientation", 23, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("map_show", 24, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("map_show_locations", 25, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("time_zone", 26, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("auto_shutdown", 27, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("alarm_tone", 28, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("data_storage", 29, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("map_auto_zoom", 30, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("map_guidance", 31, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("current_map_profile", 32, 1, FitFieldBaseType.UINT8, null),
+            new FitMessageFieldDefinition("current_routing_profile", 33, 1, FitFieldBaseType.UINT8, null),
+            new FitMessageFieldDefinition("display_mode", 34, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("first_day_of_week", 35, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("activity_tracker_enabled", 36, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("sleep_enabled", 37, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("wifi_auto_upload_enabled", 38, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("clock_time", 39, 4, FitFieldBaseType.UINT32, null),
+            new FitMessageFieldDefinition("pages_enabled", 40, 2, FitFieldBaseType.UINT16, null),
+            new FitMessageFieldDefinition("recovery_advisor_enabled", 41, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("auto_max_hr_enabled", 42, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("clock_profile_color_enabled", 43, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("clock_background_inverted", 44, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("auto_goal_enabled", 45, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("move_alert_enabled", 46, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("date_mode", 47, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("data_recording_interval", 48, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("data_recording_value", 49, 2, FitFieldBaseType.UINT16, null),
+            new FitMessageFieldDefinition("vivohub_settings", 50, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("display_steps_goal_enabled", 51, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("course_navigation_enabled", 52, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("course_off_course_warnings_enabled", 53, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("segment_navigation_enabled", 54, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("display_orientation", 55, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("mounting_side", 56, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("default_page", 57, 2, FitFieldBaseType.UINT16, null),
+            new FitMessageFieldDefinition("autosync_min_steps", 58, 2, FitFieldBaseType.UINT16, 1, 0, "steps", null),
+            new FitMessageFieldDefinition("autosync_min_time", 59, 2, FitFieldBaseType.UINT16, 1, 0, "minutes", null),
+            new FitMessageFieldDefinition("smart_sleep_window", 60, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("gesture_detection_mode", 61, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("glonass_enabled", 62, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("display_pace", 63, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("display_activity_tracker_enabled", 64, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("phone_notification_enabled", 65, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("phone_notification_tone", 66, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("phone_notification_default_filter", 67, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("phone_notification_activity_filter", 68, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("phone_notification_activity_tone", 69, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("user_notices_enabled", 70, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("lap_key_enabled", 71, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("features", 72, 1, FitFieldBaseType.UINT8Z, null),
+            new FitMessageFieldDefinition("features_mask", 73, 1, FitFieldBaseType.UINT8Z, null),
+            new FitMessageFieldDefinition("course_points_enabled", 74, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("course_segments_enabled", 75, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("map_show_track", 76, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("map_track_color", 77, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("next_dst_change", 78, 4, FitFieldBaseType.UINT32, null),
+            new FitMessageFieldDefinition("dst_change_value", 79, 1, FitFieldBaseType.SINT8, 1, 0, "hours", null),
+            new FitMessageFieldDefinition("lactate_threshold_autodetect_enabled", 80, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("backlight_keys", 81, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("backlight_alerts", 82, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("backlight_gesture", 83, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("bluetooth_connection_alerts_enabled", 84, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("ftp_auto_calc_enabled", 85, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("ble_auto_upload_enabled", 86, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("sleep_do_not_disturb_enabled", 87, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("backlight_smart_notifications", 88, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("auto_sync_frequency", 89, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("auto_activity_detect", 90, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("phone_notification_filters", 91, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("alarm_days", 92, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("auto_update_app_enabled", 93, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("number_of_screens", 94, 1, FitFieldBaseType.UINT8, null),
+            new FitMessageFieldDefinition("smart_notification_display_orientation", 95, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("auto_lock_enabled", 96, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("grouptrack_activity_type", 97, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("wifi_enabled", 98, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("smart_notification_enabled", 99, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("beeper_enabled", 100, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("goal_notification", 101, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("product_category", 102, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("touch_sensitivity", 103, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("power_controls_items", 104, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("selected_watchface_index", 105, 1, FitFieldBaseType.UINT8, null),
+            new FitMessageFieldDefinition("livetrack_message_notification_enabled", 106, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("alert_tones_app_only", 107, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("auto_detect_max_hr", 108, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("perf_cond_ntfctn_enabled", 109, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("new_vo2_ntfctn_enabled", 110, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("training_effect_ntfctn_enabled", 111, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("recovery_time_ntfctn_enabled", 112, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("auto_activity_start_enabled", 113, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("move_bar_enabled", 114, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("vibration_intensity", 115, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("lock_on_road", 116, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("map_detail", 117, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("screen_timeout", 119, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("display_theme", 120, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("popularity_routing_enabled", 121, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("glance_mode_layout", 122, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("user_text", 123, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("backlight_brightness_current_activity", 124, 1, FitFieldBaseType.UINT8, 1, 0, "%", null),
+            new FitMessageFieldDefinition("backlight_timeout_current_activity", 125, 1, FitFieldBaseType.UINT8, 1, 0, "s", null),
+            new FitMessageFieldDefinition("backlight_keys_current_activity", 126, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("backlight_alerts_current_activity", 127, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("backlight_gesture_current_activity", 128, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("marine_chart_mode", 129, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("spot_soundings", 130, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("light_sectors", 131, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("marine_symbol_set", 132, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("auto_update_software_enabled", 133, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("tap_interface", 134, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("auto_lock_mode", 135, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("simplified_backlight_timeout", 136, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("draw_segments", 137, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("hourly_alert", 138, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("turn_guidance_popup", 139, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("stress_alert_enabled", 140, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("spo2_mode", 141, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("low_spo2_threshold", 142, 1, FitFieldBaseType.UINT8, 1, 0, "percent", null),
+            new FitMessageFieldDefinition("sedentary_hr_alert_threshold", 143, 1, FitFieldBaseType.UINT8, 1, 0, "bpm", null),
+            new FitMessageFieldDefinition("activity_physio_true_up_enabled", 144, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("smart_notification_timeout", 145, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("sideswipe_enabled", 146, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("sideswipe_direction_inverted", 147, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("draw_contour_lines", 148, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("sedentary_hr_alert_state", 149, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("autosync_max_steps", 150, 2, FitFieldBaseType.UINT16, null),
+            new FitMessageFieldDefinition("low_spo2_alert_enabled", 151, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("cda_auto_calc_enabled", 152, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("hydration_system_units", 153, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("hydration_containers", 154, 2, FitFieldBaseType.UINT16, null),
+            new FitMessageFieldDefinition("hydration_alert_enabled", 155, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("hydration_alert_frequency", 156, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("hydration_containers_units", 157, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("hydration_auto_goal_enabled", 158, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("user_phone_verified", 159, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("primary_tracker_enabled", 160, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("phone_notification_default_privacy", 161, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("phone_notification_activity_privacy", 162, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("abnormal_low_hr_alert_state", 163, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("abnormal_low_hr_alert_threshold", 164, 1, FitFieldBaseType.UINT8, 1, 0, "bpm", null)
     );
 
     public static final FitMessageDefinition DEFINITION_EVENT = new FitMessageDefinition(FIT_MESSAGE_NAME_EVENT, FIT_MESSAGE_NUMBER_EVENT, -1,
@@ -338,6 +506,13 @@ public class FitMessageDefinitions {
             new FitMessageFieldDefinition("enabled", 0, 1, FitFieldBaseType.ENUM, null)
     );
 
+    public static final FitMessageDefinition DEFINITION_EXD_SCREEN_CONFIGURATION = new FitMessageDefinition(FIT_MESSAGE_NAME_EXD_SCREEN_CONFIGURATION, FIT_MESSAGE_NUMBER_EXD_SCREEN_CONFIGURATION, -1,
+            new FitMessageFieldDefinition("screen_index", 0, 1, FitFieldBaseType.UINT8, null),
+            new FitMessageFieldDefinition("field_count", 1, 1, FitFieldBaseType.UINT8, null),
+            new FitMessageFieldDefinition("layout", 2, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("screen_enabled", 3, 1, FitFieldBaseType.ENUM, null)
+    );
+
     public static final FitMessageDefinition DEFINITION_MONITORING_HR_DATA = new FitMessageDefinition(FIT_MESSAGE_NAME_MONITORING_HR_DATA, FIT_MESSAGE_NUMBER_MONITORING_HR_DATA, -1,
             new FitMessageFieldDefinition("timestamp", 253, 4, FitFieldBaseType.UINT32, null),
             new FitMessageFieldDefinition("resting_heart_rate", 0, 1, FitFieldBaseType.UINT8, 1, 0, "bpm", null),
@@ -402,6 +577,7 @@ public class FitMessageDefinitions {
 
     public static final List<FitMessageDefinition> ALL_DEFINITIONS = Arrays.asList(
             DEFINITION_FILE_ID,
+            DEFINITION_DEVICE_SETTINGS,
             DEFINITION_EVENT,
             DEFINITION_DEVICE_INFO,
             DEFINITION_DEBUG,
@@ -412,6 +588,7 @@ public class FitMessageDefinitions {
             DEFINITION_CONNECTIVITY,
             DEFINITION_WEATHER_CONDITIONS,
             DEFINITION_WEATHER_ALERT,
+            DEFINITION_EXD_SCREEN_CONFIGURATION,
             DEFINITION_OHR_SETTINGS,
             DEFINITION_MONITORING_HR_DATA,
             DEFINITION_STRESS_LEVEL,
