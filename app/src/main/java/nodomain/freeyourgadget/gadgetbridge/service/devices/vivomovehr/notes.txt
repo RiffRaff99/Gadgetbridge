@@ -1,0 +1,5 @@
+Firmware update:
+
+http://download.garmin.com/software/vivomoveHR_###.gcd
+
+https://www8.garmin.com/support/download_details.jsp?id=11763

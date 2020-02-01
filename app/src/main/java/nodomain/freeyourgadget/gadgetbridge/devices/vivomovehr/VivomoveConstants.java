@@ -79,4 +79,5 @@ public class VivomoveConstants {
     public static final int MESSAGE_MUSIC_CONTROL_ENTITY_UPDATE = 5049;
     public static final int MESSAGE_CONFIGURATION = 5050;
     public static final int MESSAGE_CURRENT_TIME_REQUEST = 5052;
+    public static final int MESSAGE_AUTH_NEGOTIATION = 5101;
 }

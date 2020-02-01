@@ -32,10 +32,12 @@ public class VivomoveHrCoordinator extends AbstractDeviceCoordinator {
     @NonNull
     @Override
     public DeviceType getSupportedType(GBDeviceCandidate candidate) {
-        LOG.debug("Testing candidate {} ({})", candidate.getMacAddress(), candidate.getName());
+        final boolean hasServiceUuids = candidate.getServiceUuids().length > 0;
+        LOG.debug("Testing candidate {} ({}), UUIDs = {}", candidate.getMacAddress(), candidate.getName(), hasServiceUuids);
+
         if ("vívomove HR".equals(candidate.getName())) return DeviceType.VIVOMOVE_HR;
-        // TODO: This does not work, “no cached services available for”
-        return candidate.supportsService(VivomoveConstants.UUID_SERVICE_GARMIN_2) ? DeviceType.VIVOMOVE_HR : DeviceType.UNKNOWN;
+
+        return hasServiceUuids && candidate.supportsService(VivomoveConstants.UUID_SERVICE_GARMIN_2) ? DeviceType.VIVOMOVE_HR : DeviceType.UNKNOWN;
     }
 
     @Override

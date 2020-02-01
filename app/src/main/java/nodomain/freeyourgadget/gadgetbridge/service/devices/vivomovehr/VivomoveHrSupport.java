@@ -16,7 +16,6 @@ import nodomain.freeyourgadget.gadgetbridge.database.DBHandler;
 import nodomain.freeyourgadget.gadgetbridge.database.DBHelper;
 import nodomain.freeyourgadget.gadgetbridge.deviceevents.GBDeviceEventBatteryInfo;
 import nodomain.freeyourgadget.gadgetbridge.deviceevents.GBDeviceEventVersionInfo;
-import nodomain.freeyourgadget.gadgetbridge.devices.SampleProvider;
 import nodomain.freeyourgadget.gadgetbridge.devices.vivomovehr.VivomoveConstants;
 import nodomain.freeyourgadget.gadgetbridge.devices.vivomovehr.VivomoveHrSampleProvider;
 import nodomain.freeyourgadget.gadgetbridge.entities.DaoSession;
@@ -56,6 +55,8 @@ import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.FitMe
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.FitMessageDefinitions;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.FitParser;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.FitWeatherConditions;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.AuthNegotiationMessage;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.AuthNegotiationRequestResponse;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.BatteryStatusMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.ConfigurationMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.CurrentTimeRequestMessage;
@@ -199,12 +200,9 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
         final Looper mainLooper = getContext().getMainLooper();
         handler = new Handler(mainLooper);
 
-        LOG.info("Initialization Done");
+        sendMessage(new AuthNegotiationMessage(AuthNegotiationMessage.LONG_TERM_KEY_AVAILABILITY_NONE, AuthNegotiationMessage.ENCRYPTION_ALGORITHM_NONE).packet);
 
-        // should not be here at all
-        handleGBDeviceEvent(new GBDeviceEventVersionInfo());
-        gbDevice.setState(GBDevice.State.INITIALIZED);
-        gbDevice.sendDeviceUpdateIntent(getContext());
+        LOG.info("Initialization Done");
 
         return builder;
     }
@@ -649,6 +647,8 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
             case VivomoveConstants.MESSAGE_GNCS_DATA_SOURCE:
                 gncsDataSourceQueue.responseReceived(GncsDataSourceResponseMessage.parsePacket(packet));
                 break;
+            case VivomoveConstants.MESSAGE_AUTH_NEGOTIATION:
+                processAuthNegotiationRequestResponse(AuthNegotiationRequestResponse.parsePacket(packet));
             default:
                 LOG.info("Received response to message {}: {}", responseMessage.requestID, responseMessage.getStatusStr());
                 break;
@@ -675,6 +675,10 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
 
     private void processDeviceSettingsResponse(SetDeviceSettingsResponseMessage responseMessage) {
         LOG.info("Received response to device settings message: status={}, response={}", responseMessage.status, responseMessage.response);
+    }
+
+    private void processAuthNegotiationRequestResponse(AuthNegotiationRequestResponse responseMessage) {
+        LOG.info("Received response to auth negotiation message: status={}, response={}, LTK={}, algorithms={}", responseMessage.status, responseMessage.response, responseMessage.longTermKeyAvailability, responseMessage.supportedEncryptionAlgorithms);
     }
 
     private void processSystemEventResponse(SystemEventResponseMessage responseMessage) {
@@ -1144,8 +1148,9 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
     @Override
     public void onTestNewFunction() {
         dbg("onTestNewFunction()");
+        sendMessage(new AuthNegotiationMessage(0, 0).packet);
         //sendMessage(new SystemEventMessage(GarminSystemEventType.NEW_DOWNLOAD_AVAILABLE, 0).packet);
-        downloadGarminDeviceXml();
+        //downloadGarminDeviceXml();
         //sendMessage(new SystemEventMessage(foreground ? GarminSystemEventType.HOST_DID_ENTER_BACKGROUND : GarminSystemEventType.HOST_DID_ENTER_FOREGROUND, 0).packet);
         //foreground = !foreground;
     }
