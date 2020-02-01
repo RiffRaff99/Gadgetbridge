@@ -1,11 +1,14 @@
 package nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit;
 
 import android.util.SparseArray;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.BinaryUtils;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.MessageReader;
 import nodomain.freeyourgadget.gadgetbridge.util.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -129,10 +132,30 @@ public class FitParser {
                 return fieldDefinition.size == 1 ? reader.readByte() : reader.readBytes(fieldDefinition.size);
             case STRING:
                 return readFitString(reader, fieldDefinition.size);
+            case FLOAT32:
+                return readFloat32(reader, fieldDefinition.size);
+            case FLOAT64:
+                return readFloat64(reader, fieldDefinition.size);
             // TODO: Float data types
             default:
                 throw new IllegalArgumentException("Unable to read value of type " + fieldDefinition.baseType);
         }
+    }
+
+    private float readFloat32(MessageReader reader, int size) {
+        if (size != 4) {
+            throw new IllegalArgumentException("Invalid size for Float32: " + size);
+        }
+        final byte[] bytes = reader.readBytes(size);
+        return ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN).getFloat();
+    }
+
+    private double readFloat64(MessageReader reader, int size) {
+        if (size != 8) {
+            throw new IllegalArgumentException("Invalid size for Float64: " + size);
+        }
+        final byte[] bytes = reader.readBytes(size);
+        return ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN).getDouble();
     }
 
     private String readFitString(MessageReader reader, int size) {
@@ -159,9 +182,9 @@ public class FitParser {
                 case 16:
                     return reader.readLong() + reader.readLong() * (double)(Long.MAX_VALUE);
                 case 32:
-                    // TODO: FIXME: 32-bit integer?!?
+                    // TODO: FIXME: 32-byte integer?!?
                     reader.skip(16);
-                    return reader.readLong() + reader.readLong() * (double)(Long.MAX_VALUE);
+                    return Math.pow(2, 128) * (reader.readLong() + reader.readLong() * (double)(Long.MAX_VALUE));
                 default:
                     throw new IllegalArgumentException("Unable to read number of size " + size);
             }

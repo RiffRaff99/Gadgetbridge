@@ -9,19 +9,24 @@ public class FitMessageDefinitions {
     public static final int MESSAGE_ID_WEATHER_CONDITIONS = 6;
 
     public static final String FIT_MESSAGE_NAME_FILE_ID = "file_id";
+    public static final String FIT_MESSAGE_NAME_CAPABILITIES = "capabilities";
     public static final String FIT_MESSAGE_NAME_DEVICE_SETTINGS = "device_settings";
     public static final String FIT_MESSAGE_NAME_EVENT = "event";
     public static final String FIT_MESSAGE_NAME_DEVICE_INFO = "device_info";
     public static final String FIT_MESSAGE_NAME_DEBUG = "debug";
     public static final String FIT_MESSAGE_NAME_SOFTWARE = "software";
+    public static final String FIT_MESSAGE_NAME_FILE_CAPABILITIES = "file_capabilities";
     public static final String FIT_MESSAGE_NAME_FILE_CREATOR = "file_creator";
     public static final String FIT_MESSAGE_NAME_MONITORING = "monitoring";
     public static final String FIT_MESSAGE_NAME_MONITORING_INFO = "monitoring_info";
     public static final String FIT_MESSAGE_NAME_CONNECTIVITY = "connectivity";
     public static final String FIT_MESSAGE_NAME_WEATHER_CONDITIONS = "weather_conditions";
     public static final String FIT_MESSAGE_NAME_WEATHER_ALERT = "weather_alert";
+    public static final String FIT_MESSAGE_NAME_FILE_DESCRIPTION = "file_description";
     public static final String FIT_MESSAGE_NAME_OHR_SETTINGS = "ohr_settings";
     public static final String FIT_MESSAGE_NAME_EXD_SCREEN_CONFIGURATION = "exd_screen_configuration";
+    public static final String FIT_MESSAGE_NAME_EXD_DATA_FIELD_CONFIGURATION = "exd_data_field_configuration";
+    public static final String FIT_MESSAGE_NAME_EXD_DATA_CONCEPT_CONFIGURATION = "exd_data_concept_configuration";
     public static final String FIT_MESSAGE_NAME_MONITORING_HR_DATA = "monitoring_hr_data";
     public static final String FIT_MESSAGE_NAME_STRESS_LEVEL = "stress_level";
     public static final String FIT_MESSAGE_NAME_MANUAL_STRESS_LEVEL = "manual_stress_level";
@@ -34,19 +39,24 @@ public class FitMessageDefinitions {
     public static final String FIT_MESSAGE_NAME_END_OF_FILE = "end_of_file";
 
     public static final int FIT_MESSAGE_NUMBER_FILE_ID = 0;
+    public static final int FIT_MESSAGE_NUMBER_CAPABILITIES = 1;
     public static final int FIT_MESSAGE_NUMBER_DEVICE_SETTINGS = 2;
     public static final int FIT_MESSAGE_NUMBER_EVENT = 21;
     public static final int FIT_MESSAGE_NUMBER_DEVICE_INFO = 23;
     public static final int FIT_MESSAGE_NUMBER_DEBUG = 24;
     public static final int FIT_MESSAGE_NUMBER_SOFTWARE = 35;
+    public static final int FIT_MESSAGE_NUMBER_FILE_CAPABILITIES = 37;
     public static final int FIT_MESSAGE_NUMBER_FILE_CREATOR = 49;
     public static final int FIT_MESSAGE_NUMBER_MONITORING = 55;
     public static final int FIT_MESSAGE_NUMBER_MONITORING_INFO = 103;
     public static final int FIT_MESSAGE_NUMBER_CONNECTIVITY = 127;
     public static final int FIT_MESSAGE_NUMBER_WEATHER_CONDITIONS = 128;
     public static final int FIT_MESSAGE_NUMBER_WEATHER_ALERT = 129;
+    public static final int FIT_MESSAGE_NUMBER_FILE_DESCRIPTION = 138;
     public static final int FIT_MESSAGE_NUMBER_OHR_SETTINGS = 188;
     public static final int FIT_MESSAGE_NUMBER_EXD_SCREEN_CONFIGURATION = 200;
+    public static final int FIT_MESSAGE_NUMBER_EXD_DATA_FIELD_CONFIGURATION = 201;
+    public static final int FIT_MESSAGE_NUMBER_EXD_DATA_CONCEPT_CONFIGURATION = 202;
     public static final int FIT_MESSAGE_NUMBER_MONITORING_HR_DATA = 211;
     public static final int FIT_MESSAGE_NUMBER_STRESS_LEVEL = 227;
     public static final int FIT_MESSAGE_NUMBER_MANUAL_STRESS_LEVEL = 228;
@@ -181,6 +191,17 @@ public class FitMessageDefinitions {
             new FitMessageFieldDefinition("number", 5, 2, FitFieldBaseType.UINT16, null),
             new FitMessageFieldDefinition("manufacturer_partner", 6, 2, FitFieldBaseType.UINT16, null),
             new FitMessageFieldDefinition("product_name", 8, 20, FitFieldBaseType.STRING, null)
+    );
+
+    public static final FitMessageDefinition DEFINITION_CAPABILITIES = new FitMessageDefinition(FIT_MESSAGE_NAME_CAPABILITIES, FIT_MESSAGE_NUMBER_CAPABILITIES, -1,
+            new FitMessageFieldDefinition("languages", 0, 1, FitFieldBaseType.UINT8Z, null),
+            new FitMessageFieldDefinition("sports", 1, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("workouts_supported", 21, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("activity_profile_supported", 22, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("connectivity_supported", 23, 4, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("wifi_supported", 24, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("segments_supported", 25, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("audio_prompts_supported", 26, 1, FitFieldBaseType.ENUM, null)
     );
 
     public static final FitMessageDefinition DEFINITION_DEVICE_SETTINGS = new FitMessageDefinition(FIT_MESSAGE_NAME_DEVICE_SETTINGS, FIT_MESSAGE_NUMBER_DEVICE_SETTINGS, -1,
@@ -402,6 +423,14 @@ public class FitMessageDefinitions {
             new FitMessageFieldDefinition("version_string", 6, 20, FitFieldBaseType.STRING, null)
     );
 
+    public static final FitMessageDefinition DEFINITION_FILE_CAPABILITIES = new FitMessageDefinition(FIT_MESSAGE_NAME_FILE_CAPABILITIES, FIT_MESSAGE_NUMBER_FILE_CAPABILITIES, -1,
+            new FitMessageFieldDefinition("type", 0, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("flags", 1, 1, FitFieldBaseType.UINT8Z, null),
+            new FitMessageFieldDefinition("directory", 2, 16, FitFieldBaseType.STRING, null),
+            new FitMessageFieldDefinition("max_count", 3, 2, FitFieldBaseType.UINT16, null),
+            new FitMessageFieldDefinition("max_size", 4, 4, FitFieldBaseType.UINT32, null)
+    );
+
     public static final FitMessageDefinition DEFINITION_FILE_CREATOR = new FitMessageDefinition(FIT_MESSAGE_NAME_FILE_CREATOR, FIT_MESSAGE_NUMBER_FILE_CREATOR, -1,
             new FitMessageFieldDefinition("software_version", 0, 2, FitFieldBaseType.UINT16, null),
             new FitMessageFieldDefinition("hardware_version", 1, 2, FitFieldBaseType.UINT8, null),
@@ -501,6 +530,16 @@ public class FitMessageDefinitions {
             new FitMessageFieldDefinition("type", 4, 1, FitFieldBaseType.ENUM, null)
     );
 
+    public static final FitMessageDefinition DEFINITION_FILE_DESCRIPTION = new FitMessageDefinition(FIT_MESSAGE_NAME_FILE_DESCRIPTION, FIT_MESSAGE_NUMBER_FILE_DESCRIPTION, -1,
+            new FitMessageFieldDefinition("message_index", 254, 4, FitFieldBaseType.UINT32, null),
+            new FitMessageFieldDefinition("manufacturer", 0, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("directory", 1, 16, FitFieldBaseType.STRING, null),
+            new FitMessageFieldDefinition("name", 2, 20, FitFieldBaseType.STRING, null),
+            new FitMessageFieldDefinition("flags", 3, 1, FitFieldBaseType.UINT8Z, null),
+            new FitMessageFieldDefinition("purpose", 4, 1, FitFieldBaseType.UINT8, null),
+            new FitMessageFieldDefinition("garmin_file_purpose", 5, 1, FitFieldBaseType.UINT8, null)
+    );
+
     public static final FitMessageDefinition DEFINITION_OHR_SETTINGS = new FitMessageDefinition(FIT_MESSAGE_NAME_OHR_SETTINGS, FIT_MESSAGE_NUMBER_OHR_SETTINGS, -1,
             new FitMessageFieldDefinition("timestamp", 253, 4, FitFieldBaseType.UINT32, null),
             new FitMessageFieldDefinition("enabled", 0, 1, FitFieldBaseType.ENUM, null)
@@ -511,6 +550,30 @@ public class FitMessageDefinitions {
             new FitMessageFieldDefinition("field_count", 1, 1, FitFieldBaseType.UINT8, null),
             new FitMessageFieldDefinition("layout", 2, 1, FitFieldBaseType.ENUM, null),
             new FitMessageFieldDefinition("screen_enabled", 3, 1, FitFieldBaseType.ENUM, null)
+    );
+
+    public static final FitMessageDefinition DEFINITION_EXD_DATA_FIELD_CONFIGURATION = new FitMessageDefinition(FIT_MESSAGE_NAME_EXD_DATA_FIELD_CONFIGURATION, FIT_MESSAGE_NUMBER_EXD_DATA_FIELD_CONFIGURATION, -1,
+            new FitMessageFieldDefinition("screen_index", 0, 1, FitFieldBaseType.UINT8, null),
+            new FitMessageFieldDefinition("concept_field", 1, 1, FitFieldBaseType.BYTE, null),
+            new FitMessageFieldDefinition("field_id", 2, 1, FitFieldBaseType.UINT8, null),
+            new FitMessageFieldDefinition("concept_count", 3, 1, FitFieldBaseType.UINT8, null),
+            new FitMessageFieldDefinition("display_type", 4, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("title", 5, 32, FitFieldBaseType.STRING, null)
+    );
+
+    public static final FitMessageDefinition DEFINITION_EXD_DATA_CONCEPT_CONFIGURATION = new FitMessageDefinition(FIT_MESSAGE_NAME_EXD_DATA_CONCEPT_CONFIGURATION, FIT_MESSAGE_NUMBER_EXD_DATA_CONCEPT_CONFIGURATION, -1,
+            new FitMessageFieldDefinition("screen_index", 0, 1, FitFieldBaseType.UINT8, null),
+            new FitMessageFieldDefinition("concept_field", 1, 1, FitFieldBaseType.BYTE, null),
+            new FitMessageFieldDefinition("field_id", 2, 1, FitFieldBaseType.UINT8, null),
+            new FitMessageFieldDefinition("concept_index", 3, 1, FitFieldBaseType.UINT8, null),
+            new FitMessageFieldDefinition("data_page", 4, 1, FitFieldBaseType.UINT8, null),
+            new FitMessageFieldDefinition("concept_key", 5, 1, FitFieldBaseType.UINT8, null),
+            new FitMessageFieldDefinition("scaling", 6, 1, FitFieldBaseType.UINT8, null),
+            new FitMessageFieldDefinition("offset", 7, 1, FitFieldBaseType.UINT8, null),
+            new FitMessageFieldDefinition("data_units", 8, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("qualifier", 9, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("descriptor", 10, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("is_signed", 11, 1, FitFieldBaseType.ENUM, FitBool.FALSE)
     );
 
     public static final FitMessageDefinition DEFINITION_MONITORING_HR_DATA = new FitMessageDefinition(FIT_MESSAGE_NAME_MONITORING_HR_DATA, FIT_MESSAGE_NUMBER_MONITORING_HR_DATA, -1,
@@ -577,18 +640,23 @@ public class FitMessageDefinitions {
 
     public static final List<FitMessageDefinition> ALL_DEFINITIONS = Arrays.asList(
             DEFINITION_FILE_ID,
+            DEFINITION_CAPABILITIES,
             DEFINITION_DEVICE_SETTINGS,
             DEFINITION_EVENT,
             DEFINITION_DEVICE_INFO,
             DEFINITION_DEBUG,
             DEFINITION_SOFTWARE,
+            DEFINITION_FILE_CAPABILITIES,
             DEFINITION_FILE_CREATOR,
             DEFINITION_MONITORING,
             DEFINITION_MONITORING_INFO,
             DEFINITION_CONNECTIVITY,
             DEFINITION_WEATHER_CONDITIONS,
             DEFINITION_WEATHER_ALERT,
+            DEFINITION_FILE_DESCRIPTION,
             DEFINITION_EXD_SCREEN_CONFIGURATION,
+            DEFINITION_EXD_DATA_FIELD_CONFIGURATION,
+            DEFINITION_EXD_DATA_CONCEPT_CONFIGURATION,
             DEFINITION_OHR_SETTINGS,
             DEFINITION_MONITORING_HR_DATA,
             DEFINITION_STRESS_LEVEL,
