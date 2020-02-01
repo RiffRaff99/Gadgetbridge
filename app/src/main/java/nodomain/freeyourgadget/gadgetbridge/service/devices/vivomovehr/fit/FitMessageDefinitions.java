@@ -492,6 +492,7 @@ public class FitMessageDefinitions {
             new FitMessageFieldDefinition("bluetooth_enabled", 0, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
             new FitMessageFieldDefinition("bluetooth_le_enabled", 1, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
             new FitMessageFieldDefinition("ant_enabled", 2, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("name", 3, 16, FitFieldBaseType.STRING, null),
             new FitMessageFieldDefinition("live_tracking_enabled", 4, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
             new FitMessageFieldDefinition("weather_conditions_enabled", 5, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
             new FitMessageFieldDefinition("weather_alerts_enabled", 6, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
@@ -542,7 +543,9 @@ public class FitMessageDefinitions {
 
     public static final FitMessageDefinition DEFINITION_OHR_SETTINGS = new FitMessageDefinition(FIT_MESSAGE_NAME_OHR_SETTINGS, FIT_MESSAGE_NUMBER_OHR_SETTINGS, -1,
             new FitMessageFieldDefinition("timestamp", 253, 4, FitFieldBaseType.UINT32, null),
-            new FitMessageFieldDefinition("enabled", 0, 1, FitFieldBaseType.ENUM, null)
+            new FitMessageFieldDefinition("enabled", 0, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("sample_rate", 1, 2, FitFieldBaseType.UINT16, null),
+            new FitMessageFieldDefinition("transmit_hr_enabled", 2, 1, FitFieldBaseType.ENUM, FitBool.FALSE)
     );
 
     public static final FitMessageDefinition DEFINITION_EXD_SCREEN_CONFIGURATION = new FitMessageDefinition(FIT_MESSAGE_NAME_EXD_SCREEN_CONFIGURATION, FIT_MESSAGE_NUMBER_EXD_SCREEN_CONFIGURATION, -1,

@@ -22,7 +22,7 @@ public class FitParserTest {
 
     @Test
     public void d() throws IOException {
-        dumpFitFile(new File("y:\\_3rdparty\\Garmin-Vivoactive\\LOCATION\\LCTNS.FIT"), new FitParser(FitMessageDefinitions.ALL_DEFINITIONS));
+        dumpFitFile(new File("y:\\_3rdparty\\Garmin-Vivoactive\\DEVICE.FIT"), new FitParser(FitMessageDefinitions.ALL_DEFINITIONS));
     }
 
     private static void dumpFitFile(File file, FitParser fitParser) throws IOException {

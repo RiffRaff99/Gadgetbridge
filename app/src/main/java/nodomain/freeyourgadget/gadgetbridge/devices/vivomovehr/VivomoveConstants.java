@@ -56,8 +56,11 @@ public class VivomoveConstants {
     public static final int MESSAGE_RESPONSE = 5000;
     public static final int MESSAGE_REQUEST = 5001;
     public static final int MESSAGE_DOWNLOAD_REQUEST = 5002;
+    public static final int MESSAGE_UPLOAD_REQUEST = 5003;
     public static final int MESSAGE_FILE_TRANSFER_DATA = 5004;
+    public static final int MESSAGE_CREATE_FILE_REQUEST = 5005;
     public static final int MESSAGE_DIRECTORY_FILE_FILTER_REQUEST = 5007;
+    public static final int MESSAGE_FILE_READY = 5009;
     public static final int MESSAGE_FIT_DEFINITION = 5011;
     public static final int MESSAGE_FIT_DATA = 5012;
     public static final int MESSAGE_WEATHER_REQUEST = 5014;

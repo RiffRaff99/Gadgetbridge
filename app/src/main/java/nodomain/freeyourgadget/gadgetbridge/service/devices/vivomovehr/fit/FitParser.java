@@ -160,7 +160,7 @@ public class FitParser {
 
     private String readFitString(MessageReader reader, int size) {
         final byte[] bytes = reader.readBytes(size);
-        final int zero = ArrayUtils.indexOf((byte)0, bytes);
+        final int zero = ArrayUtils.indexOf((byte) 0, bytes);
         if (zero < 0) {
             LOG.warn("Unterminated string");
             return new String(bytes, StandardCharsets.UTF_8);
@@ -168,26 +168,49 @@ public class FitParser {
         return new String(bytes, 0, zero, StandardCharsets.UTF_8);
     }
 
+    private Object readRawFitNumber(MessageReader reader, int size) {
+        switch (size) {
+            case 1:
+                return reader.readByte();
+            case 2:
+                return reader.readShort();
+            case 3: {
+                // this is strange?
+                byte[] bytes = new byte[4];
+                reader.readBytesTo(3, bytes, 0);
+                return BinaryUtils.readInt(bytes, 0);
+            }
+            case 4:
+                return reader.readInt();
+            case 7: {
+                // this is strange?
+                byte[] bytes = new byte[8];
+                reader.readBytesTo(7, bytes, 0);
+                return BinaryUtils.readLong(bytes, 0);
+            }
+            case 8:
+                return reader.readLong();
+            case 12:
+                // this is strange?
+                long lower = reader.readLong();
+                int upper = reader.readInt();
+                return upper * ((double) Long.MAX_VALUE) + lower;
+            case 16:
+                // this is strange?
+                return reader.readLong() + reader.readLong() * (double) (Long.MAX_VALUE);
+            case 32:
+                // this is strange?
+                // TODO: FIXME: 32-byte integer?!?
+                reader.skip(16);
+                return Math.pow(2, 128) * (reader.readLong() + reader.readLong() * (double) (Long.MAX_VALUE));
+            default:
+                throw new IllegalArgumentException("Unable to read number of size " + size);
+        }
+    }
+
     private Object readFitNumber(MessageReader reader, int size, double scale, double offset) {
         if (scale == 0) {
-            switch (size) {
-                case 1:
-                    return reader.readByte();
-                case 2:
-                    return reader.readShort();
-                case 4:
-                    return reader.readInt();
-                case 8:
-                    return reader.readLong();
-                case 16:
-                    return reader.readLong() + reader.readLong() * (double)(Long.MAX_VALUE);
-                case 32:
-                    // TODO: FIXME: 32-byte integer?!?
-                    reader.skip(16);
-                    return Math.pow(2, 128) * (reader.readLong() + reader.readLong() * (double)(Long.MAX_VALUE));
-                default:
-                    throw new IllegalArgumentException("Unable to read number of size " + size);
-            }
+            return readRawFitNumber(reader, size);
         } else {
             switch (size) {
                 case 1:

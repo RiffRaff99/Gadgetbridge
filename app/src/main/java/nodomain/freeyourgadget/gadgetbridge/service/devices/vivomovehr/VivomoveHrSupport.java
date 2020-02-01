@@ -59,6 +59,7 @@ import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.AuthNegotiationRequestResponse;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.BatteryStatusMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.ConfigurationMessage;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.CreateFileRequestMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.CurrentTimeRequestMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.CurrentTimeRequestResponseMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.DeviceInformationMessage;
@@ -67,6 +68,7 @@ import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.DirectoryFileFilterResponseMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.DownloadRequestMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.DownloadRequestResponseMessage;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.FileReadyMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.FileTransferDataMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.FindMyPhoneRequestMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.FitDataMessage;
@@ -93,6 +95,7 @@ import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.SyncRequestMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.SystemEventMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.SystemEventResponseMessage;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.UploadRequestMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.WeatherRequestMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.WeatherRequestResponseMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiCore;
@@ -200,9 +203,16 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
         final Looper mainLooper = getContext().getMainLooper();
         handler = new Handler(mainLooper);
 
-        sendMessage(new AuthNegotiationMessage(AuthNegotiationMessage.LONG_TERM_KEY_AVAILABILITY_NONE, AuthNegotiationMessage.ENCRYPTION_ALGORITHM_NONE).packet);
-
         LOG.info("Initialization Done");
+
+        // OK, this is not perfect: we should not be INITIALIZED until “connected AND all the necessary initialization
+        // steps have been performed. At the very least, this means that basic information like device name, firmware
+        // version, hardware revision (as applicable) is available in the GBDevice”. But we cannot send any message
+        // until we are INITIALIZED. So what can we do…
+        gbDevice.setState(GBDevice.State.INITIALIZED);
+        gbDevice.sendDeviceUpdateIntent(getContext());
+
+        sendMessage(new AuthNegotiationMessage(AuthNegotiationMessage.LONG_TERM_KEY_AVAILABILITY_NONE, AuthNegotiationMessage.ENCRYPTION_ALGORITHM_NONE).packet);
 
         return builder;
     }
@@ -952,7 +962,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
         LOG.info("Starting sync");
         fitImporter = new FitDbImporter(getDevice());
         // sendMessage(new SystemEventMessage(GarminSystemEventType.PAIR_START, 0).packet);
-        listFiles(0);
+        listFiles(DirectoryFileFilterRequestMessage.FILTER_NO_FILTER);
         // TODO: Localization
         GB.updateTransferNotification(null, "Downloading list of files", true, 0, getContext());
     }
@@ -1148,7 +1158,8 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
     @Override
     public void onTestNewFunction() {
         dbg("onTestNewFunction()");
-        sendMessage(new AuthNegotiationMessage(0, 0).packet);
+        //sendMessage(new CreateFileRequestMessage(500, GarminFitSubtypes.FileDataType.SETTINGS.code, GarminFitSubtypes.FitSubType.INVALID.code, 0, 0, -1, "SETTINGS\\SETTINGS.FIT").packet);
+        listFiles(DirectoryFileFilterRequestMessage.FILTER_CUSTOM_FILTER);
         //sendMessage(new SystemEventMessage(GarminSystemEventType.NEW_DOWNLOAD_AVAILABLE, 0).packet);
         //downloadGarminDeviceXml();
         //sendMessage(new SystemEventMessage(foreground ? GarminSystemEventType.HOST_DID_ENTER_BACKGROUND : GarminSystemEventType.HOST_DID_ENTER_FOREGROUND, 0).packet);
@@ -1221,6 +1232,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
     @Override
     public void onAllDownloadsCompleted() {
         LOG.info("All downloads completed");
+        GB.updateTransferNotification(null, null, false, 100, getContext());
         sendMessage(new SystemEventMessage(GarminSystemEventType.SYNC_COMPLETE, 0).packet);
         if (fitImporter != null) {
             fitImporter.processData();

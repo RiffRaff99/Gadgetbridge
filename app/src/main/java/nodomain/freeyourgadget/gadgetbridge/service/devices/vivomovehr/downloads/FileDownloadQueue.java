@@ -25,6 +25,7 @@ public class FileDownloadQueue {
     private final Set<Integer> queuedFileIndices = new HashSet<>();
 
     private QueueItem currentlyDownloadingItem;
+    private int currentCrc;
     private long totalRemainingBytes;
 
     public FileDownloadQueue(VivomoveHrCommunicator communicator, FileDownloadListener listener) {
@@ -64,10 +65,11 @@ public class FileDownloadQueue {
 
     private void requestNextDownload() {
         currentlyDownloadingItem = queue.remove();
+        currentCrc = 0;
         final int fileIndex = currentlyDownloadingItem.fileIndex;
-        LOG.info("Requesting download of {}", fileIndex);
+        LOG.info("Requesting download of {} ({} B)", fileIndex, currentlyDownloadingItem.dataSize);
         queuedFileIndices.remove(fileIndex);
-        communicator.sendMessage(new DownloadRequestMessage(fileIndex, 0, 1, 0, 0).packet);
+        communicator.sendMessage(new DownloadRequestMessage(fileIndex, 0, DownloadRequestMessage.REQUEST_NEW_TRANSFER, 0, 0).packet);
     }
 
     public void onDownloadRequestResponse(DownloadRequestResponseMessage responseMessage) {
@@ -107,12 +109,13 @@ public class FileDownloadQueue {
             return;
         }
 
-        final int dataCrc = ChecksumCalculator.computeCrc(dataMessage.data, 0, dataMessage.data.length);
+        final int dataCrc = ChecksumCalculator.computeCrc(currentCrc, dataMessage.data, 0, dataMessage.data.length);
         if (dataCrc != dataMessage.crc) {
             LOG.warn("Invalid CRC ({} vs {}) for {}B data @{} of {}", dataCrc, dataMessage.crc, dataMessage.data.length, dataMessage.dataOffset, currentlyDownloadingItem.fileIndex);
             //communicator.sendMessage(new FileTransferDataResponseMessage(VivomoveConstants.STATUS_ACK, FileTransferDataResponseMessage.RESPONSE_ERROR_CRC_MISMATCH, currentlyDownloadingItem.dataOffset).packet);
             //return;
         }
+        currentCrc = dataCrc;
 
         LOG.info("Received {}B@{}/{} of {}", dataMessage.data.length, dataMessage.dataOffset, currentlyDownloadingItem.dataSize, currentlyDownloadingItem.fileIndex);
         currentlyDownloadingItem.appendData(dataMessage.data);
