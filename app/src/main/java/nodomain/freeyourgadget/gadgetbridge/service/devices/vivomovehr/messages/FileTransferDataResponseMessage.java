@@ -12,9 +12,17 @@ public class FileTransferDataResponseMessage {
     public static final byte RESPONSE_ERROR_DATA_OFFSET_MISMATCH = 4;
     public static final byte RESPONSE_SILENT_SYNC_PAUSED = 5;
 
+    public final int status;
+    public final int response;
+    public final int nextDataOffset;
+
     public final byte[] packet;
 
     public FileTransferDataResponseMessage(int status, int response, int nextDataOffset) {
+        this.status = status;
+        this.response = response;
+        this.nextDataOffset = nextDataOffset;
+
         final MessageWriter writer = new MessageWriter();
         writer.writeShort(0); // packet size will be filled below
         writer.writeShort(VivomoveConstants.MESSAGE_RESPONSE);
@@ -27,5 +35,14 @@ public class FileTransferDataResponseMessage {
         BinaryUtils.writeShort(packet, 0, packet.length);
         BinaryUtils.writeShort(packet, packet.length - 2, ChecksumCalculator.computeCrc(packet, 0, packet.length - 2));
         this.packet = packet;
+    }
+
+    public static FileTransferDataResponseMessage parse(byte[] packet) {
+        final MessageReader reader = new MessageReader(packet, 6);
+        final int status = reader.readByte();
+        final int response = reader.readByte();
+        final int nextDataOffset = reader.readInt();
+
+        return new FileTransferDataResponseMessage(status, response, nextDataOffset);
     }
 }

@@ -87,6 +87,7 @@ public class FileDownloadQueue {
             listener.onFileDownloadError(currentlyDownloadingItem.fileIndex);
             totalRemainingBytes -= currentlyDownloadingItem.dataSize;
             currentlyDownloadingItem = null;
+            checkRequestNextDownload();
         }
     }
 
@@ -112,8 +113,8 @@ public class FileDownloadQueue {
         final int dataCrc = ChecksumCalculator.computeCrc(currentCrc, dataMessage.data, 0, dataMessage.data.length);
         if (dataCrc != dataMessage.crc) {
             LOG.warn("Invalid CRC ({} vs {}) for {}B data @{} of {}", dataCrc, dataMessage.crc, dataMessage.data.length, dataMessage.dataOffset, currentlyDownloadingItem.fileIndex);
-            //communicator.sendMessage(new FileTransferDataResponseMessage(VivomoveConstants.STATUS_ACK, FileTransferDataResponseMessage.RESPONSE_ERROR_CRC_MISMATCH, currentlyDownloadingItem.dataOffset).packet);
-            //return;
+            communicator.sendMessage(new FileTransferDataResponseMessage(VivomoveConstants.STATUS_ACK, FileTransferDataResponseMessage.RESPONSE_ERROR_CRC_MISMATCH, currentlyDownloadingItem.dataOffset).packet);
+            return;
         }
         currentCrc = dataCrc;
 

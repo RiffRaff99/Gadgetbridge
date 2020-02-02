@@ -56,10 +56,9 @@ import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.FitMe
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.FitParser;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.FitWeatherConditions;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.AuthNegotiationMessage;
-import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.AuthNegotiationRequestResponse;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.AuthNegotiationResponseMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.BatteryStatusMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.ConfigurationMessage;
-import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.CreateFileRequestMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.CurrentTimeRequestMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.CurrentTimeRequestResponseMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.DeviceInformationMessage;
@@ -68,7 +67,6 @@ import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.DirectoryFileFilterResponseMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.DownloadRequestMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.DownloadRequestResponseMessage;
-import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.FileReadyMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.FileTransferDataMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.FindMyPhoneRequestMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.FitDataMessage;
@@ -95,7 +93,6 @@ import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.SyncRequestMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.SystemEventMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.SystemEventResponseMessage;
-import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.UploadRequestMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.WeatherRequestMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.WeatherRequestResponseMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiCore;
@@ -658,7 +655,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
                 gncsDataSourceQueue.responseReceived(GncsDataSourceResponseMessage.parsePacket(packet));
                 break;
             case VivomoveConstants.MESSAGE_AUTH_NEGOTIATION:
-                processAuthNegotiationRequestResponse(AuthNegotiationRequestResponse.parsePacket(packet));
+                processAuthNegotiationRequestResponse(AuthNegotiationResponseMessage.parsePacket(packet));
             default:
                 LOG.info("Received response to message {}: {}", responseMessage.requestID, responseMessage.getStatusStr());
                 break;
@@ -687,7 +684,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
         LOG.info("Received response to device settings message: status={}, response={}", responseMessage.status, responseMessage.response);
     }
 
-    private void processAuthNegotiationRequestResponse(AuthNegotiationRequestResponse responseMessage) {
+    private void processAuthNegotiationRequestResponse(AuthNegotiationResponseMessage responseMessage) {
         LOG.info("Received response to auth negotiation message: status={}, response={}, LTK={}, algorithms={}", responseMessage.status, responseMessage.response, responseMessage.longTermKeyAvailability, responseMessage.supportedEncryptionAlgorithms);
     }
 
