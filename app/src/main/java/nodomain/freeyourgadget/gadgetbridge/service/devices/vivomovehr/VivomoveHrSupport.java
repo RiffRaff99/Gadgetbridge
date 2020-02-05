@@ -59,6 +59,7 @@ import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.AuthNegotiationResponseMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.BatteryStatusMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.ConfigurationMessage;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.CreateFileResponseMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.CurrentTimeRequestMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.CurrentTimeRequestResponseMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.DeviceInformationMessage;
@@ -68,6 +69,7 @@ import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.DownloadRequestMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.DownloadRequestResponseMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.FileTransferDataMessage;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.FileTransferDataResponseMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.FindMyPhoneRequestMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.FitDataMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.FitDataResponseMessage;
@@ -93,12 +95,14 @@ import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.SyncRequestMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.SystemEventMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.SystemEventResponseMessage;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.UploadRequestResponseMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.WeatherRequestMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.WeatherRequestResponseMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiCore;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiDeviceStatus;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiSmartProto;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.uploads.FileUploadQueue;
 import nodomain.freeyourgadget.gadgetbridge.service.serial.GBDeviceProtocol;
 import nodomain.freeyourgadget.gadgetbridge.util.FileUtils;
 import nodomain.freeyourgadget.gadgetbridge.util.GB;
@@ -108,6 +112,7 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -144,6 +149,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
     private VivomoveHrCommunicator communicator;
     private GncsDataSourceQueue gncsDataSourceQueue;
     private FileDownloadQueue fileDownloadQueue;
+    private FileUploadQueue fileUploadQueue;
     private FitDbImporter fitImporter;
     private boolean notificationSubscription;
 
@@ -196,6 +202,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
         builder.setGattCallback(this);
         communicator.start(builder);
         fileDownloadQueue = new FileDownloadQueue(communicator, this);
+        fileUploadQueue = new FileUploadQueue(communicator);
 
         final Looper mainLooper = getContext().getMainLooper();
         handler = new Handler(mainLooper);
@@ -632,6 +639,15 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
                 break;
             case VivomoveConstants.MESSAGE_DOWNLOAD_REQUEST:
                 fileDownloadQueue.onDownloadRequestResponse(DownloadRequestResponseMessage.parsePacket(packet));
+                break;
+            case VivomoveConstants.MESSAGE_UPLOAD_REQUEST:
+                fileUploadQueue.onUploadRequestResponse(UploadRequestResponseMessage.parsePacket(packet));
+                break;
+            case VivomoveConstants.MESSAGE_FILE_TRANSFER_DATA:
+                fileUploadQueue.onFileTransferResponse(FileTransferDataResponseMessage.parsePacket(packet));
+                break;
+            case VivomoveConstants.MESSAGE_CREATE_FILE_REQUEST:
+                fileUploadQueue.onCreateFileRequestResponse(CreateFileResponseMessage.parsePacket(packet));
                 break;
             case VivomoveConstants.MESSAGE_FIT_DEFINITION:
                 processFitDefinitionResponse(FitDefinitionResponseMessage.parsePacket(packet));
@@ -1155,6 +1171,8 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
     @Override
     public void onTestNewFunction() {
         dbg("onTestNewFunction()");
+        final byte[] data = new String(new byte[100]).replace("\0", "test\n").getBytes(StandardCharsets.UTF_8);
+        fileUploadQueue.queueCreateFile(data.length, GarminFitSubtypes.FileDataType.DEBUG.code, GarminFitSubtypes.FitSubType.INVALID.code, 1, "TEST.TXT", data);
         //sendMessage(new CreateFileRequestMessage(500, GarminFitSubtypes.FileDataType.SETTINGS.code, GarminFitSubtypes.FitSubType.INVALID.code, 0, 0, -1, "SETTINGS\\SETTINGS.FIT").packet);
         listFiles(DirectoryFileFilterRequestMessage.FILTER_CUSTOM_FILTER);
         //sendMessage(new SystemEventMessage(GarminSystemEventType.NEW_DOWNLOAD_AVAILABLE, 0).packet);

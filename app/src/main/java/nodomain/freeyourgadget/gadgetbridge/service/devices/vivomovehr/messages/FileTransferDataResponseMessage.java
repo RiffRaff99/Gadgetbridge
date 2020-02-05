@@ -37,7 +37,7 @@ public class FileTransferDataResponseMessage {
         this.packet = packet;
     }
 
-    public static FileTransferDataResponseMessage parse(byte[] packet) {
+    public static FileTransferDataResponseMessage parsePacket(byte[] packet) {
         final MessageReader reader = new MessageReader(packet, 6);
         final int status = reader.readByte();
         final int response = reader.readByte();
