@@ -1174,7 +1174,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
         final byte[] data = new String(new byte[100]).replace("\0", "test\n").getBytes(StandardCharsets.UTF_8);
         fileUploadQueue.queueCreateFile(data.length, GarminFitSubtypes.FileDataType.DEBUG.code, GarminFitSubtypes.FitSubType.INVALID.code, 1, "TEST.TXT", data);
         //sendMessage(new CreateFileRequestMessage(500, GarminFitSubtypes.FileDataType.SETTINGS.code, GarminFitSubtypes.FitSubType.INVALID.code, 0, 0, -1, "SETTINGS\\SETTINGS.FIT").packet);
-        listFiles(DirectoryFileFilterRequestMessage.FILTER_CUSTOM_FILTER);
+        //listFiles(DirectoryFileFilterRequestMessage.FILTER_CUSTOM_FILTER);
         //sendMessage(new SystemEventMessage(GarminSystemEventType.NEW_DOWNLOAD_AVAILABLE, 0).packet);
         //downloadGarminDeviceXml();
         //sendMessage(new SystemEventMessage(foreground ? GarminSystemEventType.HOST_DID_ENTER_BACKGROUND : GarminSystemEventType.HOST_DID_ENTER_FOREGROUND, 0).packet);

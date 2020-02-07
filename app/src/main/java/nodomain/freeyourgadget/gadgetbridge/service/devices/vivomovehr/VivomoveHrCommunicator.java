@@ -21,7 +21,7 @@ public class VivomoveHrCommunicator {
     private BluetoothGattCharacteristic characteristicSteps;
     private BluetoothGattCharacteristic characteristicCalories;
     private BluetoothGattCharacteristic characteristicStairs;
-    private BluetoothGattCharacteristic char2_7;
+    private BluetoothGattCharacteristic characteristicHrVariation;
     private BluetoothGattCharacteristic char2_9;
 
     public VivomoveHrCommunicator(AbstractBTLEDeviceSupport deviceSupport) {
@@ -33,7 +33,7 @@ public class VivomoveHrCommunicator {
         this.characteristicSteps = deviceSupport.getCharacteristic(VivomoveConstants.UUID_CHARACTERISTIC_GARMIN_STEPS);
         this.characteristicCalories = deviceSupport.getCharacteristic(VivomoveConstants.UUID_CHARACTERISTIC_GARMIN_CALORIES);
         this.characteristicStairs = deviceSupport.getCharacteristic(VivomoveConstants.UUID_CHARACTERISTIC_GARMIN_STAIRS);
-        this.char2_7 = deviceSupport.getCharacteristic(VivomoveConstants.UUID_CHARACTERISTIC_GARMIN_HEART_RATE_VARIATION);
+        this.characteristicHrVariation = deviceSupport.getCharacteristic(VivomoveConstants.UUID_CHARACTERISTIC_GARMIN_HEART_RATE_VARIATION);
         this.char2_9 = deviceSupport.getCharacteristic(VivomoveConstants.UUID_CHARACTERISTIC_GARMIN_2_9);
     }
 

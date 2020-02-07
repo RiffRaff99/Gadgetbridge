@@ -6,12 +6,6 @@ import java.util.Set;
 import java.util.UUID;
 
 public class VivomoveConstants {
-    /**
-     * @see <a href="https://www.bluetooth.com/specifications/gatt/services/">BLE GATT Services</a>
-     */
-    public static final UUID UUID_CHARACTERISTIC_GENERIC_ACCESS = UUID.fromString("00001800-0000-1000-8000-008055f9b34fb");
-    public static final UUID UUID_CHARACTERISTIC_MEASURE = UUID.fromString("000033f2-0000-1000-8000-00805f9b34fb");
-
     public static final UUID UUID_SERVICE_GARMIN_1 = UUID.fromString("6A4E2401-667B-11E3-949A-0800200C9A66");
     public static final UUID UUID_SERVICE_GARMIN_2 = UUID.fromString("6A4E2500-667B-11E3-949A-0800200C9A66");
 

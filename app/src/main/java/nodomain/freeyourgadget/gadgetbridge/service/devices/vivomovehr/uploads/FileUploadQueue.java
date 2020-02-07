@@ -38,11 +38,13 @@ public class FileUploadQueue {
     public void queueCreateFile(int fileSize, int dataType, int subType, int fileIdentifier, String targetPath, byte[] data) {
         queue.add(new QueueItem(fileSize, dataType, subType, fileIdentifier, targetPath, data));
         totalRemainingBytes += fileSize;
+        checkStartNextUpload();
     }
 
     public void queueUploadFile(int fileSize, int fileIndex, byte[] data) {
         queue.add(new QueueItem(fileSize, fileIndex, data));
         totalRemainingBytes += fileSize;
+        checkStartNextUpload();
     }
 
     public void cancelAllUploads() {
