@@ -98,6 +98,7 @@ import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.UploadRequestResponseMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.WeatherRequestMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.WeatherRequestResponseMessage;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.notifications.NotificationStorage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiCore;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiDeviceStatus;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiFindMyWatch;
@@ -146,6 +147,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
     private WeatherSpec lastWeatherSpec = defaultWeatherSpec();
 
     private final FitParser fitParser = new FitParser(FitMessageDefinitions.ALL_DEFINITIONS);
+    private final NotificationStorage notificationStorage = new NotificationStorage();
     private VivomoveHrCommunicator communicator;
     private GncsDataSourceQueue gncsDataSourceQueue;
     private FileDownloadQueue fileDownloadQueue;
@@ -947,7 +949,8 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
                 category = AncsCategory.OTHER;
                 break;
         }
-        sendMessage(new GncsNotificationSourceMessage(event, flags, category, 1, assignNotificationId()).packet);
+        notificationStorage.registerNewNotification(spec, category);
+        sendMessage(new GncsNotificationSourceMessage(event, flags, category, notificationStorage.getCountInCategory(category), spec.getId()).packet);
     }
 
     private void listFiles(int filterType) {
@@ -988,6 +991,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
     @Override
     public void onNotification(NotificationSpec notificationSpec) {
         dbg("onNotification " + notificationSpec.type + " #" + notificationSpec.getId());
+
         if (notificationSubscription) {
             sendNotification(AncsEvent.NOTIFICATION_ADDED, notificationSpec);
         } else {
@@ -998,6 +1002,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
     @Override
     public void onDeleteNotification(int id) {
         dbg("onDeleteNotification " + id);
+        notificationStorage.deleteNotification(id);
     }
 
     @Override
