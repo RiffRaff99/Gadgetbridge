@@ -39,9 +39,7 @@ import nodomain.freeyourgadget.gadgetbridge.service.btle.AbstractBTLEDeviceSuppo
 import nodomain.freeyourgadget.gadgetbridge.service.btle.TransactionBuilder;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.ancs.AncsAttribute;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.ancs.AncsAttributeRequest;
-import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.ancs.AncsCategory;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.ancs.AncsEvent;
-import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.ancs.AncsEventFlag;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.ancs.AncsGetNotificationAttributeCommand;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.ancs.AncsGetNotificationAttributesResponse;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.ancs.GncsDataSourceQueue;
@@ -98,6 +96,7 @@ import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.UploadRequestResponseMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.WeatherRequestMessage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.WeatherRequestResponseMessage;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.notifications.NotificationData;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.notifications.NotificationStorage;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiCore;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.protobuf.GdiDeviceStatus;
@@ -114,12 +113,10 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -472,48 +469,17 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
                 final AncsGetNotificationAttributeCommand getNotificationAttributeCommand = (AncsGetNotificationAttributeCommand) requestMessage.command;
                 LOG.info("Processing ANCS request to get attributes of notification #{}", getNotificationAttributeCommand.notificationUID);
                 sendMessage(new GncsControlPointResponseMessage(VivomoveConstants.STATUS_ACK, GncsControlPointResponseMessage.RESPONSE_SUCCESSFUL, GncsControlPointResponseMessage.ANCS_ERROR_NO_ERROR).packet);
+                final NotificationData notificationData = notificationStorage.retrieveNotification(getNotificationAttributeCommand.notificationUID);
+                if (notificationData == null) {
+                    LOG.warn("Notification #{} not registered", getNotificationAttributeCommand.notificationUID);
+                }
                 final Map<AncsAttribute, String> attributes = new LinkedHashMap<>();
-                for (AncsAttributeRequest attributeRequest : getNotificationAttributeCommand.attributes) {
+                for (final AncsAttributeRequest attributeRequest : getNotificationAttributeCommand.attributes) {
                     final AncsAttribute attribute = attributeRequest.attribute;
-                    final String attributeValue;
-                    LOG.debug("Requested ANCS attribute {}", attribute);
-                    switch (attribute) {
-                        case DATE:
-                            final SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd'T'HHmmSS", Locale.ROOT);
-                            //fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
-                            attributeValue = fmt.format(new Date(System.currentTimeMillis() - 1500));
-                            break;
-                        case TITLE:
-                            attributeValue = "zkouska";
-                            break;
-                        case SUBTITLE:
-                            attributeValue = "zkouska!";
-                            break;
-                        case APP_IDENTIFIER:
-                            attributeValue = BuildConfig.APPLICATION_ID;
-                            break;
-                        case MESSAGE:
-                            attributeValue = "Zkousime ANCS";
-                            break;
-                        case MESSAGE_SIZE:
-                            attributeValue = "13";
-                            break;
-                        case POSITIVE_ACTION_LABEL:
-                            attributeValue = "Ano";
-                            break;
-                        case NEGATIVE_ACTION_LABEL:
-                            attributeValue = "Ne";
-                            break;
-                        case PHONE_NUMBER:
-                            attributeValue = "+420555123456";
-                            break;
-                        default:
-                            LOG.warn("Unknown attribute {}", attribute);
-                            attributeValue = "";
-                            break;
-                    }
-                    final String valueShortened = attributeRequest.maxLength > 0 && attributeValue.length() > attributeRequest.maxLength ? attributeValue.substring(0, attributeRequest.maxLength) : attributeValue;
-                    attributes.put(attribute, valueShortened);
+                    final String attributeValue = notificationData == null ? null : notificationData.getAttribute(attributeRequest.attribute);
+                    final String valueShortened = attributeRequest.maxLength > 0 && attributeValue != null && attributeValue.length() > attributeRequest.maxLength ? attributeValue.substring(0, attributeRequest.maxLength) : attributeValue;
+                    LOG.debug("Requested ANCS attribute {}: '{}'", attribute, valueShortened);
+                    attributes.put(attribute, valueShortened == null ? "" : valueShortened);
                 }
                 gncsDataSourceQueue.addToQueue(new AncsGetNotificationAttributesResponse(getNotificationAttributeCommand.notificationUID, attributes).packet);
                 break;
@@ -913,44 +879,13 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
         sendMessage(new FitDataMessage(weatherConditionsMessage).packet);
     }
 
-    private void sendNotification(AncsEvent event, NotificationSpec spec) {
-        final AncsCategory category;
-        final Set<AncsEventFlag> flags = new HashSet<>();
-        switch (spec.type) {
-            case GENERIC_SMS:
-                category = AncsCategory.SMS;
-                break;
-            case GENERIC_PHONE:
-                category = AncsCategory.INCOMING_CALL;
-                flags.add(AncsEventFlag.IMPORTANT);
-                break;
-            case GENERIC_EMAIL:
-            case GMAIL:
-            case BBM:
-            case MAILBOX:
-            case OUTLOOK:
-                category = AncsCategory.EMAIL;
-                break;
-            case GENERIC_NAVIGATION:
-            case GOOGLE_MAPS:
-                category = AncsCategory.LOCATION;
-                break;
-            case GENERIC_CALENDAR:
-            case GENERIC_ALARM_CLOCK:
-                category = AncsCategory.SCHEDULE;
-                break;
-            case FACEBOOK:
-            case LINKEDIN:
-                flags.add(AncsEventFlag.SILENT);
-                category = AncsCategory.SOCIAL;
-                break;
-            // TODO: The rest
-            default:
-                category = AncsCategory.OTHER;
-                break;
+    private void sendNotification(AncsEvent event, NotificationData notification) {
+        if (event == AncsEvent.NOTIFICATION_ADDED) {
+            notificationStorage.registerNewNotification(notification);
+        } else {
+            notificationStorage.deleteNotification(notification.spec.getId());
         }
-        notificationStorage.registerNewNotification(spec, category);
-        sendMessage(new GncsNotificationSourceMessage(event, flags, category, notificationStorage.getCountInCategory(category), spec.getId()).packet);
+        sendMessage(new GncsNotificationSourceMessage(event, notification.flags, notification.category, notificationStorage.getCountInCategory(notification.category), notification.spec.getId()).packet);
     }
 
     private void listFiles(int filterType) {
@@ -993,7 +928,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
         dbg("onNotification " + notificationSpec.type + " #" + notificationSpec.getId());
 
         if (notificationSubscription) {
-            sendNotification(AncsEvent.NOTIFICATION_ADDED, notificationSpec);
+            sendNotification(AncsEvent.NOTIFICATION_ADDED, new NotificationData(notificationSpec));
         } else {
             LOG.debug("No notification subscription is active, ignoring notification");
         }
@@ -1002,7 +937,10 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
     @Override
     public void onDeleteNotification(int id) {
         dbg("onDeleteNotification " + id);
-        notificationStorage.deleteNotification(id);
+        final NotificationData notificationData = notificationStorage.retrieveNotification(id);
+        if (notificationData != null) {
+            sendNotification(AncsEvent.NOTIFICATION_REMOVED, notificationData);
+        }
     }
 
     @Override

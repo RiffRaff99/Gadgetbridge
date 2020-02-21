@@ -21,8 +21,8 @@ public class SparseLongArray {
         mHashMap.put(key, value);
     }
 
-    public int get(int key) {
-        return get(key, 0);
+    public long get(int key) {
+        return get(key, 0L);
     }
 
     public long get(int key, long valueIfNotFound) {

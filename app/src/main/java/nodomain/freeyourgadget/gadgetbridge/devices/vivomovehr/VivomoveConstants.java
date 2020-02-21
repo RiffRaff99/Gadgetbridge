@@ -2,6 +2,8 @@ package nodomain.freeyourgadget.gadgetbridge.devices.vivomovehr;
 
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.GarminCapability;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 
@@ -46,6 +48,8 @@ public class VivomoveConstants {
      * Garmin zero time in seconds since Epoch: 1989-12-31T00:00:00Z
      */
     public static final int GARMIN_TIME_EPOCH = 631065600;
+
+    public static final SimpleDateFormat ANCS_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd'T'HHmmss", Locale.ROOT);
 
     public static final int MESSAGE_RESPONSE = 5000;
     public static final int MESSAGE_REQUEST = 5001;
