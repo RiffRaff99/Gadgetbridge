@@ -10,6 +10,7 @@ import android.os.Looper;
 import android.widget.Toast;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.google.protobuf.InvalidProtocolBufferException;
+import de.greenrobot.dao.query.Query;
 import nodomain.freeyourgadget.gadgetbridge.BuildConfig;
 import nodomain.freeyourgadget.gadgetbridge.GBApplication;
 import nodomain.freeyourgadget.gadgetbridge.database.DBHandler;
@@ -20,6 +21,8 @@ import nodomain.freeyourgadget.gadgetbridge.devices.vivomovehr.VivomoveConstants
 import nodomain.freeyourgadget.gadgetbridge.devices.vivomovehr.VivomoveHrSampleProvider;
 import nodomain.freeyourgadget.gadgetbridge.entities.DaoSession;
 import nodomain.freeyourgadget.gadgetbridge.entities.Device;
+import nodomain.freeyourgadget.gadgetbridge.entities.DownloadedFitFile;
+import nodomain.freeyourgadget.gadgetbridge.entities.DownloadedFitFileDao;
 import nodomain.freeyourgadget.gadgetbridge.entities.User;
 import nodomain.freeyourgadget.gadgetbridge.entities.VivomoveHrActivitySample;
 import nodomain.freeyourgadget.gadgetbridge.impl.GBDevice;
@@ -118,11 +121,13 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.BinaryUtils.readByte;
 import static nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.BinaryUtils.readInt;
@@ -308,7 +313,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
             return;
         }
 
-        try (DBHandler dbHandler = GBApplication.acquireDB()) {
+        try (final DBHandler dbHandler = GBApplication.acquireDB()) {
             final DaoSession session = dbHandler.getDaoSession();
 
             final GBDevice gbDevice = getDevice();
@@ -1131,28 +1136,94 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
         sendWeatherConditions();
     }
 
+    private final Map<Integer, DirectoryEntry> filesToDownload = new ConcurrentHashMap<>();
     private long totalDownloadSize;
     private long lastTransferNotificationTimestamp;
 
+    private DownloadedFitFile findDownloadedFitFile(DaoSession session, Device device, User user, int fileNumber, int fileDataType, int fileSubType) {
+        final DownloadedFitFileDao fileDao = session.getDownloadedFitFileDao();
+        final Query<DownloadedFitFile> query = fileDao.queryBuilder()
+                .where(
+                        DownloadedFitFileDao.Properties.DeviceId.eq(device.getId()),
+                        DownloadedFitFileDao.Properties.UserId.eq(user.getId()),
+                        DownloadedFitFileDao.Properties.FileNumber.eq(fileNumber),
+                        DownloadedFitFileDao.Properties.FileDataType.eq(fileDataType),
+                        DownloadedFitFileDao.Properties.FileSubType.eq(fileSubType)
+                )
+                .build();
+
+        final List<DownloadedFitFile> files = query.list();
+        return files.size() > 0 ? files.get(0) : null;
+    }
+
     @Override
     public void onDirectoryDownloaded(DirectoryData directoryData) {
-        long totalSize = 0;
-        for (DirectoryEntry entry : directoryData.entries) {
-            LOG.info("File #{}: type {}/{} #{}, {}B, flags {}/{}, timestamp {}", entry.fileIndex, entry.fileDataType, entry.fileSubType, entry.fileNumber, entry.fileSize, entry.specificFlags, entry.fileFlags, entry.fileDate);
-            if (entry.fileIndex == 0) {
-                // ?
-                LOG.warn("File #0 reported?");
-                continue;
-            }
-            fileDownloadQueue.addToDownloadQueue(entry.fileIndex, entry.fileSize);
-            totalSize += entry.fileSize;
+        if (filesToDownload.size() != 0) {
+            throw new IllegalStateException("File download already in progress!");
         }
+
+        long totalSize = 0;
+        try {
+            try (final DBHandler dbHandler = GBApplication.acquireDB()) {
+                final DaoSession session = dbHandler.getDaoSession();
+                final GBDevice gbDevice = getDevice();
+                final Device device = DBHelper.getDevice(gbDevice, session);
+                final User user = DBHelper.getUser(session);
+
+                for (final DirectoryEntry entry : directoryData.entries) {
+                    LOG.info("File #{}: type {}/{} #{}, {}B, flags {}/{}, timestamp {}", entry.fileIndex, entry.fileDataType, entry.fileSubType, entry.fileNumber, entry.fileSize, entry.specificFlags, entry.fileFlags, entry.fileDate);
+                    if (entry.fileIndex == 0) {
+                        // ?
+                        LOG.warn("File #0 reported?");
+                        continue;
+                    }
+
+                    final long timestamp = entry.fileDate.getTime();
+                    final DownloadedFitFile alreadyDownloadedFile = findDownloadedFitFile(session, device, user, entry.fileNumber, entry.fileDataType, entry.fileSubType);
+                    if (alreadyDownloadedFile != null) {
+                        if (alreadyDownloadedFile.getFileTimestamp() == timestamp && alreadyDownloadedFile.getFileSize() == entry.fileSize) {
+                            LOG.debug("File already downloaded, skipping");
+                            continue;
+                        } else {
+                            LOG.info("File modified after previous download, removing previous version and re-downloading");
+                            alreadyDownloadedFile.delete();
+                        }
+                    }
+
+                    filesToDownload.put(entry.fileIndex, entry);
+                    fileDownloadQueue.addToDownloadQueue(entry.fileIndex, entry.fileSize);
+                    totalSize += entry.fileSize;
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
         totalDownloadSize = totalSize;
     }
 
     @Override
     public void onFileDownloadComplete(int fileIndex, byte[] data) {
         LOG.info("Downloaded file {}: {} bytes", fileIndex, data.length);
+        final DirectoryEntry downloadedDirectoryEntry = filesToDownload.get(fileIndex);
+        if (downloadedDirectoryEntry == null) {
+            LOG.warn("Unexpected file {} downloaded", fileIndex);
+        } else {
+            try (final DBHandler dbHandler = GBApplication.acquireDB()) {
+                final DaoSession session = dbHandler.getDaoSession();
+
+                final GBDevice gbDevice = getDevice();
+                final Device device = DBHelper.getDevice(gbDevice, session);
+                final User user = DBHelper.getUser(session);
+                final int ts = (int) (System.currentTimeMillis() / 1000);
+
+                final DownloadedFitFile downloadedFitFile = new DownloadedFitFile(0L, ts, device.getId(), user.getId(), downloadedDirectoryEntry.fileNumber, downloadedDirectoryEntry.fileDataType, downloadedDirectoryEntry.fileSubType, downloadedDirectoryEntry.fileDate.getTime(), downloadedDirectoryEntry.specificFlags, downloadedDirectoryEntry.fileSize, data);
+                session.getDownloadedFitFileDao().insertOrReplace(downloadedFitFile);
+            } catch (Exception e) {
+                LOG.error("Error saving downloaded file to database", e);
+            }
+        }
+
         if (fileIndex <= 0x8000) {
             fitImporter.processFitFile(fitParser.parseFitFile(data));
         } else {

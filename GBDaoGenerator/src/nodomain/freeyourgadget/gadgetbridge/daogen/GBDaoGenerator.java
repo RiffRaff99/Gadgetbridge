@@ -15,8 +15,6 @@
  */
 package nodomain.freeyourgadget.gadgetbridge.daogen;
 
-import java.util.Date;
-
 import de.greenrobot.daogenerator.DaoGenerator;
 import de.greenrobot.daogenerator.Entity;
 import de.greenrobot.daogenerator.Index;
@@ -350,17 +348,28 @@ public class GBDaoGenerator {
         final Entity downloadedFitFile = addEntity(schema, "DownloadedFitFile");
         downloadedFitFile.implementsSerializable();
         downloadedFitFile.setJavaDoc("This class represents a single FIT file downloaded from a FIT-compatible device.");
-        downloadedFitFile.addIntProperty("downloadTimestamp").primaryKey().notNull();
+        downloadedFitFile.addIdProperty().autoincrement();
+        downloadedFitFile.addLongProperty("downloadTimestamp").notNull();
         final Property deviceId = downloadedFitFile.addLongProperty("deviceId").notNull().getProperty();
         downloadedFitFile.addToOne(device, deviceId);
         final Property userId = downloadedFitFile.addLongProperty("userId").notNull().getProperty();
         downloadedFitFile.addToOne(user, userId);
+        final Property fileNumber = downloadedFitFile.addIntProperty("fileNumber").notNull().getProperty();
         downloadedFitFile.addIntProperty("fileDataType").notNull();
         downloadedFitFile.addIntProperty("fileSubType").notNull();
-        downloadedFitFile.addIntProperty("fileTimestamp").notNull();
+        downloadedFitFile.addLongProperty("fileTimestamp").notNull();
         downloadedFitFile.addIntProperty("specificFlags").notNull();
         downloadedFitFile.addIntProperty("fileSize").notNull();
         downloadedFitFile.addByteArrayProperty("fileData");
+
+        final Index indexUnique = new Index();
+        indexUnique.addProperty(deviceId);
+        indexUnique.addProperty(userId);
+        indexUnique.addProperty(fileNumber);
+        indexUnique.makeUnique();
+
+        downloadedFitFile.addIndex(indexUnique);
+
         return downloadedFitFile;
     }
 
