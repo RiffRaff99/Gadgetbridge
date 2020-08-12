@@ -1,8 +1,10 @@
 package nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit;
 
 import android.util.SparseArray;
+import androidx.annotation.NonNull;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.messages.MessageWriter;
 
+import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -120,6 +122,8 @@ public class FitMessage {
         }
     }
 
+    @Override
+    @NonNull
     public String toString() {
         final StringBuilder result = new StringBuilder();
         result.append(this.definition.messageName);
@@ -128,9 +132,28 @@ public class FitMessage {
             result.append('\t');
             result.append(field.getKey());
             result.append(": ");
-            result.append(String.valueOf(field.getValue()));
+            result.append(valueToString(field.getValue()));
             result.append(System.lineSeparator());
         }
         return result.toString();
+    }
+
+    @NonNull
+    private static String valueToString(Object value) {
+        if (value == null) return "null";
+        final Class<?> clazz = value.getClass();
+        if (clazz.isArray()) {
+            final StringBuilder result = new StringBuilder();
+            result.append('[');
+            final int length = Array.getLength(value);
+            for (int i = 0; i < length; ++i) {
+                if (i > 0) result.append(", ");
+                result.append(valueToString(Array.get(value, i)));
+            }
+            result.append(']');
+            return result.toString();
+        } else {
+            return String.valueOf(value);
+        }
     }
 }

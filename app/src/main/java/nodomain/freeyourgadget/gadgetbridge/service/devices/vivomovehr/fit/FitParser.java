@@ -113,7 +113,8 @@ public class FitParser {
     }
 
     private Object readValue(MessageReader reader, FitLocalFieldDefinition fieldDefinition) {
-        switch (fieldDefinition.baseType) {
+        //switch (fieldDefinition.baseType) {
+        switch (fieldDefinition.globalDefinition.fieldType) {
             case ENUM:
             case SINT8:
             case UINT8:

@@ -3,3 +3,13 @@ Firmware update:
 http://download.garmin.com/software/vivomoveHR_###.gcd
 
 https://www8.garmin.com/support/download_details.jsp?id=11763
+
+
+screen types (???)
+5: datetime
+44: steps
+47: floors
+45: active minutes
+49: calories
+46: heart rate
+76: stress

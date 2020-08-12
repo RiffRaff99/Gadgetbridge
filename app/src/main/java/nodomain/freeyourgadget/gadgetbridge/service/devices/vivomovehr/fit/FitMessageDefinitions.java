@@ -11,6 +11,7 @@ public class FitMessageDefinitions {
     public static final String FIT_MESSAGE_NAME_FILE_ID = "file_id";
     public static final String FIT_MESSAGE_NAME_CAPABILITIES = "capabilities";
     public static final String FIT_MESSAGE_NAME_DEVICE_SETTINGS = "device_settings";
+    public static final String FIT_MESSAGE_NAME_USER_PROFILE = "user_profile";
     public static final String FIT_MESSAGE_NAME_EVENT = "event";
     public static final String FIT_MESSAGE_NAME_DEVICE_INFO = "device_info";
     public static final String FIT_MESSAGE_NAME_DEBUG = "debug";
@@ -28,11 +29,13 @@ public class FitMessageDefinitions {
     public static final String FIT_MESSAGE_NAME_EXD_DATA_FIELD_CONFIGURATION = "exd_data_field_configuration";
     public static final String FIT_MESSAGE_NAME_EXD_DATA_CONCEPT_CONFIGURATION = "exd_data_concept_configuration";
     public static final String FIT_MESSAGE_NAME_MONITORING_HR_DATA = "monitoring_hr_data";
+    public static final String FIT_MESSAGE_NAME_ALARM_SETTINGS = "alarm_settings";
     public static final String FIT_MESSAGE_NAME_STRESS_LEVEL = "stress_level";
     public static final String FIT_MESSAGE_NAME_MANUAL_STRESS_LEVEL = "manual_stress_level";
     public static final String FIT_MESSAGE_NAME_MAX_MET_DATA = "max_met_data";
     public static final String FIT_MESSAGE_NAME_WHR_DIAG = "whr_diag";
     public static final String FIT_MESSAGE_NAME_METRICS_INFO = "metrics_info";
+    public static final String FIT_MESSAGE_NAME_PAGES_MAP = "pages_map";
     public static final String FIT_MESSAGE_NAME_NEURAL_NETWORK_INFO = "neural_network_info";
     public static final String FIT_MESSAGE_NAME_NEURAL_NETWORK_DATA = "neural_network_data";
     public static final String FIT_MESSAGE_NAME_SLEEP_LEVEL = "sleep_level";
@@ -41,6 +44,7 @@ public class FitMessageDefinitions {
     public static final int FIT_MESSAGE_NUMBER_FILE_ID = 0;
     public static final int FIT_MESSAGE_NUMBER_CAPABILITIES = 1;
     public static final int FIT_MESSAGE_NUMBER_DEVICE_SETTINGS = 2;
+    public static final int FIT_MESSAGE_NUMBER_USER_PROFILE = 3;
     public static final int FIT_MESSAGE_NUMBER_EVENT = 21;
     public static final int FIT_MESSAGE_NUMBER_DEVICE_INFO = 23;
     public static final int FIT_MESSAGE_NUMBER_DEBUG = 24;
@@ -58,11 +62,13 @@ public class FitMessageDefinitions {
     public static final int FIT_MESSAGE_NUMBER_EXD_DATA_FIELD_CONFIGURATION = 201;
     public static final int FIT_MESSAGE_NUMBER_EXD_DATA_CONCEPT_CONFIGURATION = 202;
     public static final int FIT_MESSAGE_NUMBER_MONITORING_HR_DATA = 211;
+    public static final int FIT_MESSAGE_NUMBER_ALARM_SETTINGS = 222;
     public static final int FIT_MESSAGE_NUMBER_STRESS_LEVEL = 227;
     public static final int FIT_MESSAGE_NUMBER_MANUAL_STRESS_LEVEL = 228;
     public static final int FIT_MESSAGE_NUMBER_MAX_MET_DATA = 229;
     public static final int FIT_MESSAGE_NUMBER_WHR_DIAG = 233;
     public static final int FIT_MESSAGE_NUMBER_METRICS_INFO = 241;
+    public static final int FIT_MESSAGE_NUMBER_PAGES_MAP = 254;
     public static final int FIT_MESSAGE_NUMBER_NEURAL_NETWORK_INFO = 273;
     public static final int FIT_MESSAGE_NUMBER_NEURAL_NETWORK_DATA = 274;
     public static final int FIT_MESSAGE_NUMBER_SLEEP_LEVEL = 275;
@@ -368,6 +374,63 @@ public class FitMessageDefinitions {
             new FitMessageFieldDefinition("abnormal_low_hr_alert_threshold", 164, 1, FitFieldBaseType.UINT8, 1, 0, "bpm", null)
     );
 
+    public static final FitMessageDefinition DEFINITION_USER_PROFILE = new FitMessageDefinition(FIT_MESSAGE_NAME_USER_PROFILE, FIT_MESSAGE_NUMBER_USER_PROFILE, -1,
+            new FitMessageFieldDefinition("friendly_name", 0, 16, FitFieldBaseType.STRING, null),
+            new FitMessageFieldDefinition("gender", 1, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("age", 2, 1, FitFieldBaseType.UINT8, 1, 0, "years", null),
+            new FitMessageFieldDefinition("height", 3, 1, FitFieldBaseType.UINT8, 1, 0, "cm", null),
+            new FitMessageFieldDefinition("weight", 4, 2, FitFieldBaseType.UINT16, 10, 0, "kg", null),
+            new FitMessageFieldDefinition("language", 5, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("elev_setting", 6, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("weight_setting", 7, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("resting_heart_rate", 8, 1, FitFieldBaseType.UINT8, 1, 0, "bpm", null),
+            new FitMessageFieldDefinition("default_max_running_heart_rate", 9, 1, FitFieldBaseType.UINT8, 1, 0, "bpm", null),
+            new FitMessageFieldDefinition("default_max_biking_heart_rate", 10, 1, FitFieldBaseType.UINT8, 1, 0, "bpm", null),
+            new FitMessageFieldDefinition("default_max_heart_rate", 11, 1, FitFieldBaseType.UINT8, 1, 0, "bpm", null),
+            new FitMessageFieldDefinition("hr_setting", 12, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("speed_setting", 13, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("dist_setting", 14, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("power_setting", 16, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("activity_class", 17, 1, FitFieldBaseType.UINT8, null),
+            new FitMessageFieldDefinition("position_setting", 18, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("rmr", 19, 2, FitFieldBaseType.UINT16, 1, 0, "kcal/d", null),
+            new FitMessageFieldDefinition("active_time", 20, 1, FitFieldBaseType.UINT8, 1, 0, "min", null),
+            new FitMessageFieldDefinition("temperature_setting", 21, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("local_id", 22, 2, FitFieldBaseType.UINT16, null),
+            new FitMessageFieldDefinition("global_id", 23, 6, FitFieldBaseType.BYTE, null),
+            new FitMessageFieldDefinition("birth_year", 24, 1, FitFieldBaseType.UINT8, 1, 1900, "", null),
+            new FitMessageFieldDefinition("avg_cycle_length", 25, 2, FitFieldBaseType.UINT16, 10000, 0, "m", null),
+            new FitMessageFieldDefinition("pressure_setting", 26, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("handedness", 27, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("wake_time", 28, 4, FitFieldBaseType.UINT32, null),
+            new FitMessageFieldDefinition("sleep_time", 29, 4, FitFieldBaseType.UINT32, null),
+            new FitMessageFieldDefinition("height_setting", 30, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("user_running_step_length", 31, 2, FitFieldBaseType.UINT16, 1, 0, "mm", null),
+            new FitMessageFieldDefinition("user_walking_step_length", 32, 2, FitFieldBaseType.UINT16, 1, 0, "mm", null),
+            new FitMessageFieldDefinition("firstbeat_monthly_load", 33, 2, FitFieldBaseType.UINT16, null),
+            new FitMessageFieldDefinition("firstbeat_recovery_time", 34, 2, FitFieldBaseType.UINT16, null),
+            new FitMessageFieldDefinition("firstbeat_recovery_time_start", 35, 4, FitFieldBaseType.UINT32, null),
+            new FitMessageFieldDefinition("firstbeat_max_stress_score", 36, 1, FitFieldBaseType.UINT8, null),
+            new FitMessageFieldDefinition("firstbeat_running_lt_kmh", 37, 2, FitFieldBaseType.UINT16, 10, 0, "km/h", null),
+            new FitMessageFieldDefinition("firstbeat_cycling_lt_watts", 38, 2, FitFieldBaseType.UINT16, null),
+            new FitMessageFieldDefinition("firstbeat_running_maxMET", 39, 4, FitFieldBaseType.FLOAT32, null),
+            new FitMessageFieldDefinition("firstbeat_cycling_maxMET", 40, 4, FitFieldBaseType.FLOAT32, null),
+            new FitMessageFieldDefinition("firstbeat_running_lt_timestamp", 41, 4, FitFieldBaseType.UINT32, null),
+            new FitMessageFieldDefinition("firstbeat_cycling_lt_timestamp", 42, 4, FitFieldBaseType.UINT32, null),
+            new FitMessageFieldDefinition("resting_hr_auto_update_enabled", 43, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("birth_day", 44, 1, FitFieldBaseType.UINT8, null),
+            new FitMessageFieldDefinition("birth_month", 45, 1, FitFieldBaseType.UINT8, null),
+            new FitMessageFieldDefinition("avatar", 46, 1, FitFieldBaseType.UINT8, null),
+            new FitMessageFieldDefinition("depth_setting", 47, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("dive_count", 49, 4, FitFieldBaseType.UINT32, null),
+            new FitMessageFieldDefinition("phone_number", 50, 20, FitFieldBaseType.STRING, null),
+            new FitMessageFieldDefinition("keep_user_name_private", 51, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("active_minutes_calc_method", 52, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("active_minutes_moderate_zone", 53, 1, FitFieldBaseType.UINT8, null),
+            new FitMessageFieldDefinition("active_minutes_vigorous_zone", 54, 1, FitFieldBaseType.UINT8, null),
+            new FitMessageFieldDefinition("swim_skill_level", 55, 1, FitFieldBaseType.UINT8, null)
+    );
+
     public static final FitMessageDefinition DEFINITION_EVENT = new FitMessageDefinition(FIT_MESSAGE_NAME_EVENT, FIT_MESSAGE_NUMBER_EVENT, -1,
             new FitMessageFieldDefinition("timestamp", 253, 4, FitFieldBaseType.UINT32, null),
             new FitMessageFieldDefinition("event", 0, 1, FitFieldBaseType.ENUM, null),
@@ -585,6 +648,18 @@ public class FitMessageDefinitions {
             new FitMessageFieldDefinition("current_day_resting_heart_rate", 1, 1, FitFieldBaseType.UINT8, 1, 0, "bpm", null)
     );
 
+    public static final FitMessageDefinition DEFINITION_ALARM_SETTINGS = new FitMessageDefinition(FIT_MESSAGE_NAME_ALARM_SETTINGS, FIT_MESSAGE_NUMBER_ALARM_SETTINGS, -1,
+            new FitMessageFieldDefinition("message_index", 254, 2, FitFieldBaseType.UINT16, null),
+            new FitMessageFieldDefinition("time", 0, 2, FitFieldBaseType.UINT16, null),
+            new FitMessageFieldDefinition("days", 1, 1, FitFieldBaseType.BYTE, null),
+            new FitMessageFieldDefinition("enabled", 2, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("sound", 3, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("backlight", 4, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
+            new FitMessageFieldDefinition("id", 5, 4, FitFieldBaseType.UINT32, null),
+            new FitMessageFieldDefinition("alarm_mesg", 6, 20, FitFieldBaseType.STRING, null),
+            new FitMessageFieldDefinition("snooze_count", 7, 1, FitFieldBaseType.UINT8, null)
+    );
+
     public static final FitMessageDefinition DEFINITION_STRESS_LEVEL = new FitMessageDefinition(FIT_MESSAGE_NAME_STRESS_LEVEL, FIT_MESSAGE_NUMBER_STRESS_LEVEL, -1,
             new FitMessageFieldDefinition("stress_level_value", 0, 2, FitFieldBaseType.SINT16, null),
             new FitMessageFieldDefinition("stress_level_time", 1, 4, FitFieldBaseType.UINT32, null),
@@ -620,6 +695,12 @@ public class FitMessageDefinitions {
             new FitMessageFieldDefinition("local_timestamp", 0, 4, FitFieldBaseType.UINT32, null)
     );
 
+    public static final FitMessageDefinition DEFINITION_PAGES_MAP = new FitMessageDefinition(FIT_MESSAGE_NAME_PAGES_MAP, FIT_MESSAGE_NUMBER_PAGES_MAP, -1,
+            new FitMessageFieldDefinition("message_index", 254, 2, FitFieldBaseType.UINT16, null),
+            new FitMessageFieldDefinition("map", 0, 10, FitFieldBaseType.BYTE, null),
+            new FitMessageFieldDefinition("default_to_last", 1, 1, FitFieldBaseType.ENUM, FitBool.FALSE)
+    );
+
     public static final FitMessageDefinition DEFINITION_NEURAL_NETWORK_INFO = new FitMessageDefinition(FIT_MESSAGE_NAME_NEURAL_NETWORK_INFO, FIT_MESSAGE_NUMBER_NEURAL_NETWORK_INFO, -1,
             new FitMessageFieldDefinition("timestamp", 253, 4, FitFieldBaseType.UINT32, null),
             new FitMessageFieldDefinition("network_version", 0, 1, FitFieldBaseType.UINT8, null),
@@ -645,6 +726,7 @@ public class FitMessageDefinitions {
             DEFINITION_FILE_ID,
             DEFINITION_CAPABILITIES,
             DEFINITION_DEVICE_SETTINGS,
+            DEFINITION_USER_PROFILE,
             DEFINITION_EVENT,
             DEFINITION_DEVICE_INFO,
             DEFINITION_DEBUG,
@@ -662,11 +744,13 @@ public class FitMessageDefinitions {
             DEFINITION_EXD_DATA_CONCEPT_CONFIGURATION,
             DEFINITION_OHR_SETTINGS,
             DEFINITION_MONITORING_HR_DATA,
+            DEFINITION_ALARM_SETTINGS,
             DEFINITION_STRESS_LEVEL,
             DEFINITION_MANUAL_STRESS_LEVEL,
             DEFINITION_MAX_MET_DATA,
             DEFINITION_WHR_DIAG,
             DEFINITION_METRICS_INFO,
+            DEFINITION_PAGES_MAP,
             DEFINITION_NEURAL_NETWORK_INFO,
             DEFINITION_NEURAL_NETWORK_DATA,
             DEFINITION_SLEEP_LEVEL,
