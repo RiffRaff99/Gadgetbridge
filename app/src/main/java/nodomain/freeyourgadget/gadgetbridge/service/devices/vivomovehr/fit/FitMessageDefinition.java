@@ -45,4 +45,11 @@ public class FitMessageDefinition {
         }
         fieldsPerNumber.append(fieldDefinition.fieldNumber, fieldDefinition);
     }
+
+    public FitMessageFieldDefinition findField(String fieldName) {
+        for (final FitMessageFieldDefinition fieldDefinition : fieldDefinitions) {
+            if (fieldName.equals(fieldDefinition.fieldName)) return fieldDefinition;
+        }
+        return null;
+    }
 }

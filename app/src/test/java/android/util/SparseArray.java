@@ -25,6 +25,10 @@ public class SparseArray<E> {
         return mHashMap.get(key);
     }
 
+    public E get(int key, E defaultValue) {
+        return mHashMap.containsKey(key) ? mHashMap.get(key) : defaultValue;
+    }
+
     public void append(int key, E value) {
         put(key, value);
     }

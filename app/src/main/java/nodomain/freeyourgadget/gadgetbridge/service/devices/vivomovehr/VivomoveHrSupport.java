@@ -53,6 +53,7 @@ import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.downloads
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.FitBool;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.FitDbImporter;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.FitMessage;
+import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.FitMessageDefinition;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.FitMessageDefinitions;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.FitParser;
 import nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit.FitWeatherConditions;
@@ -828,7 +829,8 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
         sendMessage(new FitDefinitionMessage(
                 FitMessageDefinitions.DEFINITION_CONNECTIVITY,
                 FitMessageDefinitions.DEFINITION_WEATHER_CONDITIONS,
-                FitMessageDefinitions.DEFINITION_WEATHER_ALERT
+                FitMessageDefinitions.DEFINITION_WEATHER_ALERT,
+                FitMessageDefinitions.DEFINITION_DEVICE_SETTINGS
         ).packet);
     }
 
@@ -1114,13 +1116,56 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
     public void onReadConfiguration(String config) {
     }
 
+    private void updateDeviceSettings() {
+        final FitMessage deviceSettingsMessage = new FitMessage(FitMessageDefinitions.DEFINITION_DEVICE_SETTINGS);
+        deviceSettingsMessage.setField("bluetooth_connection_alerts_enabled", 0);
+        deviceSettingsMessage.setField("auto_lock_enabled", 0);
+        deviceSettingsMessage.setField("activity_tracker_enabled", 1);
+        deviceSettingsMessage.setField("alarm_time", 0);
+        deviceSettingsMessage.setField("ble_auto_upload_enabled", 1);
+        deviceSettingsMessage.setField("autosync_min_steps", 1000);
+        deviceSettingsMessage.setField("vibration_intensity", 2);
+        deviceSettingsMessage.setField("screen_timeout", 0);
+        deviceSettingsMessage.setField("mounting_side", 1);
+        deviceSettingsMessage.setField("phone_notification_activity_filter", 0);
+        deviceSettingsMessage.setField("auto_goal_enabled", 1);
+        deviceSettingsMessage.setField("autosync_min_time", 60);
+        deviceSettingsMessage.setField("glance_mode_layout", 0);
+        deviceSettingsMessage.setField("time_offset", 7200);
+        deviceSettingsMessage.setField("phone_notification_default_filter", 0);
+        deviceSettingsMessage.setField("alarm_mode", -1);
+        deviceSettingsMessage.setField("backlight_timeout", 5);
+        deviceSettingsMessage.setField("sedentary_hr_alert_threshold", 100);
+        deviceSettingsMessage.setField("backlight_brightness", 0);
+        deviceSettingsMessage.setField("time_zone", 254);
+        deviceSettingsMessage.setField("sedentary_hr_alert_state", 0);
+        deviceSettingsMessage.setField("auto_activity_start_enabled", 0);
+        deviceSettingsMessage.setField("alarm_days", 0);
+        deviceSettingsMessage.setField("default_page", 1);
+        deviceSettingsMessage.setField("message_tones_enabled", 2);
+        deviceSettingsMessage.setField("key_tones_enabled", 2);
+        deviceSettingsMessage.setField("date_mode", 0);
+        deviceSettingsMessage.setField("backlight_gesture", 1);
+        deviceSettingsMessage.setField("backlight_mode", 3);
+        deviceSettingsMessage.setField("move_alert_enabled", 1);
+        deviceSettingsMessage.setField("sleep_do_not_disturb_enabled", 0);
+        deviceSettingsMessage.setField("display_orientation", 2);
+        deviceSettingsMessage.setField("time_mode", 1);
+        deviceSettingsMessage.setField("pages_enabled", 127);
+        deviceSettingsMessage.setField("smart_notification_display_orientation", 0);
+        deviceSettingsMessage.setField("display_steps_goal_enabled", 1);
+        sendMessage(new FitDataMessage(deviceSettingsMessage).packet);
+    }
+
     private boolean foreground;
 
     @Override
     public void onTestNewFunction() {
         dbg("onTestNewFunction()");
         final byte[] data = new String(new byte[100]).replace("\0", "test\n").getBytes(StandardCharsets.UTF_8);
-        fileUploadQueue.queueCreateFile(data.length, GarminFitSubtypes.FileDataType.DEBUG.code, GarminFitSubtypes.FitSubType.INVALID.code, 1, "TEST.TXT", data);
+        //fileUploadQueue.queueCreateFile(data.length, GarminFitSubtypes.FileDataType.DEBUG.code, GarminFitSubtypes.FitSubType.INVALID.code, 1, "TEST.TXT", data);
+
+        updateDeviceSettings();
 
         //sendMessage(new CreateFileRequestMessage(500, GarminFitSubtypes.FileDataType.SETTINGS.code, GarminFitSubtypes.FitSubType.INVALID.code, 0, 0, -1, "SETTINGS\\SETTINGS.FIT").packet);
         //listFiles(DirectoryFileFilterRequestMessage.FILTER_CUSTOM_FILTER);
@@ -1181,12 +1226,14 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
 
                     final long timestamp = entry.fileDate.getTime();
                     final DownloadedFitFile alreadyDownloadedFile = findDownloadedFitFile(session, device, user, entry.fileNumber, entry.fileDataType, entry.fileSubType);
-                    if (alreadyDownloadedFile != null) {
+                    if (alreadyDownloadedFile == null) {
+                        LOG.debug("File not yet downloaded");
+                    } else {
                         if (alreadyDownloadedFile.getFileTimestamp() == timestamp && alreadyDownloadedFile.getFileSize() == entry.fileSize) {
                             LOG.debug("File already downloaded, skipping");
                             continue;
                         } else {
-                            LOG.info("File modified after previous download, removing previous version and re-downloading");
+                            LOG.info("File #{} modified after previous download, removing previous version and re-downloading", entry.fileIndex);
                             alreadyDownloadedFile.delete();
                         }
                     }
@@ -1219,7 +1266,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
                 final int ts = (int) (System.currentTimeMillis() / 1000);
 
                 final DownloadedFitFile downloadedFitFile = new DownloadedFitFile(0L, ts, device.getId(), user.getId(), downloadedDirectoryEntry.fileNumber, downloadedDirectoryEntry.fileDataType, downloadedDirectoryEntry.fileSubType, downloadedDirectoryEntry.fileDate.getTime(), downloadedDirectoryEntry.specificFlags, downloadedDirectoryEntry.fileSize, data);
-                session.getDownloadedFitFileDao().insertOrReplace(downloadedFitFile);
+                session.getDownloadedFitFileDao().insert(downloadedFitFile);
             } catch (Exception e) {
                 LOG.error("Error saving downloaded file to database", e);
             }
@@ -1245,7 +1292,7 @@ public class VivomoveHrSupport extends AbstractBTLEDeviceSupport implements File
 
     @Override
     public void onDownloadProgress(long remainingBytes) {
-        LOG.info("{}B/{} remaining to download", remainingBytes, totalDownloadSize);
+        LOG.debug("{}B/{} remaining to download", remainingBytes, totalDownloadSize);
         final long now = System.currentTimeMillis();
         if (now - lastTransferNotificationTimestamp < 1000) {
             // do not issue updates too often

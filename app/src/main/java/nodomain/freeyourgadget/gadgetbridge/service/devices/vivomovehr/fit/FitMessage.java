@@ -25,6 +25,12 @@ public class FitMessage {
         fieldValuesPerName.put(fieldDefinition.fieldName, value);
     }
 
+    public void setField(String fieldName, Object value) {
+        final FitMessageFieldDefinition fieldDefinition = definition.findField(fieldName);
+        if (fieldDefinition == null) throw new IllegalArgumentException("Unknown field name");
+        setField(fieldDefinition.fieldNumber, value);
+    }
+
     public Object getField(int fieldNumber) {
         return fieldValues.get(fieldNumber);
     }

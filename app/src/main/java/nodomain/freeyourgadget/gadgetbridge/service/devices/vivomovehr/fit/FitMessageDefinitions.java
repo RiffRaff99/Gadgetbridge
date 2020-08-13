@@ -7,6 +7,7 @@ public class FitMessageDefinitions {
     public static final int MESSAGE_ID_CONNECTIVITY = 0;
     public static final int MESSAGE_ID_WEATHER_ALERT = 5;
     public static final int MESSAGE_ID_WEATHER_CONDITIONS = 6;
+    public static final int MESSAGE_ID_DEVICE_SETTINGS = 7;
 
     public static final String FIT_MESSAGE_NAME_FILE_ID = "file_id";
     public static final String FIT_MESSAGE_NAME_CAPABILITIES = "capabilities";
@@ -210,7 +211,7 @@ public class FitMessageDefinitions {
             new FitMessageFieldDefinition("audio_prompts_supported", 26, 1, FitFieldBaseType.ENUM, null)
     );
 
-    public static final FitMessageDefinition DEFINITION_DEVICE_SETTINGS = new FitMessageDefinition(FIT_MESSAGE_NAME_DEVICE_SETTINGS, FIT_MESSAGE_NUMBER_DEVICE_SETTINGS, -1,
+    public static final FitMessageDefinition DEFINITION_DEVICE_SETTINGS = new FitMessageDefinition(FIT_MESSAGE_NAME_DEVICE_SETTINGS, FIT_MESSAGE_NUMBER_DEVICE_SETTINGS, MESSAGE_ID_DEVICE_SETTINGS,
             new FitMessageFieldDefinition("active_time_zone", 0, 1, FitFieldBaseType.UINT8, null),
             new FitMessageFieldDefinition("utc_offset", 1, 4, FitFieldBaseType.UINT32, null),
             new FitMessageFieldDefinition("time_offset", 2, 4, FitFieldBaseType.UINT32, 1, 0, "s", null),
@@ -222,7 +223,7 @@ public class FitMessageDefinitions {
             new FitMessageFieldDefinition("key_tones_enabled", 10, 1, FitFieldBaseType.ENUM, null),
             new FitMessageFieldDefinition("message_tones_enabled", 11, 1, FitFieldBaseType.ENUM, null),
             new FitMessageFieldDefinition("backlight_mode", 12, 1, FitFieldBaseType.ENUM, null),
-            new FitMessageFieldDefinition("backlight_timeout", 13, 1, FitFieldBaseType.ENUM, 1, 0, "s", null),
+            new FitMessageFieldDefinition("backlight_timeout", 13, 1, FitFieldBaseType.UINT8, 1, 0, "s", null),
             new FitMessageFieldDefinition("backlight_brightness", 14, 1, FitFieldBaseType.UINT8, 1, 0, "%", null),
             new FitMessageFieldDefinition("display_contrast", 15, 1, FitFieldBaseType.UINT8, 1, 0, "%", null),
             new FitMessageFieldDefinition("computer_beacon", 16, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
@@ -300,7 +301,7 @@ public class FitMessageDefinitions {
             new FitMessageFieldDefinition("auto_sync_frequency", 89, 1, FitFieldBaseType.ENUM, null),
             new FitMessageFieldDefinition("auto_activity_detect", 90, 1, FitFieldBaseType.ENUM, null),
             new FitMessageFieldDefinition("phone_notification_filters", 91, 1, FitFieldBaseType.ENUM, null),
-            new FitMessageFieldDefinition("alarm_days", 92, 1, FitFieldBaseType.ENUM, null),
+            new FitMessageFieldDefinition("alarm_days", 92, 1, FitFieldBaseType.BYTE, null),
             new FitMessageFieldDefinition("auto_update_app_enabled", 93, 1, FitFieldBaseType.ENUM, FitBool.FALSE),
             new FitMessageFieldDefinition("number_of_screens", 94, 1, FitFieldBaseType.UINT8, null),
             new FitMessageFieldDefinition("smart_notification_display_orientation", 95, 1, FitFieldBaseType.ENUM, null),
