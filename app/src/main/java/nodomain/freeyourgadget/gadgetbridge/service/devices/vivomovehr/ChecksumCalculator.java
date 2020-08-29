@@ -1,7 +1,7 @@
 package nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr;
 
 public class ChecksumCalculator {
-    public static final int[] CONSTANTS = {0, 52225, 55297, 5120, 61441, 15360, 10240, 58369, 40961, 27648, 30720, 46081, 20480, 39937, 34817, 17408};
+    public static final int[] CONSTANTS = {0x0000, 0xCC01, 0xD801, 0x1400, 0xF001, 0x3C00, 0x2800, 0xE401, 0xA001, 0x6C00, 0x7800, 0xB401, 0x5000, 0x9C01, 0x8801, 0x4400};
 
     public static int computeCrc(byte[] data, int offset, int length) {
         return computeCrc(0, data, offset, length);

@@ -57,6 +57,14 @@ public class MessageWriter {
         return position == buffer.length ? buffer : Arrays.copyOf(buffer, position);
     }
 
+    public byte[] peekBytes() {
+        return buffer;
+    }
+
+    public int getSize() {
+        return position;
+    }
+
     public void writeBytes(byte[] bytes) {
         writeBytes(bytes, 0, bytes.length);
     }

@@ -3,33 +3,33 @@ package android.util;
 import java.util.HashMap;
 
 /**
- * Stupid (but working) implementation of Android-specific SparseLongArray to be used in unit tests running using JUnit in
+ * Stupid (but working) implementation of Android-specific SparseBooleanArray to be used in unit tests running using JUnit in
  * classic JVM, where Android-specific code is not available
  */
-public class SparseLongArray {
-    private final SparseArray<Long> impl;
+public class SparseBooleanArray {
+    private final SparseArray<Boolean> impl;
 
-    public SparseLongArray() {
+    public SparseBooleanArray() {
         impl = new SparseArray<>();
     }
 
-    public SparseLongArray(int initialCapacity) {
+    public SparseBooleanArray(int initialCapacity) {
         impl = new SparseArray<>(initialCapacity);
     }
 
-    public void put(int key, long value) {
+    public void put(int key, boolean value) {
         impl.put(key, value);
     }
 
-    public long get(int key) {
-        return impl.get(key, 0L);
+    public boolean get(int key) {
+        return impl.get(key, false);
     }
 
-    public long get(int key, long valueIfNotFound) {
+    public boolean get(int key, boolean valueIfNotFound) {
         return impl.get(key, valueIfNotFound);
     }
 
-    public void append(int key, long value) {
+    public void append(int key, boolean value) {
         impl.append(key, value);
     }
 
@@ -45,7 +45,7 @@ public class SparseLongArray {
         return impl.keyAt(index);
     }
 
-    public long valueAt(int index) {
+    public boolean valueAt(int index) {
         return impl.valueAt(index);
     }
 
@@ -65,7 +65,7 @@ public class SparseLongArray {
         impl.removeAtRange(index, size);
     }
 
-    public void setValueAt(int index, long value) {
+    public void setValueAt(int index, boolean value) {
         impl.setValueAt(index, value);
     }
 
@@ -73,7 +73,7 @@ public class SparseLongArray {
         return impl.indexOfKey(key);
     }
 
-    public int indexOfValue(long value) {
+    public int indexOfValue(boolean value) {
         return impl.indexOfValue(value);
     }
 }

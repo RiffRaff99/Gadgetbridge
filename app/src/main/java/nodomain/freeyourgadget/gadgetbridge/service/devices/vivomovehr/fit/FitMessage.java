@@ -27,7 +27,7 @@ public class FitMessage {
 
     public void setField(String fieldName, Object value) {
         final FitMessageFieldDefinition fieldDefinition = definition.findField(fieldName);
-        if (fieldDefinition == null) throw new IllegalArgumentException("Unknown field name");
+        if (fieldDefinition == null) throw new IllegalArgumentException("Unknown field name " + fieldName);
         setField(fieldDefinition.fieldNumber, value);
     }
 

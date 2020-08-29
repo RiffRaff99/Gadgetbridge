@@ -37,12 +37,17 @@ public class FitParser {
         }
     }
 
+    public SparseArray<FitLocalMessageDefinition> getLocalMessageDefinitions() {
+        return localMessageDefinitions;
+    }
+
     public List<FitMessage> parseFitFile(byte[] data) {
         if (data.length < 12) throw new IllegalArgumentException("Too short data");
 
         final MessageReader reader = new MessageReader(data);
         final List<FitMessage> result = new ArrayList<>();
         while (!reader.isEof()) {
+            final int fileHeaderStart = reader.getPosition();
             final int fileHeaderSize = reader.readByte();
             final int protocolVersion = reader.readByte();
             final int profileVersion = reader.readShort();
@@ -60,7 +65,7 @@ public class FitParser {
             localMessageDefinitions.clear();
 
             int lastTimestamp = 0;
-            final int end = fileHeaderSize + dataSize;
+            final int end = fileHeaderStart + fileHeaderSize + dataSize;
             while (reader.getPosition() < end) {
                 final int recordHeader = reader.readByte();
                 final boolean isDefinitionMessage;
@@ -104,6 +109,7 @@ public class FitParser {
     }
 
     private void parseDataMessage(MessageReader reader, FitLocalMessageDefinition localMessageDefinition, FitMessage dataMessage) {
+        System.out.println("parseDataMessage: " + localMessageDefinition.globalDefinition.globalMessageID);
         for (FitLocalFieldDefinition localFieldDefinition : localMessageDefinition.fieldDefinitions) {
             final Object value = readValue(reader, localFieldDefinition);
             if (!localFieldDefinition.baseType.invalidValue.equals(value)) {
