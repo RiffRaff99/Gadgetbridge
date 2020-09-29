@@ -1,5 +1,6 @@
 package nodomain.freeyourgadget.gadgetbridge.service.devices.vivomovehr.fit;
 
+import android.util.SparseArray;
 import nodomain.freeyourgadget.gadgetbridge.util.FileUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -9,6 +10,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -42,11 +44,22 @@ public class FitSerializerTest {
         final byte[] fitBytes = FileUtils.readAll(new FileInputStream(inputFile), Long.MAX_VALUE);
         final List<FitMessage> fitData = fitParser.parseFitFile(fitBytes);
         assertNotNull(fitData);
+        System.out.println("*** Read data:");
+        for(final FitMessage message : fitData) {
+            System.out.println(message.definition.globalMessageID);
+            System.out.println(message);
+        }
+//        final SparseArray<FitLocalMessageDefinition> localMessageDefinitionsFromParser = fitParser.getLocalMessageDefinitions();
+//        final SparseArray<FitLocalMessageDefinition> localDefinitions = new SparseArray<>(localMessageDefinitionsFromParser.size());
+//        for (final FitLocalMessageDefinition definitionFromParser : localMessageDefinitionsFromParser) {
+//            localDefinitions.append(definitionFromParser.globalDefinition.localMessageID, new FitLocalMessageDefinition(definitionFromParser.globalDefinition, ));
+//        }
         final FitSerializer fitSerializer = new FitSerializer(fitParser.getLocalMessageDefinitions());
         final byte[] serializedBytes = fitSerializer.serializeFitFile(fitData);
 
         Files.write(outputFile.toPath(), serializedBytes, StandardOpenOption.CREATE);
 
+        System.out.println("*** Reparsing data:");
         final List<FitMessage> reparsedMessages = fitParser.parseFitFile(serializedBytes);
         Assert.assertEquals(fitData.size(), reparsedMessages.size());
     }

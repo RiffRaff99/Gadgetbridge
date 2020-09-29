@@ -119,10 +119,11 @@ public class FitSerializer {
         writer.writeByte(localMessageID);
 
         for (FitLocalFieldDefinition localFieldDefinition : localMessageDefinition.fieldDefinitions) {
-            final Object value = message.getField(localFieldDefinition.globalDefinition.fieldNumber);
-            if (value != null && !localFieldDefinition.baseType.invalidValue.equals(value)) {
-                writeValue(writer, localFieldDefinition, value);
+            Object value = message.getField(localFieldDefinition.globalDefinition.fieldNumber);
+            if (value == null) {
+                value = localFieldDefinition.baseType.invalidValue;
             }
+            writeValue(writer, localFieldDefinition, value);
         }
     }
 
