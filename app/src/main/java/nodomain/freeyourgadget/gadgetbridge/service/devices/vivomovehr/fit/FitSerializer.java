@@ -92,7 +92,7 @@ public class FitSerializer {
             writeDataMessage(writer, message, localMessageID, localMessageDefinition);
         }
 
-        writer.writeShort(ChecksumCalculator.computeCrc(writer.peekBytes(), 0, writer.getSize()));
+        writer.writeShort(ChecksumCalculator.computeCrc(writer.peekBytes(), 14, writer.getSize() - 14));
 
         final byte[] bytes = writer.getBytes();
         // rewrite size

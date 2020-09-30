@@ -44,22 +44,20 @@ public class FitSerializerTest {
         final byte[] fitBytes = FileUtils.readAll(new FileInputStream(inputFile), Long.MAX_VALUE);
         final List<FitMessage> fitData = fitParser.parseFitFile(fitBytes);
         assertNotNull(fitData);
-        System.out.println("*** Read data:");
-        for(final FitMessage message : fitData) {
-            System.out.println(message.definition.globalMessageID);
-            System.out.println(message);
+
+        for (final FitMessage msg : fitData) {
+//            if (msg.definition.globalMessageID == FitMessageDefinitions.FIT_MESSAGE_NUMBER_DEVICE_SETTINGS) {
+//                msg.setField("phone_notification_activity_filter", 0);
+//                msg.setField("phone_notification_default_filter", 0);
+//            }
+            System.out.println(msg);
         }
-//        final SparseArray<FitLocalMessageDefinition> localMessageDefinitionsFromParser = fitParser.getLocalMessageDefinitions();
-//        final SparseArray<FitLocalMessageDefinition> localDefinitions = new SparseArray<>(localMessageDefinitionsFromParser.size());
-//        for (final FitLocalMessageDefinition definitionFromParser : localMessageDefinitionsFromParser) {
-//            localDefinitions.append(definitionFromParser.globalDefinition.localMessageID, new FitLocalMessageDefinition(definitionFromParser.globalDefinition, ));
-//        }
+
         final FitSerializer fitSerializer = new FitSerializer(fitParser.getLocalMessageDefinitions());
         final byte[] serializedBytes = fitSerializer.serializeFitFile(fitData);
 
         Files.write(outputFile.toPath(), serializedBytes, StandardOpenOption.CREATE);
 
-        System.out.println("*** Reparsing data:");
         final List<FitMessage> reparsedMessages = fitParser.parseFitFile(serializedBytes);
         Assert.assertEquals(fitData.size(), reparsedMessages.size());
     }
